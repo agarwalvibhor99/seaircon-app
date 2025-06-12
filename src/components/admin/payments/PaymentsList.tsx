@@ -232,7 +232,6 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
                           className="text-xs"
                           onClick={() => {
                             // View payment details logic
-                            console.log('View payment:', payment.id)
                           }}
                         >
                           <FileText className="h-3 w-3" />

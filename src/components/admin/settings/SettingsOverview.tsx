@@ -65,12 +65,10 @@ export default function SettingsOverview({ currentEmployee, employees }: Setting
 
   const handleProfileUpdate = () => {
     // Handle profile update
-    console.log('Profile updated:', profileData)
   }
 
   const handleSystemUpdate = () => {
     // Handle system settings update
-    console.log('System settings updated:', systemSettings)
   }
 
   const roleColors = {

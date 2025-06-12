@@ -22,6 +22,7 @@ This is the repository for the SE Aircon CRM application, a comprehensive custom
 
 - `scripts/` - Utility scripts for development and deployment
   - Contains scripts for starting the application in different modes
+  - Includes cleanup.sh for removing logs and build artifacts
 
 ## Getting Started
 
@@ -43,6 +44,11 @@ This is the repository for the SE Aircon CRM application, a comprehensive custom
    Or use the script:
    ```
    ./scripts/start-dev.sh
+   ```
+
+4. Clean up build artifacts and logs:
+   ```
+   ./scripts/cleanup.sh
    ```
 
 ## Testing

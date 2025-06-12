@@ -135,8 +135,6 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
         status: 'new' as const,
         source: 'website' as const,
       }
-
-      console.log('Submitting consultation request:', requestData)
       
       // Direct Supabase insert since the data is already mapped correctly
       const { data: result, error } = await supabase
@@ -146,11 +144,8 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
         .single()
 
       if (error) {
-        console.error('Supabase insert error:', error)
         throw new Error(`Failed to submit consultation request: ${error.message || 'Database error'}`)
       }
-
-      console.log('Submission successful:', result)
 
       // Show success toast
       showToast.success(

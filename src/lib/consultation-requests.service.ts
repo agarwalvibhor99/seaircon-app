@@ -10,10 +10,6 @@ import {
 export class ConsultationRequestsService {
   static async create(data: ConsultationRequestInsert): Promise<ServiceResponse<ConsultationRequest>> {
     try {
-      console.log('Creating consultation request with data:', data)
-      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
-      console.log('Supabase Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-      
       const { data: result, error } = await supabase
         .from('consultation_requests')
         .insert(data)
@@ -21,21 +17,11 @@ export class ConsultationRequestsService {
         .single()
 
       if (error) {
-        console.error('Supabase error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        })
         throw error
       }
       
-      console.log('Successfully created consultation request:', result)
       return { data: result, error: null }
     } catch (error) {
-      console.error('Error creating consultation request:', error)
-      console.error('Error type:', typeof error)
-      console.error('Error keys:', Object.keys(error as any))
       return { data: null, error: error as Error }
     }
   }

@@ -164,20 +164,13 @@ export class AuthService {
     try {
       const serverClient = createServerSupabaseClient();
       
-      // In production, you might want to create a security_logs table
-      console.log('Security Event:', {
-        event,
-        details,
-        userId,
-        timestamp: new Date().toISOString(),
-        ip: details.ip || 'unknown',
-        userAgent: details.userAgent || 'unknown',
-      });
+      // In production, implement security log storage
+      // TODO: Create security_logs table and implement proper logging
       
       // Could store in Supabase for audit trail
       // await serverClient.from('security_logs').insert({...})
     } catch (error) {
-      console.error('Failed to log security event:', error);
+      // Silent fail in production
     }
   }
 
