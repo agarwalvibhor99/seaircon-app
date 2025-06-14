@@ -1,42 +1,120 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+'use client'
+
+import { useState, useEffect } from 'react'
+import { createBrowserClient } from '@supabase/ssr'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import ProjectsList from '@/components/admin/projects/ProjectsList'
+import UnifiedProjectsList from '@/components/admin/projects/UnifiedProjectsList'
 import ProjectsStats from '@/components/admin/projects/ProjectsStats'
 
-export default async function ProjectsPage() {
-  const supabase = createServerComponentClient({ cookies })
-  
-  const { data: { session } } = await supabase.auth.getSession()
-  
-  const { data: employee } = await supabase
-    .from('employees')
-    .select('*')
-    .eq('email', session?.user.email)
-    .single()
+export default function ProjectsPage() {
+  const [employee, setEmployee] = useState<any>(null)
+  const [projects, setProjects] = useState<any[]>([])
+  const [customers, setCustomers] = useState<any[]>([])
+  const [employees, setEmployees] = useState<any[]>([])
+  const [statsData, setStatsData] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Fetch projects data
-  const { data: projects } = await supabase
-    .from('projects')
-    .select(`
-      *,
-      customers(name, phone, email),
-      project_manager:employees!projects_project_manager_id_fkey(full_name),
-      quotations(quotation_number, total_amount)
-    `)
-    .order('created_at', { ascending: false })
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
-  // Get project stats
-  const { data: statsData } = await supabase
-    .from('projects')
-    .select('status, budget')
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true)
+      console.log('🔄 Starting to load data...')
+      
+      // Get current session
+      const { data: { session } } = await supabase.auth.getSession()
+      console.log('👤 Session:', session?.user ? 'Authenticated' : 'Not authenticated')
+      
+      if (!session?.user) {
+        console.error('❌ No authenticated user found')
+        return
+      }
+
+      // Get employee details
+      const { data: employeeData, error: employeeError } = await supabase
+        .from('employees')
+        .select('*')
+        .eq('email', session.user.email)
+        .single()
+
+      if (employeeError) {
+        console.error('❌ Error fetching employee:', employeeError)
+        return
+      }
+
+      console.log('👨‍💼 Employee loaded:', employeeData?.full_name)
+      setEmployee(employeeData)
+
+      // Use API route to fetch projects (better authentication)
+      console.log('📊 Fetching projects via API...')
+      const projectsResponse = await fetch('/api/projects')
+      const projectsResult = await projectsResponse.json()
+
+      if (!projectsResponse.ok || !projectsResult.success) {
+        console.error('❌ Error fetching projects via API:', projectsResult.error)
+      } else {
+        console.log('✅ Projects fetched successfully via API:', projectsResult.data?.length || 0, 'projects')
+        setProjects(projectsResult.data || [])
+      }
+
+      // Fetch other data using direct Supabase calls (these should work)
+      const [customersResult, employeesResult, statsResult] = await Promise.all([
+        supabase.from('customers').select('*').order('name'),
+        supabase.from('employees').select('*').eq('is_active', true).order('full_name'),
+        fetch('/api/projects').then(r => r.json()).then(result => ({ data: result.success ? result.data?.map((p: any) => ({ status: p.status, project_value: p.project_value })) : [] }))
+      ])
+
+      setCustomers(customersResult.data || [])
+      setEmployees(employeesResult.data || [])
+      setStatsData(statsResult.data || [])
+
+      console.log('✅ All data loaded successfully')
+
+    } catch (error) {
+      console.error('💥 Error loading data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+            <p className="mt-4 text-gray-600">Loading projects...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!employee) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-600">Unable to load employee data</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -45,15 +123,18 @@ export default async function ProjectsPage() {
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
                 <p className="mt-2 text-gray-600">
-                  Plan, assign and track project execution
+                  Plan, assign and track project execution with comprehensive financial oversight
                 </p>
               </div>
-              <a
-                href="/admin/projects/create"
-                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
-              >
-                + Create Project
-              </a>
+              <div className="flex gap-2">
+                <button
+                  onClick={loadData}
+                  disabled={isLoading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {isLoading ? 'Loading...' : 'Refresh Data'}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -62,9 +143,14 @@ export default async function ProjectsPage() {
             <ProjectsStats projects={statsData || []} />
           </div>
 
-          {/* Projects List */}
+          {/* Enhanced Projects List */}
           <div>
-            <ProjectsList projects={projects || []} />
+            <UnifiedProjectsList 
+              projects={projects || []} 
+              employee={employee}
+              customers={customers || []}
+              employees={employees || []}
+            />
           </div>
         </main>
       </div>

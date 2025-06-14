@@ -7,9 +7,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Phone, Mail, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { showToast } from '@/lib/toast.service'
+import { notify } from '@/lib/toast'
 
 type ContactFormData = {
   full_name: string
@@ -148,7 +149,7 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
       }
 
       // Show success toast
-      showToast.success(
+      notify.success(
         'Request submitted successfully!', 
         'We\'ll get back to you within 24 hours.'
       )
@@ -176,7 +177,7 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
 
     } catch (error) {
       console.error('Form submission error:', error)
-      showToast.error(
+      notify.error(
         'Submission failed', 
         'There was an error submitting your request. Please try again or call us directly.'
       )
@@ -196,144 +197,162 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
   }
 
   return (
-    <Card className={`w-full max-w-2xl mx-auto ${className}`}>
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Request a Consultation</CardTitle>
-        <CardDescription className="text-center">
+    <Card className={`w-full max-w-4xl mx-auto shadow-2xl border-0 bg-white/95 backdrop-blur-sm ${className}`}>
+      <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+        <CardTitle className="text-3xl font-bold text-center">Request a Consultation</CardTitle>
+        <CardDescription className="text-center text-cyan-50 text-lg">
           Get expert HVAC advice tailored to your needs. We&apos;ll respond within 24 hours.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={onSubmit} className="space-y-6">
+      <CardContent className="p-8">
+        <form onSubmit={onSubmit} className="space-y-8">
           {/* Contact Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Contact Information</h3>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b-2 border-cyan-100">
+              <div className="p-2 bg-cyan-100 rounded-lg">
+                <Phone className="h-5 w-5 text-cyan-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="full_name">Full Name *</Label>
+              <div className="space-y-3">
+                <Label htmlFor="full_name" className="text-sm font-semibold text-gray-700">Full Name *</Label>
                 <Input
                   id="full_name"
                   value={formData.full_name}
                   onChange={(e) => handleInputChange('full_name', e.target.value)}
                   placeholder="Enter your full name"
-                  className={errors.full_name ? 'border-red-500' : ''}
+                  className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.full_name ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                 />
                 {errors.full_name && (
-                  <p className="text-red-500 text-sm">{errors.full_name}</p>
+                  <p className="text-red-600 text-sm flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.full_name}
+                  </p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address *</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="your.email@example.com"
-                  className={errors.email ? 'border-red-500' : ''}
+                  className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email}</p>
+                  <p className="text-red-600 text-sm flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.email}
+                  </p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
+              <div className="space-y-3">
+                <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">Phone Number *</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="+1 (555) 123-4567"
-                  className={errors.phone ? 'border-red-500' : ''}
+                  className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                 />
                 {errors.phone && (
-                  <p className="text-red-500 text-sm">{errors.phone}</p>
+                  <p className="text-red-600 text-sm flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.phone}
+                  </p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="company">Company (Optional)</Label>
+              <div className="space-y-3">
+                <Label htmlFor="company" className="text-sm font-semibold text-gray-700">Company <span className="text-gray-500 font-normal">(Optional)</span></Label>
                 <Input
                   id="company"
                   value={formData.company || ''}
                   onChange={(e) => handleInputChange('company', e.target.value)}
                   placeholder="Your company name"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400"
                 />
               </div>
             </div>
           </div>
 
           {/* Service Details */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Service Details</h3>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b-2 border-blue-100">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800">Service Details</h3>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="service_type">Service Type *</Label>
-                <select
-                  id="service_type"
-                  value={formData.service_type}
-                  onChange={(e) => handleInputChange('service_type', e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                >
-                  <option value="residential_installation">Residential Installation</option>
-                  <option value="commercial_hvac">Commercial HVAC</option>
-                  <option value="maintenance_service">Maintenance Service</option>
-                  <option value="emergency_repair">Emergency Repair</option>
-                  <option value="consultation">General Consultation</option>
-                  <option value="other">Other</option>
-                </select>
+              <div className="space-y-3">
+                <Label htmlFor="service_type" className="text-sm font-semibold text-gray-700">Service Type *</Label>
+                <Select value={formData.service_type} onValueChange={(value) => handleInputChange('service_type', value)}>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400">
+                    <SelectValue placeholder="Select service type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="residential_installation">Residential Installation</SelectItem>
+                    <SelectItem value="commercial_hvac">Commercial HVAC</SelectItem>
+                    <SelectItem value="maintenance_service">Maintenance Service</SelectItem>
+                    <SelectItem value="emergency_repair">Emergency Repair</SelectItem>
+                    <SelectItem value="consultation">General Consultation</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="property_type">Property Type</Label>
-                <select
-                  id="property_type"
-                  value={formData.property_type || ''}
-                  onChange={(e) => handleInputChange('property_type', e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                >
-                  <option value="">Select property type</option>
-                  <option value="residential">Residential</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="industrial">Industrial</option>
-                  <option value="retail">Retail</option>
-                  <option value="office">Office</option>
-                  <option value="other">Other</option>
-                </select>
+              <div className="space-y-3">
+                <Label htmlFor="property_type" className="text-sm font-semibold text-gray-700">Property Type</Label>
+                <Select value={formData.property_type || ''} onValueChange={(value) => handleInputChange('property_type', value)}>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400">
+                    <SelectValue placeholder="Select property type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="residential">Residential</SelectItem>
+                    <SelectItem value="commercial">Commercial</SelectItem>
+                    <SelectItem value="industrial">Industrial</SelectItem>
+                    <SelectItem value="retail">Retail</SelectItem>
+                    <SelectItem value="office">Office</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="project_size">Project Size</Label>
-                <select
-                  id="project_size"
-                  value={formData.project_size || ''}
-                  onChange={(e) => handleInputChange('project_size', e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                >
-                  <option value="">Select project size</option>
-                  <option value="small">Small (1-2 units)</option>
-                  <option value="medium">Medium (3-10 units)</option>
-                  <option value="large">Large (11-50 units)</option>
-                  <option value="enterprise">Enterprise (50+ units)</option>
-                </select>
+              <div className="space-y-3">
+                <Label htmlFor="project_size" className="text-sm font-semibold text-gray-700">Project Size</Label>
+                <Select value={formData.project_size || ''} onValueChange={(value) => handleInputChange('project_size', value)}>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400">
+                    <SelectValue placeholder="Select project size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="small">Small (1-2 units)</SelectItem>
+                    <SelectItem value="medium">Medium (3-10 units)</SelectItem>
+                    <SelectItem value="large">Large (11-50 units)</SelectItem>
+                    <SelectItem value="enterprise">Enterprise (50+ units)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="urgency">Urgency Level</Label>
-                <select
-                  id="urgency"
-                  value={formData.urgency}
-                  onChange={(e) => handleInputChange('urgency', e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                >
-                  <option value="low">Low - General inquiry</option>
-                  <option value="medium">Medium - Planning ahead</option>
-                  <option value="high">High - Need soon</option>
-                  <option value="emergency">Emergency - ASAP</option>
-                </select>
+              <div className="space-y-3">
+                <Label htmlFor="urgency" className="text-sm font-semibold text-gray-700">Urgency Level</Label>
+                <Select value={formData.urgency} onValueChange={(value) => handleInputChange('urgency', value)}>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400">
+                    <SelectValue placeholder="Select urgency level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low - General inquiry</SelectItem>
+                    <SelectItem value="medium">Medium - Planning ahead</SelectItem>
+                    <SelectItem value="high">High - Need soon</SelectItem>
+                    <SelectItem value="emergency">Emergency - ASAP</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -345,66 +364,81 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="message">Project Details *</Label>
+            <div className="space-y-3">
+              <Label htmlFor="message" className="text-sm font-semibold text-gray-700">Project Details *</Label>
               <Textarea
                 id="message"
                 value={formData.message}
                 onChange={(e) => handleInputChange('message', e.target.value)}
                 placeholder="Please describe your HVAC needs, current issues, or project requirements..."
                 rows={4}
-                className={errors.message ? 'border-red-500' : ''}
+                className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.message ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
               />
               {errors.message && (
-                <p className="text-red-500 text-sm">{errors.message}</p>
+                <p className="text-red-600 text-sm flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.message}
+                </p>
               )}
             </div>
           </div>
 
           {/* Contact Preferences */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Contact Preferences</h3>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b-2 border-green-100">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Mail className="h-5 w-5 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800">Contact Preferences</h3>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="preferred_contact_method">Preferred Contact Method</Label>
-                <select
-                  id="preferred_contact_method"
-                  value={formData.preferred_contact_method}
-                  onChange={(e) => handleInputChange('preferred_contact_method', e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                >
-                  <option value="phone">Phone Call</option>
-                  <option value="email">Email</option>
-                  <option value="whatsapp">WhatsApp</option>
-                </select>
+              <div className="space-y-3">
+                <Label htmlFor="preferred_contact_method" className="text-sm font-semibold text-gray-700">Preferred Contact Method</Label>
+                <Select value={formData.preferred_contact_method} onValueChange={(value) => handleInputChange('preferred_contact_method', value)}>
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400">
+                    <SelectValue placeholder="Select contact method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="phone">Phone Call</SelectItem>
+                    <SelectItem value="email">Email</SelectItem>
+                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="preferred_contact_time">Best Time to Contact</Label>
+              <div className="space-y-3">
+                <Label htmlFor="preferred_contact_time" className="text-sm font-semibold text-gray-700">Best Time to Contact</Label>
                 <Input
                   id="preferred_contact_time"
                   value={formData.preferred_contact_time || ''}
                   onChange={(e) => handleInputChange('preferred_contact_time', e.target.value)}
                   placeholder="e.g., Weekdays 9-5, Evenings after 6pm"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="budget_range">Budget Range (Optional)</Label>
+              <div className="space-y-3">
+                <Label htmlFor="budget_range" className="text-sm font-semibold text-gray-700">Budget Range <span className="text-gray-500 font-normal">(Optional)</span></Label>
                 <Input
                   id="budget_range"
                   value={formData.budget_range || ''}
                   onChange={(e) => handleInputChange('budget_range', e.target.value)}
                   placeholder="e.g., $5,000-$10,000"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400"
                 />
               </div>
             </div>
           </div>
 
           {/* Location (Optional) */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Service Location (Optional)</h3>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b-2 border-purple-100">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800">Service Location <span className="text-sm text-gray-500 font-normal">(Optional)</span></h3>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2 space-y-2">
@@ -450,11 +484,11 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
           </div>
 
           {/* Submit Button */}
-          <div className="pt-4">
+          <div className="pt-6">
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full text-lg py-6 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700"
+              className="w-full text-lg py-6 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
             >
               {isSubmitting ? (
                 <>
@@ -462,16 +496,21 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
                   Submitting Request...
                 </>
               ) : (
-                'Submit Consultation Request'
+                <>
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  Submit Consultation Request
+                </>
               )}
             </Button>
             
-            <p className="text-center text-sm text-gray-600 mt-3">
-              We'll respond within 24 hours. For emergencies, call us directly at{' '}
-              <a href="tel:+15551234567" className="text-cyan-600 hover:underline font-medium">
-                +1 (555) 123-4567
-              </a>
-            </p>
+            <div className="text-center mt-4 p-4 bg-cyan-50 rounded-lg border border-cyan-200">
+              <p className="text-sm text-cyan-800">
+                <strong>We'll respond within 24 hours.</strong> For emergencies, call us directly at{' '}
+                <a href="tel:+15551234567" className="text-cyan-600 hover:underline font-medium">
+                  +1 (555) 123-4567
+                </a>
+              </p>
+            </div>
           </div>
         </form>
       </CardContent>

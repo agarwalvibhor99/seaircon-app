@@ -715,6 +715,9 @@ CREATE POLICY "Allow public select on consultation_requests" ON consultation_req
 CREATE POLICY "Allow public update on consultation_requests" ON consultation_requests
   FOR UPDATE USING (true);
 
+CREATE POLICY "Allow authenticated users delete on consultation_requests" ON consultation_requests
+  FOR DELETE TO authenticated USING (true);
+
 CREATE POLICY "Allow public insert on contact_history" ON contact_history
   FOR INSERT WITH CHECK (true);
 

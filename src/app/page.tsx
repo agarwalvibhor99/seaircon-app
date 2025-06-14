@@ -439,8 +439,8 @@ export default function Home() {
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white font-bold text-xl">SE</span>
+                <div className="mr-4">
+                  <img src="/selogo.svg" alt="SE Aircon Logo" className="w-12 h-12" />
                 </div>
                 <div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">SE Aircon Pvt Ltd</span>
@@ -1309,11 +1309,11 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white font-bold text-xl">SE</span>
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mr-4 shadow-lg p-1">
+                  <img src="/selogo.svg" alt="SE Aircon Logo" className="h-full w-full" />
                 </div>
                 <div>
-                                   <span className="text-2xl font-bold">SE Aircon Pvt Ltd</span>
+                  <span className="text-2xl font-bold">SE Aircon Pvt Ltd</span>
                   <p className="text-cyan-200 text-sm font-medium">Bringing Comfort to Life</p>
                 </div>
               </div>

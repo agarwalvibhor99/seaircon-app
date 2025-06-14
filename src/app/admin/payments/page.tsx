@@ -1,12 +1,21 @@
 import { cookies } from 'next/headers'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { redirect } from 'next/navigation'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import PaymentsList from '@/components/admin/payments/PaymentsList'
+import UnifiedPaymentsList from '@/components/admin/payments/UnifiedPaymentsList'
 
 export default async function PaymentsPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -34,6 +43,12 @@ export default async function PaymentsPage() {
     `)
     .order('created_at', { ascending: false })
 
+  // Fetch invoices for forms
+  const { data: invoices } = await supabase
+    .from('invoices')
+    .select('*')
+    .order('invoice_number')
+
   // Get summary statistics
   const { data: stats } = await supabase
     .from('payments')
@@ -50,7 +65,7 @@ export default async function PaymentsPage() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -62,15 +77,6 @@ export default async function PaymentsPage() {
                   Track and manage all customer payments
                 </p>
               </div>
-              <a
-                href="/admin/payments/create"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Record Payment
-              </a>
             </div>
           </div>
 
@@ -119,7 +125,11 @@ export default async function PaymentsPage() {
             </div>
           </div>
 
-          <PaymentsList payments={payments || []} />
+          <UnifiedPaymentsList 
+            payments={payments || []} 
+            employee={employee}
+            invoices={invoices || []}
+          />
         </main>
       </div>
     </div>

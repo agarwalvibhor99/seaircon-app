@@ -1,12 +1,21 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
 import AMCStats from '@/components/admin/amc/AMCStats'
-import AMCList from '@/components/admin/amc/AMCList'
+import UnifiedAMCList from '@/components/admin/amc/UnifiedAMCList'
 
 export default async function AMCPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -27,6 +36,23 @@ export default async function AMCPage() {
     `)
     .order('created_at', { ascending: false })
 
+  // Fetch data for forms
+  const [customersResult, projectsResult, employeesResult] = await Promise.all([
+    supabase
+      .from('customers')
+      .select('*')
+      .order('name'),
+    supabase
+      .from('projects')
+      .select('*')
+      .order('project_name'),
+    supabase
+      .from('employees')
+      .select('*')
+      .eq('is_active', true)
+      .order('full_name')
+  ])
+
   // Get AMC stats
   const { data: statsData } = await supabase
     .from('amc_contracts')
@@ -36,7 +62,7 @@ export default async function AMCPage() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -48,12 +74,6 @@ export default async function AMCPage() {
                   Manage annual maintenance contracts and service agreements
                 </p>
               </div>
-              <a
-                href="/admin/amc/create"
-                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
-              >
-                + Create AMC Contract
-              </a>
             </div>
           </div>
 
@@ -64,7 +84,12 @@ export default async function AMCPage() {
 
           {/* AMC Contracts List */}
           <div>
-            <AMCList contracts={contracts || []} />
+            <UnifiedAMCList 
+              contracts={contracts || []} 
+              employee={employee}
+              customers={customersResult.data || []}
+              employees={employeesResult.data || []}
+            />
           </div>
         </main>
       </div>

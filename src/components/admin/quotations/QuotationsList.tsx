@@ -1,12 +1,24 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FileText, Eye, Edit, Download, Send, CheckCircle, XCircle, Clock } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { FileText, Eye, Edit, Download, Send, CheckCircle, XCircle, Clock, Plus, Search, Filter, X } from 'lucide-react'
+import CreateQuotationFormDialog from './CreateQuotationFormDialog'
+import { Employee, Customer, Project } from '@/lib/enhanced-types'
+
+interface ConsultationRequest {
+  id: string
+  name: string
+  email: string
+  phone: string
+  service_type: string
+  message: string
+}
 
 interface Quotation {
   id: string
@@ -24,6 +36,10 @@ interface Quotation {
 
 interface QuotationsListProps {
   quotations: Quotation[]
+  employee: Employee
+  customers: Customer[]
+  projects: Project[]
+  consultationRequests: ConsultationRequest[]
 }
 
 const statusConfig = {
@@ -34,10 +50,17 @@ const statusConfig = {
   expired: { color: 'bg-orange-100 text-orange-800', label: 'Expired', icon: Clock }
 }
 
-export default function QuotationsList({ quotations }: QuotationsListProps) {
+export default function QuotationsList({ quotations, employee, customers, projects, consultationRequests }: QuotationsListProps) {
   const [filteredQuotations, setFilteredQuotations] = useState(quotations)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+
+  const handleCreateSuccess = () => {
+    setIsAddDialogOpen(false)
+    // Refresh the page to show updated data
+    window.location.reload()
+  }
 
   // Filter quotations based on search and filters
   const handleFilter = () => {
@@ -98,9 +121,27 @@ export default function QuotationsList({ quotations }: QuotationsListProps) {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Quotations Management</h2>
+          <p className="text-gray-600">Create, manage and track customer quotations</p>
+        </div>
+        <Button onClick={() => setIsAddDialogOpen(true)} className="bg-cyan-600 hover:bg-cyan-700">
+          <Plus className="h-4 w-4 mr-2" />
+          Create Quotation
+        </Button>
+      </div>
+
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
+      <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg flex items-center">
+            <Search className="h-5 w-5 mr-2 text-cyan-600" />
+            Search & Filters
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <Input
@@ -115,7 +156,7 @@ export default function QuotationsList({ quotations }: QuotationsListProps) {
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="draft">Draft</SelectItem>
                   <SelectItem value="sent">Sent</SelectItem>
@@ -132,7 +173,7 @@ export default function QuotationsList({ quotations }: QuotationsListProps) {
       {/* Quotations List */}
       <div className="grid gap-4">
         {filteredQuotations.length === 0 ? (
-          <Card>
+          <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
             <CardContent className="p-8 text-center">
               <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No quotations found</h3>
@@ -151,7 +192,7 @@ export default function QuotationsList({ quotations }: QuotationsListProps) {
             const expired = isExpired(quotation.valid_until)
             
             return (
-              <Card key={quotation.id} className="hover:shadow-md transition-shadow">
+              <Card key={quotation.id} className="border-0 shadow-lg bg-white/95 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -253,6 +294,31 @@ export default function QuotationsList({ quotations }: QuotationsListProps) {
           })
         )}
       </div>
+
+      {/* Create Quotation Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
+            <DialogTitle className="text-xl font-semibold">Create New Quotation</DialogTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsAddDialogOpen(false)}
+              className="hover:bg-gray-100"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogHeader>
+          <CreateQuotationFormDialog
+            employee={employee}
+            customers={customers}
+            projects={projects}
+            consultationRequests={consultationRequests}
+            onSuccess={handleCreateSuccess}
+            onCancel={() => setIsAddDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

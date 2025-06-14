@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   Users, 
@@ -10,9 +10,11 @@ import {
   BarChart3,
   FileCheck
 } from 'lucide-react'
+import { useDashboard } from '@/contexts/DashboardContext'
 
 interface Stats {
   totalLeads: number
+  convertedLeads: number
   activeProjects: number
   pendingInvoices: number
   monthlyRevenue: number
@@ -20,8 +22,10 @@ interface Stats {
 }
 
 export default function DashboardStats() {
+  const { refreshKey } = useDashboard()
   const [stats, setStats] = useState<Stats>({
     totalLeads: 0,
+    convertedLeads: 0,
     activeProjects: 0,
     pendingInvoices: 0,
     monthlyRevenue: 0,
@@ -29,13 +33,18 @@ export default function DashboardStats() {
   })
   const [loading, setLoading] = useState(true)
   
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   useEffect(() => {
     async function fetchStats() {
       try {
+        console.log('📊 Fetching dashboard stats... (refresh key:', refreshKey, ')')
         const [
           { count: leadsCount },
+          { count: convertedCount },
           { count: projectsCount },
           { count: invoicesCount },
           { data: revenueData },
@@ -44,7 +53,11 @@ export default function DashboardStats() {
           supabase
             .from('consultation_requests')
             .select('*', { count: 'exact', head: true })
-            .eq('status', 'new'),
+            .not('status', 'in', '(converted,completed,cancelled)'), // Active leads
+          supabase
+            .from('consultation_requests')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'converted'), // Converted leads
           supabase
             .from('projects')
             .select('*', { count: 'exact', head: true })
@@ -68,6 +81,7 @@ export default function DashboardStats() {
 
         setStats({
           totalLeads: leadsCount || 0,
+          convertedLeads: convertedCount || 0,
           activeProjects: projectsCount || 0,
           pendingInvoices: invoicesCount || 0,
           monthlyRevenue,
@@ -81,22 +95,29 @@ export default function DashboardStats() {
     }
 
     fetchStats()
-  }, [supabase])
+  }, [supabase, refreshKey]) // Add refreshKey as dependency
 
   const statCards = [
     {
-      title: 'New Leads',
+      title: 'Active Leads',
       value: stats.totalLeads,
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100'
     },
     {
+      title: 'Converted Leads',
+      value: stats.convertedLeads,
+      icon: Users,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100'
+    },
+    {
       title: 'Active Projects',
       value: stats.activeProjects,
       icon: ClipboardList,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-100'
     },
     {
       title: 'Pending Invoices',
@@ -104,13 +125,6 @@ export default function DashboardStats() {
       icon: DollarSign,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-100'
-    },
-    {
-      title: 'Active AMCs',
-      value: stats.activeAMCs,
-      icon: FileCheck,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-100'
     },
     {
       title: 'Monthly Revenue',

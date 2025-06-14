@@ -1,10 +1,19 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => cookieStore.get(name)?.value,
+        },
+      }
+    )
     const { searchParams } = new URL(req.url)
     
     const page = parseInt(searchParams.get('page') || '1')
@@ -19,7 +28,7 @@ export async function GET(req: NextRequest) {
         customers(name, email, phone),
         quotations(quotation_number, total_amount),
         project_manager:employees!project_manager_id(full_name, email),
-        assigned_team:employees!assigned_team_id(full_name, email)
+        supervisor:employees!supervisor_id(full_name, email)
       `)
       .order('created_at', { ascending: false })
 
@@ -65,10 +74,19 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => cookieStore.get(name)?.value,
+        },
+      }
+    )
     const body = await req.json()
 
-    // Get current user for created_by field
+    // Get current user 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json(
@@ -97,7 +115,6 @@ export async function POST(req: NextRequest) {
     const projectData = {
       ...body,
       project_number: projectNumber,
-      created_by: employee.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }
@@ -125,6 +142,120 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('Create project error:', error)
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => cookieStore.get(name)?.value,
+        },
+      }
+    )
+    const body = await req.json()
+    const { id, ...updateData } = body
+
+    // Get current user for authentication
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    const projectUpdateData = {
+      ...updateData,
+      updated_at: new Date().toISOString()
+    }
+
+    const { data: project, error } = await supabase
+      .from('projects')
+      .update(projectUpdateData)
+      .eq('id', id)
+      .select(`
+        *,
+        customers(name, email, phone),
+        quotations(quotation_number, total_amount),
+        project_manager:employees!project_manager_id(full_name, email)
+      `)
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: project,
+      message: 'Project updated successfully'
+    })
+
+  } catch (error: any) {
+    console.error('Update project error:', error)
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => cookieStore.get(name)?.value,
+        },
+      }
+    )
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: 'Project ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Get current user for authentication
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      throw error
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Project deleted successfully'
+    })
+
+  } catch (error: any) {
+    console.error('Delete project error:', error)
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

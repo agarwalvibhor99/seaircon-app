@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent } from '@/components/ui/card'
 
 export default function LeadsStats() {
@@ -14,7 +14,10 @@ export default function LeadsStats() {
   })
   const [loading, setLoading] = useState(true)
   
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   useEffect(() => {
     async function fetchStats() {

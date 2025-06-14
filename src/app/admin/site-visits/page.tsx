@@ -1,11 +1,20 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import SiteVisitsList from '@/components/admin/site-visits/SiteVisitsList'
+import UnifiedSiteVisitsList from '@/components/admin/site-visits/UnifiedSiteVisitsList'
 
 export default async function SiteVisitsPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -27,11 +36,28 @@ export default async function SiteVisitsPage() {
     `)
     .order('visit_date', { ascending: false })
 
+  // Fetch data for forms
+  const [customersResult, employeesResult, leadsResult] = await Promise.all([
+    supabase
+      .from('customers')
+      .select('*')
+      .order('name'),
+    supabase
+      .from('employees')
+      .select('*')
+      .eq('is_active', true)
+      .order('full_name'),
+    supabase
+      .from('consultation_requests')
+      .select('*')
+      .order('created_at', { ascending: false })
+  ])
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -43,17 +69,16 @@ export default async function SiteVisitsPage() {
                   Schedule and manage customer site visits
                 </p>
               </div>
-              <a
-                href="/admin/site-visits/schedule"
-                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
-              >
-                + Schedule Visit
-              </a>
             </div>
           </div>
           
           <div className="mt-8">
-            <SiteVisitsList visits={siteVisits || []} />
+            <UnifiedSiteVisitsList 
+              visits={siteVisits || []}
+              employee={employee}
+              employees={employeesResult.data || []}
+              leads={leadsResult.data || []}
+            />
           </div>
         </main>
       </div>

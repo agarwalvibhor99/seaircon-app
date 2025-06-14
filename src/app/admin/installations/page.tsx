@@ -1,12 +1,21 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import InstallationsList from '@/components/admin/installations/InstallationsList'
+import UnifiedInstallationsList from '@/components/admin/installations/UnifiedInstallationsList'
 import InstallationsStats from '@/components/admin/installations/InstallationsStats'
 
 export default async function InstallationsPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -28,6 +37,19 @@ export default async function InstallationsPage() {
     `)
     .order('installation_date', { ascending: false })
 
+  // Fetch data for forms
+  const [projectsResult, employeesResult] = await Promise.all([
+    supabase
+      .from('projects')
+      .select('*')
+      .order('project_name'),
+    supabase
+      .from('employees')
+      .select('*')
+      .eq('is_active', true)
+      .order('full_name')
+  ])
+
   // Get installation stats
   const { data: statsData } = await supabase
     .from('installations')
@@ -37,7 +59,7 @@ export default async function InstallationsPage() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -49,12 +71,6 @@ export default async function InstallationsPage() {
                   Monitor and manage HVAC installation progress
                 </p>
               </div>
-              <a
-                href="/admin/installations/schedule"
-                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
-              >
-                + Schedule Installation
-              </a>
             </div>
           </div>
 
@@ -65,7 +81,12 @@ export default async function InstallationsPage() {
 
           {/* Installations List */}
           <div>
-            <InstallationsList installations={installations || []} />
+            <UnifiedInstallationsList 
+              installations={installations || []} 
+              employee={employee}
+              projects={projectsResult.data || []}
+              employees={employeesResult.data || []}
+            />
           </div>
         </main>
       </div>

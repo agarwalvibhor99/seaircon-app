@@ -1,3 +1,7 @@
+'use client'
+
+import { DashboardProvider } from '@/contexts/DashboardContext'
+
 export default function AdminLayout({
   children,
 }: {
@@ -5,8 +9,10 @@ export default function AdminLayout({
 }) {
   // Auth is handled by middleware, so we just render the children
   return (
-    <div className="min-h-screen bg-gray-50">
-      {children}
-    </div>
+    <DashboardProvider>
+      <div className="min-h-screen bg-gray-50">
+        {children}
+      </div>
+    </DashboardProvider>
   )
 }

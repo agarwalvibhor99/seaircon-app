@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,35 +10,17 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Plus, Minus, Save, Send } from 'lucide-react'
+import { Project, Quotation, Customer, Employee, InvoiceItem } from '@/lib/enhanced-types'
+import { notify } from '@/lib/toast'
 
-interface Employee {
-  id: string
-  full_name: string
+interface CreateInvoiceFormProps {
+  employee: Employee
+  projects: Project[]
+  customers: Customer[]
+  quotations: Quotation[]
 }
 
-interface Customer {
-  id: string
-  name: string
-  email: string
-  phone: string
-  address: string
-}
-
-interface Project {
-  id: string
-  project_name: string
-  project_number: string
-  project_value: number
-  status: string
-  customers: Customer
-  quotations: Array<{
-    id: string
-    quotation_number: string
-    total_amount: number
-  }>
-}
-
-interface InvoiceItem {
+interface InvoiceItemTemp {
   id: string
   description: string
   quantity: number
@@ -46,19 +28,17 @@ interface InvoiceItem {
   total: number
 }
 
-interface CreateInvoiceFormProps {
-  employee: Employee
-  projects: Project[]
-  customers: Customer[]
-}
-
 export default function CreateInvoiceForm({ 
   employee, 
   projects, 
-  customers 
+  customers,
+  quotations
 }: CreateInvoiceFormProps) {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const [loading, setLoading] = useState(false)
   const [invoiceType, setInvoiceType] = useState<'project' | 'direct'>('project')
   
@@ -74,7 +54,7 @@ export default function CreateInvoiceForm({
     discount_percentage: 0
   })
 
-  const [items, setItems] = useState<InvoiceItem[]>([
+  const [items, setItems] = useState<InvoiceItemTemp[]>([
     {
       id: '1',
       description: '',
@@ -91,12 +71,13 @@ export default function CreateInvoiceForm({
       setFormData(prev => ({
         ...prev,
         project_id: projectId,
-        customer_id: project.customers.id
+        customer_id: project.customer_id || ''
       }))
       
-      // Pre-fill items based on project
-      if (project.quotations.length > 0) {
-        const quotation = project.quotations[0]
+      // Pre-fill items based on project quotations
+      const projectQuotations = quotations.filter(q => q.project_id === projectId)
+      if (projectQuotations.length > 0) {
+        const quotation = projectQuotations[0]
         setItems([{
           id: '1',
           description: `${project.project_name} - Progress Payment`,
@@ -127,7 +108,7 @@ export default function CreateInvoiceForm({
   }
 
   // Update item
-  const updateItem = (id: string, field: keyof InvoiceItem, value: string | number) => {
+  const updateItem = (id: string, field: keyof InvoiceItemTemp, value: string | number) => {
     setItems(items.map(item => {
       if (item.id === id) {
         const updated = { ...item, [field]: value }
@@ -151,7 +132,7 @@ export default function CreateInvoiceForm({
   const handleSubmit = async (status: 'draft' | 'sent') => {
     setLoading(true)
     try {
-      // Create invoice
+      // Create invoice with enhanced fields
       const invoiceData = {
         ...formData,
         status,
@@ -160,8 +141,13 @@ export default function CreateInvoiceForm({
         tax_amount: taxAmount,
         total_amount: totalAmount,
         balance_due: totalAmount,
+        amount_paid: 0,
         created_by: employee.id,
-        invoice_date: new Date().toISOString().split('T')[0]
+        issue_date: new Date().toISOString().split('T')[0],
+        invoice_date: new Date().toISOString().split('T')[0],
+        // Enhanced fields
+        invoice_type: invoiceType === 'project' ? 'invoice' : 'invoice',
+        tax_rate: formData.tax_rate
       }
 
       const { data: invoice, error: invoiceError } = await supabase
@@ -172,13 +158,14 @@ export default function CreateInvoiceForm({
 
       if (invoiceError) throw invoiceError
 
-      // Create invoice items
+      // Create invoice items with enhanced fields
       const invoiceItems = items.map(item => ({
         invoice_id: invoice.id,
         description: item.description,
         quantity: item.quantity,
         unit_price: item.unit_price,
-        total_amount: item.total
+        total_amount: item.total,
+        unit: 'piece' // Default unit
       }))
 
       const { error: itemsError } = await supabase
@@ -187,10 +174,38 @@ export default function CreateInvoiceForm({
 
       if (itemsError) throw itemsError
 
+      // Log project activity if linked to project
+      if (formData.project_id) {
+        try {
+          await supabase
+            .from('project_activities')
+            .insert([{
+              project_id: formData.project_id,
+              activity_type: 'invoice_created',
+              title: `Invoice ${invoice.invoice_number} created`,
+              description: `Invoice for ₹${totalAmount.toLocaleString('en-IN')} has been ${status}`,
+              entity_type: 'invoice',
+              entity_id: invoice.id,
+              performed_by: employee.id
+            }])
+        } catch (activityError) {
+          console.error('Error logging project activity:', activityError)
+          // Don't throw - invoice creation succeeded
+        }
+      }
+
+      notify.success(
+        'Invoice created successfully!',
+        status === 'sent' ? 'Invoice has been created and sent.' : 'Invoice saved as draft.'
+      )
+
       router.push('/admin/invoicing')
     } catch (error) {
       console.error('Error creating invoice:', error)
-      alert('Error creating invoice. Please try again.')
+      notify.error(
+        'Failed to create invoice',
+        'There was an error creating the invoice. Please try again.'
+      )
     } finally {
       setLoading(false)
     }
@@ -207,20 +222,20 @@ export default function CreateInvoiceForm({
   })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Invoice Type & Customer Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Invoice Information</CardTitle>
+      <Card className="shadow-lg border-0 bg-white/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+          <CardTitle className="text-xl font-bold">Invoice Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-6 space-y-6">
           <div>
             <Label>Invoice Type</Label>
             <Select value={invoiceType} onValueChange={(value: string) => setInvoiceType(value as 'project' | 'direct')}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[200px] overflow-y-auto">
                 <SelectItem value="project">Project Invoice</SelectItem>
                 <SelectItem value="direct">Direct Invoice</SelectItem>
               </SelectContent>
@@ -234,10 +249,10 @@ export default function CreateInvoiceForm({
                 <SelectTrigger>
                   <SelectValue placeholder="Select project" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
                   {projects.map(project => (
                     <SelectItem key={project.id} value={project.id}>
-                      {project.project_number} - {project.project_name} ({project.customers.name})
+                      {project.project_number} - {project.project_name} ({project.customers?.name || 'No Customer'})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -252,7 +267,7 @@ export default function CreateInvoiceForm({
                 <SelectTrigger>
                   <SelectValue placeholder="Select customer" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
                   {customers.map(customer => (
                     <SelectItem key={customer.id} value={customer.id}>
                       {customer.name} - {customer.phone}
@@ -290,7 +305,7 @@ export default function CreateInvoiceForm({
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
                   <SelectItem value="advance">Advance Payment</SelectItem>
                   <SelectItem value="progress">Progress Payment</SelectItem>
                   <SelectItem value="final">Final Payment</SelectItem>
@@ -310,18 +325,18 @@ export default function CreateInvoiceForm({
       </Card>
 
       {/* Items */}
-      <Card>
-        <CardHeader>
+      <Card className="shadow-lg border-0 bg-white/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
-            <CardTitle>Invoice Items</CardTitle>
-            <Button onClick={addItem} variant="outline" size="sm">
+            <CardTitle className="text-xl font-bold">Invoice Items</CardTitle>
+            <Button onClick={addItem} variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <Plus className="h-4 w-4 mr-1" />
               Add Item
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="p-6">
+          <div className="space-y-6">
           {items.map((item) => (
               <div key={item.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 border rounded-lg">
                 <div className="md:col-span-2">

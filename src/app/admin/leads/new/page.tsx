@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { showToast } from '@/lib/toast.service'
+import { notify } from '@/lib/toast'
 
 export default function NewLeadPage() {
   const [loading, setLoading] = useState(false)
@@ -30,7 +30,10 @@ export default function NewLeadPage() {
   })
 
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
@@ -65,25 +68,22 @@ export default function NewLeadPage() {
 
       if (error) throw error
 
-      showToast.success(
-        'Lead created successfully!',
-        'The new lead has been added to your pipeline.'
-      )
+      // Show success toast before redirect
+      notify.success('Lead created successfully', 'The new lead has been added to your CRM and is ready for follow-up.')
       
-      router.push('/admin/leads')
-      router.refresh()
+      // Small delay to ensure toast shows before redirect
+      setTimeout(() => {
+        router.push('/admin/leads')
+      }, 500)
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
       console.error('Error creating lead:', error)
-      showToast.error(
+      notify.error(
         'Failed to create lead',
         errorMessage
       )
     } finally {
       setLoading(false)
-    }
-  }
-  }
     }
   }
 
@@ -92,50 +92,87 @@ export default function NewLeadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Add New Lead</h1>
-          <p className="mt-2 text-gray-600">Create a new consultation request manually</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Add New Lead</h1>
+          <p className="text-lg text-gray-600">Create a new consultation request manually</p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Lead Information</CardTitle>
+        <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+            <CardTitle className="text-2xl font-bold text-center">Lead Information</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <CardContent className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Customer Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="name">Full Name *</Label>
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 pb-4 border-b-2 border-cyan-100">
+                  <div className="p-2 bg-cyan-100 rounded-lg">
+                    <svg className="h-5 w-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">Customer Details</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Full Name *</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     required
+                    className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                   />
+                  {errors.name && (
+                    <p className="text-red-600 text-sm flex items-center gap-1">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
                 
-                <div>
-                  <Label htmlFor="phone">Phone Number *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">Phone Number *</Label>
                   <Input
                     id="phone"
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
                     required
+                    className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                   />
+                  {errors.phone && (
+                    <p className="text-red-600 text-sm flex items-center gap-1">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {errors.phone}
+                    </p>
+                  )}
                 </div>
                 
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    onChange={(e) => handleInputChange('email' , e.target.value)}
+                    className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                   />
+                  {errors.email && (
+                    <p className="text-red-600 text-sm flex items-center gap-1">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
                 
                 <div>
@@ -147,9 +184,21 @@ export default function NewLeadPage() {
                   />
                 </div>
               </div>
+              </div>
 
               {/* Location & Property */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 pb-4 border-b-2 border-blue-100">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">Location & Property</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="location">Location</Label>
                   <Input
@@ -176,9 +225,20 @@ export default function NewLeadPage() {
                   </Select>
                 </div>
               </div>
+              </div>
 
               {/* Service Requirements */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 pb-4 border-b-2 border-green-100">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">Service Requirements</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="service_type">Service Type</Label>
                   <Select value={formData.service_type} onValueChange={(value) => handleInputChange('service_type', value)}>
@@ -209,9 +269,20 @@ export default function NewLeadPage() {
                   </Select>
                 </div>
               </div>
+              </div>
 
               {/* Contact Preferences */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 pb-4 border-b-2 border-purple-100">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <svg className="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">Contact Preferences</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="preferred_contact_method">Preferred Contact Method</Label>
                   <Select value={formData.preferred_contact_method} onValueChange={(value) => handleInputChange('preferred_contact_method', value)}>
@@ -236,10 +307,11 @@ export default function NewLeadPage() {
                   />
                 </div>
               </div>
+              </div>
 
               {/* Source */}
-              <div>
-                <Label htmlFor="source">Lead Source</Label>
+              <div className="space-y-3">
+                <Label htmlFor="source" className="text-sm font-semibold text-gray-700">Lead Source</Label>
                 <Select value={formData.source} onValueChange={(value) => handleInputChange('source', value)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -268,19 +340,35 @@ export default function NewLeadPage() {
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex justify-end space-x-4">
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => router.back()}
+                  className="px-6 py-3 text-gray-600 hover:text-gray-800 hover:border-gray-400"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={loading}
+                  className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
                 >
-                  {loading ? 'Creating...' : 'Create Lead'}
+                  {loading ? (
+                    <>
+                      <svg className="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Create Lead
+                    </>
+                  )}
                 </Button>
               </div>
             </form>

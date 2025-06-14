@@ -1,12 +1,21 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import EmployeeManagement from '@/components/admin/EmployeeManagement'
+import UnifiedEmployeeList from '@/components/admin/employees/UnifiedEmployeeList'
 
 export default async function EmployeesPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -29,15 +38,32 @@ export default async function EmployeesPage() {
     redirect('/admin/dashboard')
   }
 
+  // Fetch all employees
+  const { data: employees } = await supabase
+    .from('employees')
+    .select('*')
+    .order('full_name')
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
-        <main>
-          <EmployeeManagement />
+        <main className="p-6">
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Employee Management</h1>
+                <p className="mt-2 text-gray-600">
+                  Manage employee records, roles, and access permissions
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <UnifiedEmployeeList employees={employees || []} />
         </main>
       </div>
     </div>

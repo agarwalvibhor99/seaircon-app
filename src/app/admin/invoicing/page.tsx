@@ -1,12 +1,21 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import InvoicesList from '@/components/admin/invoicing/InvoicesList'
+import UnifiedInvoicesList from '@/components/admin/invoicing/UnifiedInvoicesList'
 import InvoicingStats from '@/components/admin/invoicing/InvoicingStats'
 
 export default async function InvoicingPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -27,6 +36,18 @@ export default async function InvoicingPage() {
     `)
     .order('created_at', { ascending: false })
 
+  // Fetch customers and projects for forms
+  const [customersResult, projectsResult] = await Promise.all([
+    supabase
+      .from('customers')
+      .select('*')
+      .order('name'),
+    supabase
+      .from('projects')
+      .select('*')
+      .order('project_name')
+  ])
+
   // Get payment data for stats
   const { data: payments } = await supabase
     .from('payments')
@@ -36,7 +57,7 @@ export default async function InvoicingPage() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -48,12 +69,6 @@ export default async function InvoicingPage() {
                   Manage billing, invoices and payment collection
                 </p>
               </div>
-              <a
-                href="/admin/invoicing/create"
-                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
-              >
-                + Create Invoice
-              </a>
             </div>
           </div>
 
@@ -67,7 +82,12 @@ export default async function InvoicingPage() {
 
           {/* Invoices List */}
           <div>
-            <InvoicesList invoices={invoices || []} />
+            <UnifiedInvoicesList 
+              invoices={invoices || []} 
+              employee={employee}
+              customers={customersResult.data || []}
+              projects={projectsResult.data || []}
+            />
           </div>
         </main>
       </div>

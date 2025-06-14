@@ -1,12 +1,21 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import QuotationsList from '@/components/admin/quotations/QuotationsList'
+import UnifiedQuotationsList from '@/components/admin/quotations/UnifiedQuotationsList'
 import QuotationsStats from '@/components/admin/quotations/QuotationsStats'
 
 export default async function QuotationsPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -28,6 +37,25 @@ export default async function QuotationsPage() {
     `)
     .order('created_at', { ascending: false })
 
+  // Fetch customers
+  const { data: customers } = await supabase
+    .from('customers')
+    .select('*')
+    .order('name')
+
+  // Fetch projects
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('*')
+    .order('project_name')
+
+  // Fetch consultation requests (leads)
+  const { data: consultationRequests } = await supabase
+    .from('consultation_requests')
+    .select('*')
+    .eq('status', 'new')
+    .order('created_at', { ascending: false })
+
   // Get quotation stats
   const { data: statsData } = await supabase
     .from('quotations')
@@ -37,35 +65,22 @@ export default async function QuotationsPage() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
           <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Quotations & Proposals</h1>
-                <p className="mt-2 text-gray-600">
-                  Create, manage and track customer quotations
-                </p>
-              </div>
-              <a
-                href="/admin/quotations/create"
-                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
-              >
-                + Create Quotation
-              </a>
-            </div>
-          </div>
-
-          {/* Stats Section */}
-          <div className="mb-8">
             <QuotationsStats quotations={statsData || []} />
           </div>
 
-          {/* Quotations List */}
           <div>
-            <QuotationsList quotations={quotations || []} />
+            <UnifiedQuotationsList 
+              quotations={quotations || []} 
+              employee={employee}
+              customers={customers || []}
+              projects={projects || []}
+              consultationRequests={consultationRequests || []}
+            />
           </div>
         </main>
       </div>

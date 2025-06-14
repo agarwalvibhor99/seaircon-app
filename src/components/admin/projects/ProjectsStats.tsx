@@ -5,7 +5,7 @@ import { ClipboardList, Clock, CheckCircle, AlertTriangle, DollarSign, BarChart3
 
 interface Project {
   status: 'planning' | 'in_progress' | 'on_hold' | 'completed' | 'cancelled'
-  budget: number
+  project_value: number
 }
 
 interface ProjectsStatsProps {
@@ -20,10 +20,10 @@ export default function ProjectsStats({ projects }: ProjectsStatsProps) {
     onHold: projects.filter(p => p.status === 'on_hold').length,
     completed: projects.filter(p => p.status === 'completed').length,
     cancelled: projects.filter(p => p.status === 'cancelled').length,
-    totalBudget: projects.reduce((sum, p) => sum + (p.budget || 0), 0),
+    totalBudget: projects.reduce((sum, p) => sum + (p.project_value || 0), 0),
     completedBudget: projects
       .filter(p => p.status === 'completed')
-      .reduce((sum, p) => sum + (p.budget || 0), 0),
+      .reduce((sum, p) => sum + (p.project_value || 0), 0),
     completionRate: projects.length > 0 
       ? ((projects.filter(p => p.status === 'completed').length / projects.length) * 100).toFixed(1)
       : '0'

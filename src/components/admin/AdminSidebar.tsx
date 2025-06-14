@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { 
@@ -41,7 +41,10 @@ const navigation = [
 export default function AdminSidebar({ employee }: AdminSidebarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -67,8 +70,8 @@ export default function AdminSidebar({ employee }: AdminSidebarProps) {
         {/* Logo */}
         <div className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-cyan-500 to-blue-600">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-cyan-600 font-bold text-lg">SE</span>
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1">
+              <img src="/selogo.svg" alt="SE Aircon Logo" className="h-full w-full" />
             </div>
             <span className="ml-3 text-white font-bold text-xl">SE Aircon</span>
           </div>

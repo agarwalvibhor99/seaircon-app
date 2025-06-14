@@ -1,12 +1,21 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import LeadsList from '@/components/admin/leads/LeadsList'
+import UnifiedLeadsList from '@/components/admin/leads/UnifiedLeadsList'
 import LeadsStats from '@/components/admin/leads/LeadsStats'
 
 export default async function LeadsPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -19,17 +28,14 @@ export default async function LeadsPage() {
   // Fetch leads data
   const { data: leads } = await supabase
     .from('consultation_requests')
-    .select(`
-      *,
-      employees!consultation_requests_assigned_to_fkey(full_name)
-    `)
+    .select('*')
     .order('created_at', { ascending: false })
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -41,19 +47,13 @@ export default async function LeadsPage() {
                   Track and manage consultation requests from customers
                 </p>
               </div>
-              <a
-                href="/admin/leads/new"
-                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
-              >
-                + Add New Lead
-              </a>
             </div>
           </div>
 
           <LeadsStats />
           
           <div className="mt-8">
-            <LeadsList leads={leads || []} />
+            <UnifiedLeadsList leads={leads || []} />
           </div>
         </main>
       </div>

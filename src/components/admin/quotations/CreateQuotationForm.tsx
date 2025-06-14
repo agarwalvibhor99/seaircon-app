@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,20 +10,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Plus, Minus, Save, Send } from 'lucide-react'
-import { showToast } from '@/lib/toast.service'
-
-interface Employee {
-  id: string
-  full_name: string
-}
-
-interface Customer {
-  id: string
-  name: string
-  email: string
-  phone: string
-  address: string
-}
+import { notify } from '@/lib/toast'
+import { Employee, Customer, Project } from '@/lib/enhanced-types'
 
 interface ConsultationRequest {
   id: string
@@ -34,7 +22,7 @@ interface ConsultationRequest {
   message: string
 }
 
-interface QuotationItem {
+interface QuotationItemTemp {
   id: string
   description: string
   quantity: number
@@ -45,34 +33,40 @@ interface QuotationItem {
 interface CreateQuotationFormProps {
   employee: Employee
   customers: Customer[]
+  projects: Project[]
   consultationRequests: ConsultationRequest[]
 }
 
 export default function CreateQuotationForm({ 
   employee, 
-  customers, 
+  customers,
+  projects,
   consultationRequests 
 }: CreateQuotationFormProps) {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const [loading, setLoading] = useState(false)
   const [customerType, setCustomerType] = useState<'existing' | 'consultation' | 'new'>('consultation')
   
   const [formData, setFormData] = useState({
     customer_id: '',
+    project_id: '',
     consultation_request_id: '',
-    quotation_number: `QUO-${Date.now()}`,
-    title: '',
+    quote_number: `QUO-${Date.now()}`,
+    quote_title: '',
     description: '',
     valid_until: '',
-    terms_conditions: `1. All prices are in Indian Rupees (INR)
+    terms_and_conditions: `1. All prices are in Indian Rupees (INR)
 2. Installation will be completed within 7-10 working days from confirmation
 3. 1 year comprehensive warranty on all equipment
 4. Payment terms: 50% advance, 50% on completion
 5. GST will be added as applicable
 6. This quotation is valid for 30 days from the date of issue`,
     notes: '',
-    tax_percentage: 18,
+    tax_rate: 18,
     discount_percentage: 0
   })
 
@@ -83,7 +77,7 @@ export default function CreateQuotationForm({
     address: ''
   })
 
-  const [items, setItems] = useState<QuotationItem[]>([
+  const [items, setItems] = useState<QuotationItemTemp[]>([
     {
       id: '1',
       description: '',
@@ -95,7 +89,7 @@ export default function CreateQuotationForm({
 
   // Pre-fill form when consultation request is selected
   const handleConsultationSelect = (consultationId: string) => {
-    const consultation = consultationRequests.find(c => c.id === consultationId)
+    const consultation = (consultationRequests || []).find(c => c.id === consultationId)
     if (consultation) {
       setFormData(prev => ({
         ...prev,
@@ -133,7 +127,7 @@ export default function CreateQuotationForm({
   }
 
   // Update item
-  const updateItem = (id: string, field: keyof QuotationItem, value: string | number) => {
+  const updateItem = (id: string, field: keyof QuotationItemTemp, value: string | number) => {
     setItems(items.map(item => {
       if (item.id === id) {
         const updated = { ...item, [field]: value }
@@ -150,7 +144,7 @@ export default function CreateQuotationForm({
   const subtotal = items.reduce((sum, item) => sum + item.total, 0)
   const discountAmount = (subtotal * formData.discount_percentage) / 100
   const taxableAmount = subtotal - discountAmount
-  const taxAmount = (taxableAmount * formData.tax_percentage) / 100
+  const taxAmount = (taxableAmount * formData.tax_rate) / 100
   const totalAmount = taxableAmount + taxAmount
 
   // Handle form submission
@@ -208,7 +202,7 @@ export default function CreateQuotationForm({
       if (itemsError) throw itemsError
 
       // Show success message and redirect
-      showToast.success(
+      notify.success(
         'Quotation created successfully!',
         status === 'sent' ? 'Quotation has been created and sent to customer.' : 'Quotation saved as draft.'
       )
@@ -216,7 +210,7 @@ export default function CreateQuotationForm({
       router.push('/admin/quotations')
     } catch (error) {
       console.error('Error creating quotation:', error)
-      showToast.error(
+      notify.error(
         'Failed to create quotation',
         'There was an error creating the quotation. Please try again.'
       )
@@ -226,20 +220,20 @@ export default function CreateQuotationForm({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Customer Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Customer Information</CardTitle>
+      <Card className="shadow-lg border-0 bg-white/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+          <CardTitle className="text-xl font-bold">Customer Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-6 space-y-6">
           <div>
             <Label>Customer Type</Label>
             <Select value={customerType} onValueChange={(value: string) => setCustomerType(value as 'existing' | 'consultation' | 'new')}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[200px] overflow-y-auto">
                 <SelectItem value="consultation">From Consultation Request</SelectItem>
                 <SelectItem value="existing">Existing Customer</SelectItem>
                 <SelectItem value="new">New Customer</SelectItem>
@@ -254,8 +248,8 @@ export default function CreateQuotationForm({
                 <SelectTrigger>
                   <SelectValue placeholder="Select consultation request" />
                 </SelectTrigger>
-                <SelectContent>
-                  {consultationRequests.map(request => (
+                <SelectContent className="max-h-[200px] overflow-y-auto">
+                  {(consultationRequests || []).map(request => (
                     <SelectItem key={request.id} value={request.id}>
                       {request.name} - {request.service_type}
                     </SelectItem>
@@ -266,21 +260,42 @@ export default function CreateQuotationForm({
           )}
 
           {customerType === 'existing' && (
-            <div>
-              <Label>Customer</Label>
-              <Select value={formData.customer_id} onValueChange={(value) => setFormData(prev => ({ ...prev, customer_id: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select customer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {customers.map(customer => (
-                    <SelectItem key={customer.id} value={customer.id}>
-                      {customer.name} - {customer.phone}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <>
+              <div>
+                <Label>Customer</Label>
+                <Select value={formData.customer_id} onValueChange={(value) => setFormData(prev => ({ ...prev, customer_id: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select customer" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {(customers || []).map(customer => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.name} - {customer.phone}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label>Link to Project (Optional)</Label>
+                <Select value={formData.project_id} onValueChange={(value) => setFormData(prev => ({ ...prev, project_id: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select project (optional)" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    <SelectItem value="">No Project</SelectItem>
+                    {(projects || [])
+                      .filter(p => p.customer_id === formData.customer_id)
+                      .map(project => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.project_number} - {project.project_name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
           )}
 
           {(customerType === 'new' || customerType === 'consultation') && (
@@ -324,17 +339,17 @@ export default function CreateQuotationForm({
       </Card>
 
       {/* Quotation Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quotation Details</CardTitle>
+      <Card className="shadow-lg border-0 bg-white/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
+          <CardTitle className="text-xl font-bold">Quotation Details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Quotation Number</Label>
               <Input
-                value={formData.quotation_number}
-                onChange={(e) => setFormData(prev => ({ ...prev, quotation_number: e.target.value }))}
+                value={formData.quote_number}
+                onChange={(e) => setFormData(prev => ({ ...prev, quote_number: e.target.value }))}
                 required
               />
             </div>
@@ -352,8 +367,8 @@ export default function CreateQuotationForm({
           <div>
             <Label>Title</Label>
             <Input
-              value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              value={formData.quote_title}
+              onChange={(e) => setFormData(prev => ({ ...prev, quote_title: e.target.value }))}
               placeholder="e.g., AC Installation and Maintenance Quote"
               required
             />
@@ -463,8 +478,8 @@ export default function CreateQuotationForm({
                 <Label>Tax/GST (%)</Label>
                 <Input
                   type="number"
-                  value={formData.tax_percentage}
-                  onChange={(e) => setFormData(prev => ({ ...prev, tax_percentage: parseFloat(e.target.value) || 0 }))}
+                  value={formData.tax_rate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tax_rate: parseFloat(e.target.value) || 0 }))}
                   min="0"
                   max="100"
                   step="0.01"
@@ -484,7 +499,7 @@ export default function CreateQuotationForm({
                 </div>
               )}
               <div className="flex justify-between">
-                <span>Tax/GST ({formData.tax_percentage}%):</span>
+                <span>Tax/GST ({formData.tax_rate}%):</span>
                 <span>₹{taxAmount.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between font-bold text-lg border-t pt-2">
@@ -504,8 +519,8 @@ export default function CreateQuotationForm({
             <div>
               <Label>Terms & Conditions</Label>
               <Textarea
-                value={formData.terms_conditions}
-                onChange={(e) => setFormData(prev => ({ ...prev, terms_conditions: e.target.value }))}
+                value={formData.terms_and_conditions}
+                onChange={(e) => setFormData(prev => ({ ...prev, terms_and_conditions: e.target.value }))}
                 rows={8}
                 className="text-sm"
               />

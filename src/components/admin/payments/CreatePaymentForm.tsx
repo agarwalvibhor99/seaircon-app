@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,44 +10,29 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Save, Receipt, ArrowLeft, Search } from 'lucide-react'
-import { showToast } from '@/lib/toast.service'
-
-interface Employee {
-  id: string
-  full_name: string
-}
-
-interface Customer {
-  id: string
-  name: string
-  email: string
-  phone: string
-  address: string
-}
-
-interface Invoice {
-  id: string
-  invoice_number: string
-  total_amount: number
-  amount_paid: number
-  balance_due: number
-  customer_id: string
-  customers: Customer
-}
+import { notify } from "@/lib/toast"
+import { Payment, Invoice, Project, Quotation, Customer, Employee } from '@/lib/enhanced-types'
 
 interface CreatePaymentFormProps {
   employee: Employee
   invoices: Invoice[]
+  projects?: Project[]
+  quotations?: Quotation[]
   customers: Customer[]
 }
 
 export default function CreatePaymentForm({ 
   employee, 
-  invoices, 
+  invoices,
+  projects = [],
+  quotations = [],
   customers 
 }: CreatePaymentFormProps) {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const [loading, setLoading] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   
@@ -90,12 +75,12 @@ export default function CreatePaymentForm({
       // Validate amount
       const paymentAmount = parseFloat(formData.amount)
       if (paymentAmount <= 0) {
-        showToast('error', 'Payment amount must be greater than zero')
+        notify.error('Invalid Amount', 'Payment amount must be greater than zero')
         return
       }
 
       if (selectedInvoice && paymentAmount > selectedInvoice.balance_due) {
-        showToast('error', 'Payment amount cannot exceed balance due')
+        notify.error('Amount Exceeds Balance', 'Payment amount cannot exceed balance due')
         return
       }
 
@@ -117,44 +102,44 @@ export default function CreatePaymentForm({
         throw new Error(result.error || 'Failed to record payment')
       }
 
-      showToast('success', 'Payment recorded successfully!')
+      notify.success('Payment Recorded', 'Payment recorded successfully!')
       router.push('/admin/payments')
     } catch (error) {
       console.error('Error recording payment:', error)
-      showToast('error', error instanceof Error ? error.message : 'Error recording payment. Please try again.')
+      notify.error('Payment Error', error instanceof Error ? error.message : 'Error recording payment. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-gradient-to-r from-cyan-50 to-blue-50 p-6 rounded-xl">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Record Payment</h1>
-          <p className="text-gray-600">Record a payment against an invoice or customer account</p>
+          <h1 className="text-3xl font-bold text-gray-900">Record Payment</h1>
+          <p className="text-lg text-gray-600">Record a payment against an invoice or customer account</p>
         </div>
         <Button 
           variant="outline" 
           onClick={() => router.back()}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 bg-white hover:bg-gray-50"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         {/* Payment Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="shadow-lg border-0 bg-white/95 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-xl font-bold">
               <Receipt className="h-5 w-5" />
               Payment Information
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Payment Reference *</Label>
@@ -185,7 +170,7 @@ export default function CreatePaymentForm({
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
                     <SelectItem value="cash">Cash</SelectItem>
                     <SelectItem value="cheque">Cheque</SelectItem>
                     <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
@@ -231,10 +216,10 @@ export default function CreatePaymentForm({
                 <SelectTrigger>
                   <SelectValue placeholder="Select an invoice with outstanding balance" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
                   {unpaidInvoices.map((invoice) => (
                     <SelectItem key={invoice.id} value={invoice.id}>
-                      {invoice.invoice_number} - {invoice.customers.name} - ₹{invoice.balance_due.toLocaleString()} due
+                      {invoice.invoice_number} - {invoice.customer?.name || 'Unknown'} - ₹{invoice.balance_due.toLocaleString()} due
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -249,7 +234,7 @@ export default function CreatePaymentForm({
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Customer:</span>
-                  <span>{selectedInvoice.customers.name}</span>
+                  <span>{selectedInvoice.customer?.name || 'Unknown Customer'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Total Amount:</span>

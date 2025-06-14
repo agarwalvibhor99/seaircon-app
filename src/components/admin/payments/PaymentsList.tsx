@@ -129,7 +129,7 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
               <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder="Payment Method" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[200px] overflow-y-auto">
                 <SelectItem value="">All Methods</SelectItem>
                 <SelectItem value="cash">Cash</SelectItem>
                 <SelectItem value="cheque">Cheque</SelectItem>
@@ -144,7 +144,7 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
               <SelectTrigger className="w-full sm:w-32">
                 <SelectValue placeholder="Date Range" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[200px] overflow-y-auto">
                 <SelectItem value="">All Dates</SelectItem>
                 <SelectItem value="today">Today</SelectItem>
                 <SelectItem value="this_week">This Week</SelectItem>

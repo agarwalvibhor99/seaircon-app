@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { supabase, createServerSupabaseClient } from './supabase'
 import { 
   ConsultationRequest, 
   ConsultationRequestInsert, 
@@ -12,7 +12,7 @@ export class ConsultationRequestsService {
     try {
       const { data: result, error } = await supabase
         .from('consultation_requests')
-        .insert(data)
+        .insert(data as any) // Temporary any cast to handle 'converted' status
         .select()
         .single()
 
@@ -41,6 +41,12 @@ export class ConsultationRequestsService {
       }
       if (filters?.assigned_to) {
         query = query.eq('assigned_to', filters.assigned_to)
+      }
+      if (filters?.excludeStatuses) {
+        query = query.not('status', 'in', `(${filters.excludeStatuses.join(',')})`)
+      }
+      if (filters?.excludeConverted) {
+        query = query.neq('status', 'converted' as any)
       }
       if (filters?.limit) {
         query = query.limit(filters.limit)
@@ -94,15 +100,35 @@ export class ConsultationRequestsService {
 
   static async delete(id: string): Promise<ServiceResponse<void>> {
     try {
-      const { error } = await supabase
+      console.log('🗑️ ConsultationRequestsService.delete called with ID:', id)
+      
+      // Try to use server client with service role key first, fallback to regular client
+      const hasServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY
+      console.log('🔑 Service role key available:', hasServiceRole)
+      
+      const clientToUse = hasServiceRole ? createServerSupabaseClient() : supabase
+      console.log('🔧 Using client:', hasServiceRole ? 'Server (Service Role)' : 'Public (Anon)')
+      
+      const { error } = await clientToUse
         .from('consultation_requests')
         .delete()
         .eq('id', id)
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ Supabase delete error:', error)
+        console.error('❌ Error details:', {
+          message: error.message,
+          code: error.code,
+          hint: error.hint,
+          details: error.details
+        })
+        throw error
+      }
+      
+      console.log('✅ Supabase delete successful for ID:', id)
       return { data: null, error: null }
     } catch (error) {
-      console.error('Error deleting consultation request:', error)
+      console.error('💥 Error deleting consultation request:', error)
       return { data: null, error: error as Error }
     }
   }

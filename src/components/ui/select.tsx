@@ -7,6 +7,8 @@ interface SelectContextType {
   onValueChange?: (value: string) => void
   open: boolean
   setOpen: (open: boolean) => void
+  options: Record<string, string>
+  registerOption: (value: string, label: string) => void
 }
 
 const SelectContext = React.createContext<SelectContextType | undefined>(undefined)
@@ -29,6 +31,7 @@ interface SelectProps {
 const Select = ({ value, onValueChange, children, defaultValue }: SelectProps) => {
   const [open, setOpen] = React.useState(false)
   const [internalValue, setInternalValue] = React.useState(defaultValue || "")
+  const [options, setOptions] = React.useState<Record<string, string>>({})
   
   const currentValue = value !== undefined ? value : internalValue
   
@@ -40,12 +43,18 @@ const Select = ({ value, onValueChange, children, defaultValue }: SelectProps) =
     setOpen(false)
   }, [value, onValueChange])
 
+  const registerOption = React.useCallback((optionValue: string, label: string) => {
+    setOptions(prev => ({ ...prev, [optionValue]: label }))
+  }, [])
+
   const contextValue = React.useMemo(() => ({
     value: currentValue,
     onValueChange: handleValueChange,
     open,
-    setOpen
-  }), [currentValue, handleValueChange, open])
+    setOpen,
+    options,
+    registerOption
+  }), [currentValue, handleValueChange, open, options, registerOption])
 
   return (
     <SelectContext.Provider value={contextValue}>
@@ -86,18 +95,9 @@ const SelectValue = React.forwardRef<
     placeholder?: string
   }
 >(({ className, placeholder, ...props }, ref) => {
-  const { value } = useSelectContext()
-  const [selectedText, setSelectedText] = React.useState("")
+  const { value, options } = useSelectContext()
   
-  React.useEffect(() => {
-    // This will be updated by SelectItem when it mounts/unmounts
-    const item = document.querySelector(`[data-value="${value}"]`)
-    if (item) {
-      setSelectedText(item.textContent || "")
-    } else {
-      setSelectedText("")
-    }
-  }, [value])
+  const displayText = value && options[value] ? options[value] : placeholder || ""
   
   return (
     <span
@@ -105,7 +105,7 @@ const SelectValue = React.forwardRef<
       className={cn("block truncate", className)}
       {...props}
     >
-      {selectedText || placeholder}
+      {displayText}
     </span>
   )
 })
@@ -137,7 +137,7 @@ const SelectContent = React.forwardRef<
     <div
       ref={contentRef}
       className={cn(
-        "absolute top-full left-0 z-50 w-full min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
+        "absolute top-full left-0 z-[60] w-full min-w-[8rem] max-h-60 overflow-auto rounded-md border border-gray-200 bg-white shadow-lg animate-in fade-in-0 zoom-in-95",
         className
       )}
       {...props}
@@ -154,17 +154,30 @@ const SelectItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
     value: string
+    displayText?: string // Allow custom display text
   }
->(({ className, children, value, ...props }, ref) => {
-  const { value: selectedValue, onValueChange } = useSelectContext()
+>(({ className, children, value, displayText, ...props }, ref) => {
+  const { value: selectedValue, onValueChange, registerOption } = useSelectContext()
   const isSelected = selectedValue === value
+  
+  // Register this option when component mounts
+  React.useEffect(() => {
+    // Use displayText if provided, otherwise extract text from children
+    let label = displayText || value
+    
+    if (!displayText && typeof children === 'string') {
+      label = children
+    }
+    
+    registerOption(value, label)
+  }, [value, children, displayText, registerOption])
   
   return (
     <div
       ref={ref}
       className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        isSelected && "bg-accent",
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-gray-900",
+        isSelected && "bg-blue-50 text-blue-900",
         className
       )}
       data-value={value}
@@ -172,7 +185,7 @@ const SelectItem = React.forwardRef<
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        {isSelected && <Check className="h-4 w-4" />}
+        {isSelected && <Check className="h-4 w-4 text-blue-600" />}
       </span>
       {children}
     </div>

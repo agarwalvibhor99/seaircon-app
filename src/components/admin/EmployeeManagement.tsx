@@ -4,21 +4,23 @@ import React, { useState, useEffect } from 'react'
 import { 
   UserPlus, 
   Search, 
-  Filter, 
   Download, 
-  Upload, 
   Edit, 
   Trash2, 
-  Eye, 
-  EyeOff,
+  X,
   Users,
   Mail,
   Phone,
   Building,
   Shield,
-  CheckCircle
+  CheckCircle,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Plus
 } from 'lucide-react'
-import { showToast } from '@/lib/toast.service'
+import { notify } from '@/lib/toast'
+import CreateEmployeeFormDialog from './employees/CreateEmployeeFormDialog'
 
 interface Employee {
   id: string
@@ -27,6 +29,14 @@ interface Employee {
   role: string
   department: string | null
   phone: string | null
+  salary: number | null
+  hire_date: string | null
+  emergency_contact_name: string | null
+  emergency_contact_phone: string | null
+  emergency_contact_relationship: string | null
+  skills: string | null
+  address: string | null
+  status: 'active' | 'inactive' | 'on_leave'
   is_active: boolean
   created_at: string
   updated_at: string
@@ -34,47 +44,107 @@ interface Employee {
 
 interface EmployeeFormData {
   email: string
-  fullName: string
+  full_name: string
   role: string
   department: string
   phone: string
+  salary: string
+  hire_date: string
+  address: string
+  emergency_contact_name: string
+  emergency_contact_phone: string
+  emergency_contact_relationship: string
+  skills: string
+  status: 'active' | 'inactive' | 'on_leave'
 }
 
 const ROLES = [
-  { value: 'admin', label: 'Administrator' },
-  { value: 'manager', label: 'Manager' },
-  { value: 'employee', label: 'Employee' },
-  { value: 'technician', label: 'Technician' }
+  { value: 'admin', label: 'Administrator', color: 'bg-red-100 text-red-800' },
+  { value: 'manager', label: 'Manager', color: 'bg-purple-100 text-purple-800' },
+  { value: 'employee', label: 'Employee', color: 'bg-blue-100 text-blue-800' },
+  { value: 'technician', label: 'Technician', color: 'bg-green-100 text-green-800' }
 ]
 
 const DEPARTMENTS = [
-  { value: 'management', label: 'Management' },
-  { value: 'sales', label: 'Sales' },
-  { value: 'technical', label: 'Technical' },
-  { value: 'operations', label: 'Operations' },
-  { value: 'accounts', label: 'Accounts' }
+  { value: 'management', label: 'Management', color: 'bg-indigo-100 text-indigo-800' },
+  { value: 'sales', label: 'Sales', color: 'bg-yellow-100 text-yellow-800' },
+  { value: 'technical', label: 'Technical', color: 'bg-green-100 text-green-800' },
+  { value: 'operations', label: 'Operations', color: 'bg-blue-100 text-blue-800' },
+  { value: 'accounts', label: 'Accounts', color: 'bg-purple-100 text-purple-800' }
 ]
+
+const STATUS_OPTIONS = [
+  { value: 'active', label: 'Active', color: 'bg-green-100 text-green-800' },
+  { value: 'inactive', label: 'Inactive', color: 'bg-gray-100 text-gray-800' },
+  { value: 'on_leave', label: 'On Leave', color: 'bg-orange-100 text-orange-800' }
+]
+
+// Modern Dialog Component
+const Dialog = ({ isOpen, onClose, title, children }: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  title: string;
+  children: React.ReactNode 
+}) => {
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
+          onClick={onClose}
+        />
+        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-in slide-in-from-bottom duration-300">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          
+          {/* Content */}
+          <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function EmployeeManagement() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([])
   const [loading, setLoading] = useState(true)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState('')
-  const [isActiveFilter, setIsActiveFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
   const [showInactiveEmployees, setShowInactiveEmployees] = useState(false)
   
   // Form state
   const [formData, setFormData] = useState<EmployeeFormData>({
     email: '',
-    fullName: '',
+    full_name: '',
     role: 'employee',
     department: '',
-    phone: ''
+    phone: '',
+    salary: '',
+    hire_date: '',
+    address: '',
+    emergency_contact_name: '',
+    emergency_contact_phone: '',
+    emergency_contact_relationship: '',
+    skills: '',
+    status: 'active'
   })
   const [formErrors, setFormErrors] = useState<Partial<EmployeeFormData>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -93,28 +163,34 @@ export default function EmployeeManagement() {
                           emp.email.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesRole = !roleFilter || emp.role === roleFilter
       const matchesDepartment = !departmentFilter || emp.department === departmentFilter
-      const matchesActive = isActiveFilter === '' || emp.is_active.toString() === isActiveFilter
+      const matchesStatus = !statusFilter || emp.status === statusFilter
+      const matchesActive = showInactiveEmployees || emp.is_active
       
-      return matchesSearch && matchesRole && matchesDepartment && matchesActive
+      return matchesSearch && matchesRole && matchesDepartment && matchesStatus && matchesActive
     })
 
-    if (!showInactiveEmployees) {
-      filtered = filtered.filter(emp => emp.is_active)
-    }
-
     setFilteredEmployees(filtered)
-  }, [employees, searchTerm, roleFilter, departmentFilter, isActiveFilter, showInactiveEmployees])
+  }, [employees, searchTerm, roleFilter, departmentFilter, statusFilter, showInactiveEmployees])
 
   const loadEmployees = async () => {
     try {
+      setLoading(true)
+      console.log('Loading employees...')
       const response = await fetch('/api/admin/employees')
+      console.log('Employee API response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('Employee data:', data)
         setEmployees(data.employees || [])
+      } else {
+        const errorData = await response.json()
+        console.error('Failed to load employees:', errorData)
+        notify.error('Failed to load employees', 'Please try again later')
       }
     } catch (error) {
       console.error('Error loading employees:', error)
-      showToast.error('Failed to load employees', 'Please try again later')
+      notify.error('Failed to load employees', 'Please try again later')
     } finally {
       setLoading(false)
     }
@@ -124,12 +200,20 @@ export default function EmployeeManagement() {
     setEditingEmployee(employee)
     setFormData({
       email: employee.email,
-      fullName: employee.full_name,
+      full_name: employee.full_name,
       role: employee.role,
       department: employee.department || '',
-      phone: employee.phone || ''
+      phone: employee.phone || '',
+      salary: employee.salary?.toString() || '',
+      hire_date: employee.hire_date || '',
+      address: employee.address || '',
+      emergency_contact_name: employee.emergency_contact_name || '',
+      emergency_contact_phone: employee.emergency_contact_phone || '',
+      emergency_contact_relationship: employee.emergency_contact_relationship || '',
+      skills: employee.skills || '',
+      status: employee.status
     })
-    setIsEditModalOpen(true)
+    setIsEditDialogOpen(true)
   }
 
   const generatePassword = () => {
@@ -151,8 +235,8 @@ export default function EmployeeManagement() {
       errors.email = 'Invalid email format'
     }
     
-    if (!data.fullName.trim()) {
-      errors.fullName = 'Full name is required'
+    if (!data.full_name.trim()) {
+      errors.full_name = 'Full name is required'
     }
     
     if (!data.role) {
@@ -187,7 +271,11 @@ export default function EmployeeManagement() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          email: formData.email,
+          fullName: formData.full_name,
+          role: formData.role,
+          department: formData.department,
+          phone: formData.phone,
           password
         }),
       })
@@ -195,16 +283,16 @@ export default function EmployeeManagement() {
       const result = await response.json()
 
       if (response.ok) {
-        showToast.success('Employee created successfully', `Password: ${password}`)
-        setIsAddModalOpen(false)
+        notify.success('Employee created successfully', `Password: ${password}`)
+        setIsAddDialogOpen(false)
         resetForm()
         loadEmployees()
       } else {
-        showToast.error('Failed to create employee', result.error || 'Please try again')
+        notify.error('Failed to create employee', result.error || 'Please try again')
       }
     } catch (error) {
       console.error('Error creating employee:', error)
-      showToast.error('Failed to create employee', 'Please try again later')
+      notify.error('Failed to create employee', 'Please try again later')
     } finally {
       setIsSubmitting(false)
     }
@@ -231,7 +319,7 @@ export default function EmployeeManagement() {
         },
         body: JSON.stringify({
           id: editingEmployee.id,
-          fullName: formData.fullName,
+          fullName: formData.full_name,
           role: formData.role,
           department: formData.department,
           phone: formData.phone,
@@ -242,17 +330,17 @@ export default function EmployeeManagement() {
       const result = await response.json()
 
       if (response.ok) {
-        showToast.success('Employee updated successfully')
-        setIsEditModalOpen(false)
+        notify.success('Employee updated successfully')
+        setIsEditDialogOpen(false)
         setEditingEmployee(null)
         resetForm()
         loadEmployees()
       } else {
-        showToast.error('Failed to update employee', result.error || 'Please try again')
+        notify.error('Failed to update employee', result.error || 'Please try again')
       }
     } catch (error) {
       console.error('Error updating employee:', error)
-      showToast.error('Failed to update employee', 'Please try again later')
+      notify.error('Failed to update employee', 'Please try again later')
     } finally {
       setIsSubmitting(false)
     }
@@ -276,41 +364,37 @@ export default function EmployeeManagement() {
       })
 
       if (response.ok) {
-        showToast.success(`Employee ${!employee.is_active ? 'activated' : 'deactivated'} successfully`)
+        notify.success(`Employee ${!employee.is_active ? 'activated' : 'deactivated'} successfully`)
         loadEmployees()
       } else {
         const result = await response.json()
-        showToast.error('Failed to update employee status', result.error || 'Please try again')
+        notify.error('Failed to update employee status', result.error || 'Please try again')
       }
     } catch (error) {
       console.error('Error updating employee status:', error)
-      showToast.error('Failed to update employee status', 'Please try again later')
+      notify.error('Failed to update employee status', 'Please try again later')
     }
   }
 
   const resetForm = () => {
     setFormData({
       email: '',
-      fullName: '',
+      full_name: '',
       role: 'employee',
       department: '',
-      phone: ''
+      phone: '',
+      salary: '',
+      hire_date: '',
+      address: '',
+      emergency_contact_name: '',
+      emergency_contact_phone: '',
+      emergency_contact_relationship: '',
+      skills: '',
+      status: 'active'
     })
     setFormErrors({})
     setGeneratedPassword('')
     setShowPassword(false)
-  }
-
-  const openEditModal = (employee: Employee) => {
-    setEditingEmployee(employee)
-    setFormData({
-      email: employee.email,
-      fullName: employee.full_name,
-      role: employee.role,
-      department: employee.department || '',
-      phone: employee.phone || ''
-    })
-    setIsEditModalOpen(true)
   }
 
   const exportEmployees = () => {
@@ -434,28 +518,29 @@ export default function EmployeeManagement() {
               </div>
 
               {/* Filters */}
-              <div className="flex gap-2">
-                <select
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">All Roles</option>
-                  {ROLES.map(role => (
-                    <option key={role.value} value={role.value}>{role.label}</option>
-                  ))}
-                </select>
+              <div className="flex gap-2">              <select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-40 overflow-y-auto"
+                size={1}
+              >
+                <option value="">All Roles</option>
+                {ROLES.map(role => (
+                  <option key={role.value} value={role.value}>{role.label}</option>
+                ))}
+              </select>
 
-                <select
-                  value={departmentFilter}
-                  onChange={(e) => setDepartmentFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">All Departments</option>
-                  {DEPARTMENTS.map(dept => (
-                    <option key={dept.value} value={dept.value}>{dept.label}</option>
-                  ))}
-                </select>
+              <select
+                value={departmentFilter}
+                onChange={(e) => setDepartmentFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-40 overflow-y-auto"
+                size={1}
+              >
+                <option value="">All Departments</option>
+                {DEPARTMENTS.map(dept => (
+                  <option key={dept.value} value={dept.value}>{dept.label}</option>
+                ))}
+              </select>
               </div>
             </div>
 
@@ -480,7 +565,7 @@ export default function EmployeeManagement() {
               </button>
               
               <button
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => setIsAddDialogOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 <UserPlus className="h-4 w-4" />
@@ -572,7 +657,7 @@ export default function EmployeeManagement() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={() => openEditModal(employee)}
+                        onClick={() => startEdit(employee)}
                         className="text-blue-600 hover:text-blue-900"
                       >
                         <Edit className="h-4 w-4" />
@@ -605,258 +690,167 @@ export default function EmployeeManagement() {
         )}
       </div>
 
-      {/* Add Employee Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Add New Employee</h3>
-              
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.email ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="john@seaircon.com"
-                  />
-                  {formErrors.email && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
-                  )}
-                </div>
+      {/* Employee Form Dialog */}
+      {isAddDialogOpen && (
+        <CreateEmployeeFormDialog
+          onSuccess={() => {
+            setIsAddDialogOpen(false)
+            loadEmployees()
+          }}
+          onCancel={() => setIsAddDialogOpen(false)}
+        />
+      )}
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.fullName ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="John Doe"
-                  />
-                  {formErrors.fullName && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.fullName}</p>
-                  )}
-                </div>
+      {/* Floating Action Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button
+          onClick={() => setIsAddDialogOpen(true)}
+          className="flex items-center justify-center w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+          title="Add New Employee"
+        >
+          <Plus className="h-6 w-6" />
+        </button>
+      </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Role *
-                  </label>
-                  <select
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    {ROLES.map(role => (
-                      <option key={role.value} value={role.value}>{role.label}</option>
-                    ))}
-                  </select>
-                </div>
+      {/* Edit Employee Dialog */}
+      <Dialog 
+        isOpen={isEditDialogOpen} 
+        onClose={() => {
+          setIsEditDialogOpen(false)
+          setEditingEmployee(null)
+          resetForm()
+        }}
+        title="Edit Employee"
+      >
+        {editingEmployee && (
+          <form onSubmit={handleEdit} className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Email (Read-only) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
+                />
+                <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Department
-                  </label>
-                  <select
-                    value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Select Department</option>
-                    {DEPARTMENTS.map(dept => (
-                      <option key={dept.value} value={dept.value}>{dept.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.phone ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="+91 9876543210"
-                  />
-                  {formErrors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.phone}</p>
-                  )}
-                </div>
-
-                {generatedPassword && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-yellow-800">
-                        Generated Password:
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="text-yellow-600 hover:text-yellow-900"
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                    <div className="mt-1 font-mono text-sm text-yellow-900">
-                      {showPassword ? generatedPassword : '••••••••••••'}
-                    </div>
-                    <p className="mt-1 text-xs text-yellow-700">
-                      Save this password - it will be shown only once!
-                    </p>
-                  </div>
+              {/* Full Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.full_name}
+                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    formErrors.full_name ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                />
+                {formErrors.full_name && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.full_name}</p>
                 )}
+              </div>
 
-                <div className="flex justify-end gap-3 mt-6">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsAddModalOpen(false)
-                      resetForm()
-                    }}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {isSubmitting ? 'Creating...' : 'Create Employee'}
-                  </button>
-                </div>
-              </form>
+              {/* Role */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Role *
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  style={{ maxHeight: '200px', overflowY: 'auto' }}
+                >
+                  {ROLES.map(role => (
+                    <option key={role.value} value={role.value}>{role.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Department */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Department
+                </label>
+                <select
+                  value={formData.department}
+                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  style={{ maxHeight: '200px', overflowY: 'auto' }}
+                >
+                  <option value="">Select Department</option>
+                  {DEPARTMENTS.map(dept => (
+                    <option key={dept.value} value={dept.value}>{dept.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    formErrors.phone ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                />
+                {formErrors.phone && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.phone}</p>
+                )}
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'on_leave' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {STATUS_OPTIONS.map(status => (
+                    <option key={status.value} value={status.value}>{status.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Edit Employee Modal */}
-      {isEditModalOpen && editingEmployee && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Edit Employee</h3>
-              
-              <form onSubmit={handleEdit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.fullName ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  />
-                  {formErrors.fullName && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.fullName}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Role *
-                  </label>
-                  <select
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    {ROLES.map(role => (
-                      <option key={role.value} value={role.value}>{role.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Department
-                  </label>
-                  <select
-                    value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Select Department</option>
-                    {DEPARTMENTS.map(dept => (
-                      <option key={dept.value} value={dept.value}>{dept.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.phone ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  />
-                  {formErrors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.phone}</p>
-                  )}
-                </div>
-
-                <div className="flex justify-end gap-3 mt-6">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditModalOpen(false)
-                      setEditingEmployee(null)
-                      resetForm()
-                    }}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {isSubmitting ? 'Updating...' : 'Update Employee'}
-                  </button>
-                </div>
-              </form>
+            {/* Form Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditDialogOpen(false)
+                  setEditingEmployee(null)
+                  resetForm()
+                }}
+                className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              >
+                {isSubmitting ? 'Updating...' : 'Update Employee'}
+              </button>
             </div>
-          </div>
-        </div>
-      )}
+          </form>
+        )}
+      </Dialog>
     </div>
   )
 }

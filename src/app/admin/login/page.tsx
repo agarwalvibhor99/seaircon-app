@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { AlertCircle, Loader2 } from 'lucide-react'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
@@ -16,7 +17,10 @@ export default function AdminLogin() {
   
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   // Handle URL parameters for errors and messages
   useEffect(() => {
@@ -107,23 +111,27 @@ export default function AdminLogin() {
           </p>
         </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign In</CardTitle>
-            <CardDescription>
+        <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+            <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
+            <CardDescription className="text-center text-cyan-50">
               Enter your employee credentials to access the dashboard
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+          <CardContent className="p-8">
+            <form onSubmit={handleLogin} className="space-y-6">
               {error && (
-                <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
-                  {error}
+                <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-red-500" />
+                  <div>
+                    <p className="font-medium">Authentication Error</p>
+                    <p className="text-sm">{error}</p>
+                  </div>
                 </div>
               )}
               
-              <div>
-                <Label htmlFor="email">Email Address</Label>
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</Label>
                 <Input
                   id="email"
                   name="email"
@@ -132,11 +140,12 @@ export default function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="employee@seaircon.com"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400"
                 />
               </div>
               
-              <div>
-                <Label htmlFor="password">Password</Label>
+              <div className="space-y-3">
+                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</Label>
                 <Input
                   id="password"
                   name="password"
@@ -144,15 +153,23 @@ export default function AdminLogin() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400"
                 />
               </div>
               
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full"
+                className="w-full py-3 text-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
               >
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </Button>
             </form>
           </CardContent>

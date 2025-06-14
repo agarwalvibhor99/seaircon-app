@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Wrench, Eye, Edit, Play, Pause, CheckCircle, Calendar, User, Clock, BarChart3 } from 'lucide-react'
+import { Wrench, Eye, Edit, Play, Pause, CheckCircle, Calendar, User, Clock, BarChart3, Plus } from 'lucide-react'
+import CreateInstallationFormDialog from './CreateInstallationFormDialog'
 
 interface Installation {
   id: string
@@ -24,6 +25,7 @@ interface Installation {
 
 interface InstallationsListProps {
   installations: Installation[]
+  onRefresh?: () => void
 }
 
 const statusConfig = {
@@ -34,10 +36,11 @@ const statusConfig = {
   cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled', icon: Pause }
 }
 
-export default function InstallationsList({ installations }: InstallationsListProps) {
+export default function InstallationsList({ installations, onRefresh }: InstallationsListProps) {
   const [filteredInstallations, setFilteredInstallations] = useState(installations)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
 
   // Filter installations based on search and filters
   const handleFilter = () => {
@@ -279,6 +282,29 @@ export default function InstallationsList({ installations }: InstallationsListPr
           })
         )}
       </div>
+
+      {/* Create Installation Button */}
+      <div className="fixed bottom-4 right-4">
+        <Button 
+          onClick={() => setShowCreateDialog(true)} 
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+          size="sm"
+        >
+          <Plus className="h-4 w-4 mr-1" />
+          New Installation
+        </Button>
+      </div>
+
+      {/* Create Installation Dialog */}
+      {showCreateDialog && (
+        <CreateInstallationFormDialog 
+          onSuccess={() => {
+            setShowCreateDialog(false)
+            onRefresh?.()
+          }}
+          onCancel={() => setShowCreateDialog(false)}
+        />
+      )}
     </div>
   )
 }

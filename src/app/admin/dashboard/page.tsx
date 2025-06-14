@@ -1,14 +1,24 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
-import DashboardStats from '@/components/admin/DashboardStats'
+import DashboardStatsWrapper from '@/components/admin/DashboardStatsWrapper'
 import RecentActivity from '@/components/admin/RecentActivity'
 import QuickActions from '@/components/admin/QuickActions'
-import WorkflowNotifications from '@/components/admin/notifications/WorkflowNotifications'
+import WorkflowNotificationsWrapper from '@/components/admin/notifications/WorkflowNotificationsWrapper'
+import ToastDemo from '@/components/admin/ToastDemo'
 
 export default async function AdminDashboard() {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => cookieStore.get(name)?.value,
+      },
+    }
+  )
   
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -39,7 +49,7 @@ export default async function AdminDashboard() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar employee={employee} />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1">
         <AdminHeader employee={employee} />
         
         <main className="p-6">
@@ -52,15 +62,11 @@ export default async function AdminDashboard() {
             </p>
           </div>
 
-          <DashboardStats />
+          <DashboardStatsWrapper />
           
           {/* Workflow Notifications */}
           <div className="mt-8">
-            <WorkflowNotifications 
-              notifications={[]} 
-              onMarkAsRead={() => {}} 
-              onDismiss={() => {}} 
-            />
+            <WorkflowNotificationsWrapper />
           </div>
           
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -143,6 +149,9 @@ export default async function AdminDashboard() {
           </div>
         </main>
       </div>
+      
+      {/* Toast Demo Component */}
+      <ToastDemo />
     </div>
   )
 }

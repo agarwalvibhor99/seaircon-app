@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ClipboardList, Eye, Edit, RefreshCw, AlertTriangle, CheckCircle, Clock, Calendar } from 'lucide-react'
+import { ClipboardList, Eye, Edit, RefreshCw, AlertTriangle, CheckCircle, Clock, Calendar, Plus } from 'lucide-react'
+import CreateAMCFormDialog from './CreateAMCFormDialog'
 
 interface AMCContract {
   id: string
@@ -28,6 +29,7 @@ interface AMCContract {
 
 interface AMCListProps {
   contracts: AMCContract[]
+  onRefresh?: () => void
 }
 
 const statusConfig = {
@@ -37,10 +39,11 @@ const statusConfig = {
   cancelled: { color: 'bg-gray-100 text-gray-800', label: 'Cancelled', icon: Clock }
 }
 
-export default function AMCList({ contracts }: AMCListProps) {
+export default function AMCList({ contracts, onRefresh }: AMCListProps) {
   const [filteredContracts, setFilteredContracts] = useState(contracts)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
 
   // Filter contracts based on search and filters
   const handleFilter = () => {
@@ -266,6 +269,28 @@ export default function AMCList({ contracts }: AMCListProps) {
           })
         )}
       </div>
+
+      {/* Create AMC Contract Button */}
+      <div className="fixed bottom-4 right-4">
+        <Button 
+          onClick={() => setShowCreateDialog(true)} 
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Create AMC Contract
+        </Button>
+      </div>
+
+      {/* Create AMC Contract Dialog */}
+      {showCreateDialog && (
+        <CreateAMCFormDialog 
+          onSuccess={() => {
+            setShowCreateDialog(false)
+            onRefresh?.()
+          }}
+          onCancel={() => setShowCreateDialog(false)}
+        />
+      )}
     </div>
   )
 }
