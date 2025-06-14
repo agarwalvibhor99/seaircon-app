@@ -197,31 +197,25 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
         </Button>
       </div>
 
-      {/* Filters and Search */}
-      <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center">
-            <Search className="h-5 w-5 mr-2 text-blue-600" />
-            Search & Filters
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Search</label>
-              <Input
-                placeholder="Search employees..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
+      {/* Filters */}
+      <Card className="backdrop-blur-sm bg-white/70 border-white/20 shadow-lg">
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search by name, email, role, department..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white/50 border-white/30"
+                />
+              </div>
             </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Department</label>
+            <div className="flex gap-2">
               <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Departments" />
+                <SelectTrigger className="w-40 bg-white/50 border-white/30">
+                  <SelectValue placeholder="Filter by department" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Departments</SelectItem>
@@ -232,13 +226,9 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
                   <SelectItem value="accounts">Accounts</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Role</label>
               <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Roles" />
+                <SelectTrigger className="w-40 bg-white/50 border-white/30">
+                  <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Roles</SelectItem>
@@ -248,36 +238,32 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
                   <SelectItem value="technician">Technician</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Status</label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Statuses" />
+                <SelectTrigger className="w-40 bg-white/50 border-white/30">
+                  <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
                   <SelectItem value="on_leave">On Leave</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="flex items-end">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setSearchTerm('')
-                  setDepartmentFilter('all')
-                  setRoleFilter('all')
-                  setStatusFilter('all')
-                }}
-                className="w-full"
-              >
-                Clear Filters
-              </Button>
+              {(searchTerm || departmentFilter !== 'all' || roleFilter !== 'all' || statusFilter !== 'all') && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm('')
+                    setDepartmentFilter('all')
+                    setRoleFilter('all')
+                    setStatusFilter('all')
+                  }}
+                  className="bg-white/50 border-white/30"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
