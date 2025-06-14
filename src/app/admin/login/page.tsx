@@ -97,7 +97,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-20 w-20 mb-4 rounded-2xl overflow-hidden shadow-lg">
@@ -116,7 +116,7 @@ export default function AdminLogin() {
         </div>
         
         <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+          <CardHeader className="bg-gray-900 text-white rounded-t-lg border-b border-gray-200">
             <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
             <CardDescription className="text-center text-cyan-50">
               Enter your employee credentials to access the dashboard
@@ -164,7 +164,7 @@ export default function AdminLogin() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 text-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+                className="w-full py-3 text-lg bg-gray-900 hover:bg-gray-800 text-white transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <>

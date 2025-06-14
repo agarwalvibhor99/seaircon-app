@@ -74,20 +74,20 @@ export default function LeadsStats() {
   }, [supabase, refreshKey])
 
   const statCards = [
-    { title: 'Total Leads', value: stats.totalLeads, color: 'text-slate-600' },
+    { title: 'Total Leads', value: stats.totalLeads, color: 'text-gray-900' },
     { title: 'Active', value: stats.activeLeads, color: 'text-blue-600' },
     { title: 'Qualified', value: stats.qualified, color: 'text-green-600' },
-    { title: 'Converted', value: stats.converted, color: 'text-purple-600' },
+    { title: 'Converted', value: stats.converted, color: 'text-green-700' },
     { title: 'Lost', value: stats.lost, color: 'text-red-600' },
-    { title: 'Completed', value: stats.completed, color: 'text-gray-600' },
-    { title: 'Conversion Rate', value: `${stats.conversionRate.toFixed(1)}%`, color: 'text-cyan-600' }
+    { title: 'Completed', value: stats.completed, color: 'text-gray-700' },
+    { title: 'Conversion Rate', value: `${stats.conversionRate.toFixed(1)}%`, color: 'text-gray-900' }
   ]
 
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
         {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-          <Card key={i} className="animate-pulse">
+          <Card key={i} className="animate-pulse border border-gray-200 shadow-sm bg-white">
             <CardContent className="p-4">
               <div className="h-12 bg-gray-200 rounded" />
             </CardContent>
@@ -100,7 +100,7 @@ export default function LeadsStats() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
       {statCards.map((card) => (
-        <Card key={card.title}>
+        <Card key={card.title} className="border border-gray-200 shadow-sm bg-white">
           <CardContent className="p-4 text-center">
             <p className="text-sm font-medium text-gray-600">{card.title}</p>
             <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>

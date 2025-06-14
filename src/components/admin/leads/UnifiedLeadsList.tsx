@@ -730,7 +730,7 @@ CONVERTED FROM LEAD:
           <p className="text-sm text-gray-600">Manage and track your sales leads</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={handleAddNewLead} className="bg-cyan-600 hover:bg-cyan-700">
+          <Button onClick={handleAddNewLead} className="bg-gray-900 hover:bg-gray-800 text-white">
             <UserPlus className="h-4 w-4 mr-2" />
             Add New Lead
           </Button>
@@ -738,71 +738,71 @@ CONVERTED FROM LEAD:
       </div>
 
       {/* Analytics Dashboard */}
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-cyan-50 to-blue-50 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <Building className="h-5 w-5 text-cyan-600" />
+      <Card className="border border-gray-200 shadow-sm bg-white">
+        <CardHeader className="border-b border-gray-100">
+          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <Building className="h-5 w-5 text-gray-700" />
             Lead Analytics Dashboard
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-6 space-y-6">
           {/* Primary Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-gray-600">Total Leads</p>
-              <p className="text-2xl font-bold text-slate-700">{analytics.totalLeads}</p>
+              <p className="text-2xl font-bold text-gray-900">{analytics.totalLeads}</p>
             </div>
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-gray-600">Active</p>
               <p className="text-2xl font-bold text-blue-600">{analytics.activeLeads}</p>
               <p className="text-xs text-gray-500">In progress</p>
             </div>
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-gray-600">Qualified</p>
               <p className="text-2xl font-bold text-green-600">{analytics.qualifiedLeads}</p>
               <p className="text-xs text-gray-500">Ready to convert</p>
             </div>
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-gray-600">Converted</p>
-              <p className="text-2xl font-bold text-purple-600">{analytics.convertedLeads}</p>
+              <p className="text-2xl font-bold text-green-700">{analytics.convertedLeads}</p>
               <p className="text-xs text-gray-500">Won deals</p>
             </div>
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-gray-600">Lost</p>
               <p className="text-2xl font-bold text-red-600">{analytics.lostLeads}</p>
               <p className="text-xs text-gray-500">Lost deals</p>
             </div>
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-600">{analytics.completedLeads}</p>
+              <p className="text-2xl font-bold text-gray-700">{analytics.completedLeads}</p>
               <p className="text-xs text-gray-500">Closed deals</p>
             </div>
-            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
-              <p className="text-2xl font-bold text-cyan-600">{analytics.conversionRate.toFixed(1)}%</p>
+              <p className="text-2xl font-bold text-gray-900">{analytics.conversionRate.toFixed(1)}%</p>
               <p className="text-xs text-gray-500">Success rate</p>
             </div>
           </div>
 
           {/* Secondary Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/30">
-            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-100">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
               <p className="text-sm font-medium text-gray-600">Qualification Rate</p>
-              <p className="text-xl font-bold text-emerald-600">{analytics.qualificationRate.toFixed(1)}%</p>
+              <p className="text-xl font-bold text-gray-900">{analytics.qualificationRate.toFixed(1)}%</p>
             </div>
-            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
               <p className="text-sm font-medium text-gray-600">Active Pipeline</p>
-              <p className="text-xl font-bold text-blue-600">{analytics.activeLeads}/{analytics.totalLeads}</p>
+              <p className="text-xl font-bold text-gray-900">{analytics.activeLeads}/{analytics.totalLeads}</p>
             </div>
-            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
               <p className="text-sm font-medium text-gray-600">Closure Rate</p>
-              <p className="text-xl font-bold text-purple-600">
+              <p className="text-xl font-bold text-gray-900">
                 {analytics.totalLeads > 0 ? ((analytics.completedLeads / analytics.totalLeads) * 100).toFixed(1) : 0}%
               </p>
             </div>
-            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
               <p className="text-sm font-medium text-gray-600">Win/Loss Ratio</p>
-              <p className="text-xl font-bold text-indigo-600">
+              <p className="text-xl font-bold text-gray-900">
                 {analytics.lostLeads > 0 ? (analytics.convertedLeads / analytics.lostLeads).toFixed(1) : analytics.convertedLeads > 0 ? '∞' : '0'}:1
               </p>
             </div>
@@ -811,7 +811,7 @@ CONVERTED FROM LEAD:
       </Card>
 
       {/* Filters */}
-      <Card className="backdrop-blur-sm bg-white/70 border-white/20 shadow-lg">
+      <Card className="border border-gray-200 shadow-sm bg-white">
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
@@ -821,13 +821,13 @@ CONVERTED FROM LEAD:
                   placeholder="Search leads..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-white/50 border-white/30"
+                  className="pl-10 bg-white border-gray-200"
                 />
               </div>
             </div>
             <div className="flex gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40 bg-white/50 border-white/30">
+                <SelectTrigger className="w-40 bg-white border-gray-200">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -843,7 +843,7 @@ CONVERTED FROM LEAD:
                 </SelectContent>
               </Select>
               <Select value={urgencyFilter} onValueChange={setUrgencyFilter}>
-                <SelectTrigger className="w-40 bg-white/50 border-white/30">
+                <SelectTrigger className="w-40 bg-white border-gray-200">
                   <SelectValue placeholder="Filter by urgency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -855,7 +855,7 @@ CONVERTED FROM LEAD:
                 </SelectContent>
               </Select>
               <Select value={serviceFilter} onValueChange={setServiceFilter}>
-                <SelectTrigger className="w-40 bg-white/50 border-white/30">
+                <SelectTrigger className="w-40 bg-white border-gray-200">
                   <SelectValue placeholder="Filter by service" />
                 </SelectTrigger>
                 <SelectContent>
@@ -877,7 +877,7 @@ CONVERTED FROM LEAD:
                     setUrgencyFilter('all')
                     setServiceFilter('all')
                   }}
-                  className="bg-white/50 border-white/30"
+                  className="bg-white border-gray-200"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -890,7 +890,7 @@ CONVERTED FROM LEAD:
       {/* Leads List */}
       <div className="grid gap-4">
         {(!Array.isArray(filteredLeads) || filteredLeads.length === 0) ? (
-          <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
+          <Card className="border border-gray-200 shadow-sm bg-white">
             <CardContent className="p-8 text-center">
               <UserPlus className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No leads found</h3>
@@ -909,7 +909,7 @@ CONVERTED FROM LEAD:
             const serviceBadge = getServiceTypeBadge(lead.service_type)
             
             return (
-              <Card key={lead.id} className="border-0 shadow-lg bg-white/95 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <Card key={lead.id} className="border border-gray-200 shadow-sm bg-white hover:shadow-md transition-all duration-200">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -1017,8 +1017,7 @@ CONVERTED FROM LEAD:
         onClick={handleAddNewLead}
         icon={<UserPlus className="h-6 w-6" />}
         label="Add New Lead"
-        gradientFrom="from-cyan-500"
-        gradientTo="to-blue-500"
+        variant="monochrome"
       />
 
       {/* Create Lead Modal - Now using unified form manager */}

@@ -11,6 +11,7 @@ interface FloatingActionButtonProps {
   gradientTo?: string
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
   size?: 'sm' | 'md' | 'lg'
+  variant?: 'gradient' | 'monochrome'
   className?: string
 }
 
@@ -41,22 +42,28 @@ export function FloatingActionButton({
   gradientTo = 'to-cyan-500',
   position = 'bottom-right',
   size = 'md',
+  variant = 'gradient',
   className = ''
 }: FloatingActionButtonProps) {
+  const baseClasses = `
+    flex items-center justify-center 
+    ${sizeClasses[size]} 
+    text-white rounded-full shadow-lg hover:shadow-xl 
+    transform hover:scale-105 active:scale-95
+    transition-all duration-200 
+    focus:outline-none focus:ring-4
+    group
+  `
+  
+  const variantClasses = variant === 'monochrome' 
+    ? 'bg-gray-900 hover:bg-gray-800 focus:ring-gray-300/50'
+    : `bg-gradient-to-r ${gradientFrom} ${gradientTo} focus:ring-blue-300/50`
+
   return (
     <div className={`fixed ${positionClasses[position]} z-50 ${className}`}>
       <button
         onClick={onClick}
-        className={`
-          flex items-center justify-center 
-          ${sizeClasses[size]} 
-          bg-gradient-to-r ${gradientFrom} ${gradientTo} 
-          text-white rounded-full shadow-lg hover:shadow-xl 
-          transform hover:scale-105 active:scale-95
-          transition-all duration-200 
-          focus:outline-none focus:ring-4 focus:ring-blue-300/50
-          group
-        `}
+        className={`${baseClasses} ${variantClasses}`}
         title={label}
         aria-label={label}
       >
@@ -78,11 +85,12 @@ export function FloatingActionButton({
 }
 
 // Predefined FABs for different modules
-export function LeadsFAB({ onClick, className }: { onClick: () => void; className?: string }) {
+export function LeadsFAB({ onClick, className, variant = 'monochrome' }: { onClick: () => void; className?: string; variant?: 'gradient' | 'monochrome' }) {
   return (
     <FloatingActionButton
       onClick={onClick}
       label="Add New Lead"
+      variant={variant}
       gradientFrom="from-cyan-500"
       gradientTo="to-blue-500"
       className={className}
@@ -90,11 +98,12 @@ export function LeadsFAB({ onClick, className }: { onClick: () => void; classNam
   )
 }
 
-export function ProjectsFAB({ onClick, className }: { onClick: () => void; className?: string }) {
+export function ProjectsFAB({ onClick, className, variant = 'gradient' }: { onClick: () => void; className?: string; variant?: 'gradient' | 'monochrome' }) {
   return (
     <FloatingActionButton
       onClick={onClick}
       label="Create Project"
+      variant={variant}
       gradientFrom="from-green-500"
       gradientTo="to-teal-500"
       className={className}

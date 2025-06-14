@@ -88,7 +88,7 @@ export default function StatusHistoryModal({ leadId, leadName, trigger }: Status
         <div className="space-y-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
             </div>
           ) : history.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
@@ -110,12 +110,12 @@ export default function StatusHistoryModal({ leadId, leadName, trigger }: Status
                     {/* Timeline entry */}
                     <div className="flex items-start gap-4 pb-6">
                       {/* Timeline dot */}
-                      <div className="flex items-center justify-center w-8 h-8 bg-cyan-100 rounded-full flex-shrink-0 mt-1">
-                        <TrendingUp className="h-4 w-4 text-cyan-600" />
+                      <div className="flex items-center justify-center w-8 h-8 bg-gray-100 border-2 border-gray-300 rounded-full flex-shrink-0 mt-1">
+                        <TrendingUp className="h-4 w-4 text-gray-600" />
                       </div>
                       
                       {/* Content */}
-                      <div className="flex-1 min-w-0 bg-gray-50 rounded-lg p-4">
+                      <div className="flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             {entry.previous_status && (
@@ -159,7 +159,7 @@ export default function StatusHistoryModal({ leadId, leadName, trigger }: Status
                         )}
                         
                         {entry.notes && (
-                          <div className="text-sm text-gray-600 bg-white rounded p-2 border-l-4 border-cyan-200">
+                          <div className="text-sm text-gray-600 bg-white rounded p-2 border-l-4 border-gray-300">
                             {entry.notes}
                           </div>
                         )}
@@ -177,13 +177,13 @@ export default function StatusHistoryModal({ leadId, leadName, trigger }: Status
               </div>
               
               {/* Summary */}
-              <div className="border-t pt-4">
-                <div className="bg-cyan-50 rounded-lg p-4">
+              <div className="border-t border-gray-200 pt-4">
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <h4 className="font-medium text-gray-900 mb-2">Timeline Summary</h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-gray-600">Total Changes:</span>
-                      <span className="ml-2 font-medium">{history.length}</span>
+                      <span className="ml-2 font-medium text-gray-900">{history.length}</span>
                     </div>
                     <div>
                       <span className="text-gray-600">Current Status:</span>

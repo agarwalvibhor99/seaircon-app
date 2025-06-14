@@ -243,7 +243,7 @@ export default function QuickStatusUpdate({ lead, onStatusUpdate, onConvertToPro
         </div>
         <div className="w-full bg-gray-200 rounded-full h-1.5">
           <div
-            className="bg-cyan-600 h-1.5 rounded-full transition-all duration-300"
+            className="bg-gray-600 h-1.5 rounded-full transition-all duration-300"
             style={{
               width: `${((Object.keys(statusConfigs).indexOf(currentStatus) + 1) / (Object.keys(statusConfigs).length - 1)) * 100}%`
             }}

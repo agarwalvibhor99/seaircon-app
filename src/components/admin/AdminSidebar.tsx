@@ -68,7 +68,7 @@ export default function AdminSidebar({ employee }: AdminSidebarProps) {
       } lg:translate-x-0 transition-transform duration-300 ease-in-out lg:static lg:inset-0`}>
         
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-cyan-500 to-blue-600">
+        <div className="flex items-center justify-between h-16 px-6 bg-gray-900 border-b border-gray-200">
           <div className="flex items-center">
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1">
               <img src="/selogo.svg" alt="SE Aircon Logo" className="h-full w-full" />

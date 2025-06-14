@@ -18,12 +18,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
 
-/* Enhanced glassmorphism effects */
-.glass-effect {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
+/* Clean design effects - Removed glassmorphism for minimal look */
 
 /* Improved line clamping */
 .line-clamp-2 {
@@ -63,7 +58,7 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
-/* Enhanced scrollbar styling */
+/* Enhanced scrollbar styling - Monochrome theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -75,12 +70,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  background: #6b7280;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb, #0891b2);
+  background: #4b5563;
 }
 
 /* Dropdown scroll styles */
@@ -89,11 +84,11 @@ select {
   overflow-y: auto;
 }
 
-/* Custom select dropdown styling */
+/* Custom select dropdown styling - Monochrome theme */
 select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #6b7280;
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 /* Scrollbar styling for dropdowns */
@@ -225,18 +220,18 @@ select::-webkit-scrollbar-thumb:hover {
 }
 
 [data-radix-select-content]::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  background: #6b7280;
   border-radius: 3px;
 }
 
 [data-radix-select-content]::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #0891b2, #2563eb);
+  background: #4b5563;
 }
 
 /* Firefox scrollbar for select content */
 [data-radix-select-content] {
   scrollbar-width: thin;
-  scrollbar-color: #06b6d4 #f1f5f9;
+  scrollbar-color: #6b7280 #f1f5f9;
 }
 
 /* Select item styling */

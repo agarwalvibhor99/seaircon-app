@@ -219,14 +219,14 @@ export default function AdminDashboard() {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative">
+    <div className="min-h-screen bg-gray-50 relative">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-40">
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
@@ -238,11 +238,11 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 bg-gradient-to-r from-blue-600 via-blue-700 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg">
                   <Users className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-cyan-700 bg-clip-text text-transparent">
+                  <h1 className="text-xl font-bold text-gray-900">
                     SE AIRCON CRM
                   </h1>
                   <p className="text-xs text-gray-500 font-medium">Professional Dashboard</p>
@@ -255,7 +255,7 @@ export default function AdminDashboard() {
               <div className="hidden md:flex items-center space-x-2">
                 <Button 
                   size="sm" 
-                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0"
+                  className="bg-gray-900 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0"
                 >
                   <Plus className="h-4 w-4 mr-1" />
                   New Request
@@ -294,7 +294,7 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
         {/* Welcome Section */}
         <div className="mb-6">
-          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 rounded-2xl p-6 text-white relative overflow-hidden shadow-2xl">
+          <div className="bg-gray-900 rounded-2xl p-6 text-white relative overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
             
             {/* Animated Background Elements */}
@@ -376,7 +376,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
                   Total Requests
                 </CardTitle>
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                <div className="w-8 h-8 bg-gray-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <Users className="h-4 w-4 text-white" />
                 </div>
               </CardHeader>
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
                   New Requests
                 </CardTitle>
-                <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <AlertCircle className="h-4 w-4 text-white" />
                 </div>
               </CardHeader>
@@ -436,7 +436,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
                   Follow-ups
                 </CardTitle>
-                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <Clock className="h-4 w-4 text-white" />
                 </div>
               </CardHeader>
@@ -457,19 +457,19 @@ export default function AdminDashboard() {
           <TabsList className="bg-white/80 backdrop-blur-sm shadow-lg border-0 p-1 rounded-xl">
             <TabsTrigger 
               value="requests" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg px-6 py-2 rounded-lg font-medium transition-all duration-200"
+              className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:shadow-lg px-6 py-2 rounded-lg font-medium transition-all duration-200"
             >
               All Requests
             </TabsTrigger>
             <TabsTrigger 
               value="followups"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white data-[state=active]:shadow-lg px-6 py-2 rounded-lg font-medium transition-all duration-200"
+              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=active]:shadow-lg px-6 py-2 rounded-lg font-medium transition-all duration-200"
             >
               Follow-ups
             </TabsTrigger>
             <TabsTrigger 
               value="analytics"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg px-6 py-2 rounded-lg font-medium transition-all duration-200"
+              className="data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=active]:shadow-lg px-6 py-2 rounded-lg font-medium transition-all duration-200"
             >
               Analytics
             </TabsTrigger>
@@ -551,7 +551,7 @@ export default function AdminDashboard() {
                               <span className="mx-2 text-gray-400">•</span>
                             </>
                           )}
-                          <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent font-medium">
+                          <span className="text-gray-900 font-medium">
                             {formatServiceType(request.service_type)}
                           </span>
                         </CardDescription>
@@ -699,12 +699,12 @@ export default function AdminDashboard() {
                             setStatusFilter('all')
                             setPriorityFilter('all')
                           }}
-                          className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+                          className="bg-gray-900 hover:bg-gray-800 text-white"
                         >
                           Clear Filters
                         </Button>
                       ) : (
-                        <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+                        <Button className="bg-gray-900 hover:bg-gray-800 text-white">
                           <Plus className="w-4 h-4 mr-2" />
                           Add New Request
                         </Button>
@@ -860,9 +860,9 @@ export default function AdminDashboard() {
             
             {/* Additional Analytics Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-0 shadow-xl">
+              <Card className="bg-gray-50 border-0 shadow-xl">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-semibold text-blue-800 flex items-center">
+                  <CardTitle className="text-base font-semibold text-gray-800 flex items-center">
                     <TrendingUp className="h-4 w-4 mr-2" />
                     Conversion Rate
                   </CardTitle>
@@ -870,10 +870,10 @@ export default function AdminDashboard() {
                 <CardContent>
                   {stats && (
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-blue-600 mb-2">
+                      <div className="text-3xl font-bold text-gray-900 mb-2">
                         {stats.totalRequests > 0 ? Math.round(((stats.statusStats.won || 0) / stats.totalRequests) * 100) : 0}%
                       </div>
-                      <p className="text-sm text-blue-700">
+                      <p className="text-sm text-gray-700">
                         Won out of total requests
                       </p>
                     </div>
@@ -881,9 +881,9 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-0 shadow-xl">
+              <Card className="bg-gray-100 border-0 shadow-xl">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-semibold text-green-800 flex items-center">
+                  <CardTitle className="text-base font-semibold text-gray-800 flex items-center">
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Success Rate
                   </CardTitle>
@@ -891,10 +891,10 @@ export default function AdminDashboard() {
                 <CardContent>
                   {stats && (
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-green-600 mb-2">
+                      <div className="text-3xl font-bold text-gray-900 mb-2">
                         {stats.totalRequests > 0 ? Math.round((((stats.statusStats.won || 0) + (stats.statusStats.quote_sent || 0)) / stats.totalRequests) * 100) : 0}%
                       </div>
-                      <p className="text-sm text-green-700">
+                      <p className="text-sm text-gray-700">
                         Won + Quote sent
                       </p>
                     </div>
@@ -902,9 +902,9 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-0 shadow-xl">
+              <Card className="bg-gray-200 border-0 shadow-xl">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-semibold text-purple-800 flex items-center">
+                  <CardTitle className="text-base font-semibold text-gray-800 flex items-center">
                     <Activity className="h-4 w-4 mr-2" />
                     Active Pipeline
                   </CardTitle>
@@ -912,10 +912,10 @@ export default function AdminDashboard() {
                 <CardContent>
                   {stats && (
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-purple-600 mb-2">
+                      <div className="text-3xl font-bold text-gray-900 mb-2">
                         {(stats.statusStats.new || 0) + (stats.statusStats.contacted || 0) + (stats.statusStats.qualified || 0) + (stats.statusStats.follow_up || 0)}
                       </div>
-                      <p className="text-sm text-purple-700">
+                      <p className="text-sm text-gray-700">
                         In progress requests
                       </p>
                     </div>
