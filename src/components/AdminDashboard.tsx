@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getCurrentUser, signOut } from '@/lib/auth-utils'
 import { 
   Users, 
   Phone, 
@@ -63,29 +64,14 @@ export default function AdminDashboard() {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const token = localStorage.getItem('auth_token')
-        if (!token) {
+        const { user } = await getCurrentUser()
+        if (!user) {
           router.push('/login')
           return
         }
-
-        const response = await fetch('/api/auth/verify', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        })
-
-        if (!response.ok) {
-          localStorage.removeItem('auth_token')
-          router.push('/login')
-          return
-        }
-
-        const data = await response.json()
-        setUser(data.user)
+        setUser(user)
       } catch (error) {
         console.error('Auth verification failed:', error)
-        localStorage.removeItem('auth_token')
         router.push('/login')
       } finally {
         setAuthLoading(false)
@@ -179,17 +165,10 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('auth_token')
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      })
+      await signOut(router)
     } catch (error) {
       console.error('Logout error:', error)
-    } finally {
-      localStorage.removeItem('auth_token')
+      // Force redirect even if logout fails
       router.push('/login')
     }
   }

@@ -1,12 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { CRMService } from '@/lib/crm-service'
-import { verifyToken } from '@/lib/auth.service'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify authentication for admin routes
-    const authResult = await verifyToken(request)
-    if (!authResult.success) {
+    // Verify authentication using Supabase session
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => cookieStore.get(name)?.value,
+        },
+      }
+    )
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError || !session) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -109,9 +121,20 @@ export async function DELETE(request: NextRequest) {
   try {
     console.log('🔍 DELETE API called for consultation-requests')
     
-    // Verify authentication for admin routes
-    const authResult = await verifyToken(request)
-    if (!authResult.success) {
+    // Verify authentication using Supabase session
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => cookieStore.get(name)?.value,
+        },
+      }
+    )
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError || !session) {
       console.log('❌ Authentication failed in DELETE API')
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
@@ -119,7 +142,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    console.log('✅ Authentication successful in DELETE API, user:', authResult.user?.email)
+    console.log('✅ Authentication successful in DELETE API, user:', session.user?.email)
 
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
@@ -165,9 +188,20 @@ export async function PATCH(request: NextRequest) {
   try {
     console.log('🔍 PATCH API called for consultation-requests')
     
-    // Verify authentication for admin routes
-    const authResult = await verifyToken(request)
-    if (!authResult.success) {
+    // Verify authentication using Supabase session
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => cookieStore.get(name)?.value,
+        },
+      }
+    )
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError || !session) {
       console.log('❌ Authentication failed in PATCH API')
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
@@ -175,7 +209,7 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    console.log('✅ Authentication successful in PATCH API, user:', authResult.user?.email)
+    console.log('✅ Authentication successful in PATCH API, user:', session.user?.email)
 
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

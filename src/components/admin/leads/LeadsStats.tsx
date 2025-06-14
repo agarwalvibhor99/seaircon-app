@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { Card, CardContent } from '@/components/ui/card'
+import { useDashboard } from '@/contexts/DashboardContext'
 
 export default function LeadsStats() {
   const [stats, setStats] = useState({
@@ -14,6 +15,8 @@ export default function LeadsStats() {
   })
   const [loading, setLoading] = useState(true)
   
+  const { refreshKey } = useDashboard()
+  
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -22,6 +25,9 @@ export default function LeadsStats() {
   useEffect(() => {
     async function fetchStats() {
       try {
+        setLoading(true)
+        console.log('📊 Fetching lead statistics...')
+        
         const { data: leads } = await supabase
           .from('consultation_requests')
           .select('status')
@@ -40,6 +46,15 @@ export default function LeadsStats() {
             converted,
             conversionRate
           })
+          
+          console.log('📊 Lead statistics updated:', {
+            total: leads.length,
+            newLeads,
+            contacted,
+            qualified,
+            converted,
+            conversionRate: conversionRate.toFixed(1) + '%'
+          })
         }
       } catch (error) {
         console.error('Error fetching leads stats:', error)
@@ -49,7 +64,7 @@ export default function LeadsStats() {
     }
 
     fetchStats()
-  }, [supabase])
+  }, [supabase, refreshKey])
 
   const statCards = [
     { title: 'New Leads', value: stats.newLeads, color: 'text-blue-600' },

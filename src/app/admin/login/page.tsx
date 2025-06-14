@@ -100,8 +100,12 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <div className="mx-auto h-16 w-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center">
-            <span className="text-white font-bold text-2xl">SE</span>
+          <div className="mx-auto h-20 w-20 mb-4 rounded-2xl overflow-hidden shadow-lg">
+            <img 
+              src="/se-aircon-logo.jpg" 
+              alt="SE Aircon Logo" 
+              className="w-full h-full object-cover"
+            />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Employee Dashboard

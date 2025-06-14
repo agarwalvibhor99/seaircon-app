@@ -77,23 +77,17 @@ export function DynamicForm({
     const validationErrors = validateFormData(formData, config)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
-      notify.error('Please fix the errors and try again')
+      // Let the calling component handle validation error feedback
       return
     }
 
     try {
       await onSubmit(formData)
-      // Only show automatic success toast if not disabled
-      if (!config.disableAutoToast) {
-        notify.success(`${config.module} ${mode === 'create' ? 'created' : 'updated'} successfully`)
-      }
+      // Let the calling component handle success toasts
       onClose()
     } catch (error) {
       console.error(`Error ${mode === 'create' ? 'creating' : 'updating'} ${config.module}:`, error)
-      notify.error(
-        `Failed to ${mode === 'create' ? 'create' : 'update'} ${config.module}`,
-        'Please check the form and try again'
-      )
+      // Let the calling component handle error toasts too
     }
   }
 
