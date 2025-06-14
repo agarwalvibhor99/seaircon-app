@@ -123,7 +123,33 @@ class FormManager {
       throw error
     }
 
-    notify.success(`${this.module} created successfully`)
+    const successMessage = this.getSuccessMessage('create')
+    notify.success(successMessage)
+  }
+
+  private getSuccessMessage(action: 'create' | 'update' | 'delete'): string {
+    const moduleLabels = {
+      leads: 'Lead',
+      employees: 'Employee', 
+      projects: 'Project',
+      sitevisits: 'Site Visit',
+      installations: 'Installation',
+      amc: 'AMC Contract',
+      invoices: 'Invoice',
+      payments: 'Payment',
+      quotations: 'Quotation'
+    }
+
+    const actionLabels = {
+      create: 'Created',
+      update: 'Updated', 
+      delete: 'Deleted'
+    }
+
+    const moduleLabel = moduleLabels[this.module] || this.module
+    const actionLabel = actionLabels[action] || action
+    
+    return `${moduleLabel} ${actionLabel} Successfully`
   }
 
   async update(id: string, formData: any): Promise<void> {
@@ -142,7 +168,8 @@ class FormManager {
       throw error
     }
 
-    notify.success(`${this.module} updated successfully`)
+    const successMessage = this.getSuccessMessage('update')
+    notify.success(successMessage)
   }
 
   async delete(id: string): Promise<void> {
@@ -158,7 +185,8 @@ class FormManager {
       throw error
     }
 
-    notify.success(`${this.module} deleted successfully`)
+    const successMessage = this.getSuccessMessage('delete')
+    notify.success(successMessage)
   }
 
   private prepareFormData(formData: any): any {
