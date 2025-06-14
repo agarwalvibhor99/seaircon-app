@@ -278,7 +278,7 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
               <FileText className="h-5 w-5" />
               Quotations ({project.quotations.length})
             </CardTitle>
-            <Link href={`/admin/quotations/create?project_id=${projectId}`}>
+            <Link href={`/admin/quotations`}>
               <Button size="sm">
                 <Plus className="h-4 w-4 mr-1" />
                 New Quote
@@ -333,7 +333,7 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
               <DollarSign className="h-5 w-5" />
               Invoices & Payments
             </CardTitle>
-            <Link href={`/admin/invoicing/create?project_id=${projectId}`}>
+            <Link href={`/admin/invoicing`}>
               <Button size="sm">
                 <Plus className="h-4 w-4 mr-1" />
                 New Invoice

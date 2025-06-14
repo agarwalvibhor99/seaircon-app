@@ -21,7 +21,7 @@ export default function QuickActions() {
     {
       title: 'Create Quotation',
       description: 'Generate new quotation',
-      href: '/admin/quotations/create',
+      href: '/admin/quotations',
       icon: '📄',
       color: 'bg-yellow-50 hover:bg-yellow-100 border-yellow-200'
     },
