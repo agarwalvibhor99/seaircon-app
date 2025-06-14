@@ -1,16 +1,16 @@
 'use client';
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import React from "react";
+import ContactForm from "@/components/ContactForm";
 
 interface ButtonProps {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "outline" | "glass";
   className?: string;
-  [key: string]: any;
+  onClick?: () => void;
 }
 
 const Button = ({ children, variant = "primary", className = "", ...props }: ButtonProps) => {
@@ -439,8 +439,8 @@ export default function Home() {
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white font-bold text-xl">SE</span>
+                <div className="mr-4">
+                  <img src="/selogo.svg" alt="SE Aircon Logo" className="w-12 h-12" />
                 </div>
                 <div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">SE Aircon Pvt Ltd</span>
@@ -551,10 +551,28 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <Button variant="primary" className="text-lg px-10 py-4 shadow-2xl">
+            <Button 
+              variant="primary" 
+              className="text-lg px-10 py-4 shadow-2xl"
+              onClick={() => {
+                document.getElementById('contact')?.scrollIntoView({ 
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+              }}
+            >
               Request Consultation
             </Button>
-            <Button variant="glass" className="text-lg px-10 py-4">
+            <Button 
+              variant="outline" 
+              className="text-lg px-10 py-4"
+              onClick={() => {
+                document.getElementById('contact')?.scrollIntoView({ 
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+              }}
+            >
               Emergency Support
             </Button>
           </motion.div>
@@ -1168,7 +1186,7 @@ export default function Home() {
                   className="text-center"
                 >
                   <blockquote className="text-2xl md:text-3xl font-medium mb-8 leading-relaxed text-white">
-                    "{testimonials[currentTestimonial].quote}"
+                    &quot;{testimonials[currentTestimonial].quote}&quot;
                   </blockquote>
                   <div className="flex items-center justify-center space-x-4">
                     <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
@@ -1278,47 +1296,7 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Card variant="gradient" className="shadow-3xl">
-                <CardContent>
-                  <h3 className="text-2xl font-bold text-slate-800 mb-8">Request Consultation</h3>
-                  <form className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <input
-                        type="text"
-                        placeholder="Full Name"
-                        className="w-full px-6 py-4 border-0 rounded-2xl bg-white/90 backdrop-blur-md focus:ring-2 focus:ring-cyan-500 focus:bg-white transition-all duration-300 shadow-lg text-slate-700 placeholder-slate-500"
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email Address"
-                        className="w-full px-6 py-4 border-0 rounded-2xl bg-white/90 backdrop-blur-md focus:ring-2 focus:ring-cyan-500 focus:bg-white transition-all duration-300 shadow-lg text-slate-700 placeholder-slate-500"
-                      />
-                    </div>
-                    <input
-                      type="tel"
-                      placeholder="Phone Number"
-                      className="w-full px-6 py-4 border-0 rounded-2xl bg-white/90 backdrop-blur-md focus:ring-2 focus:ring-cyan-500 focus:bg-white transition-all duration-300 shadow-lg text-slate-700 placeholder-slate-500"
-                    />
-                    <select className="w-full px-6 py-4 border-0 rounded-2xl bg-white/90 backdrop-blur-md focus:ring-2 focus:ring-cyan-500 focus:bg-white transition-all duration-300 shadow-lg text-slate-700">
-                      <option>Select Service Type</option>
-                      <option>Central Air Conditioning</option>
-                      <option>Residential AC Installation</option>
-                      <option>Emergency Repair Service</option>
-                      <option>Annual Maintenance Contract</option>
-                      <option>Industrial HVAC Solutions</option>
-                      <option>Custom HVAC Design</option>
-                    </select>
-                    <textarea
-                      placeholder="Project Details & Requirements"
-                      rows={4}
-                      className="w-full px-6 py-4 border-0 rounded-2xl bg-white/90 backdrop-blur-md focus:ring-2 focus:ring-cyan-500 focus:bg-white transition-all duration-300 shadow-lg resize-none text-slate-700 placeholder-slate-500"
-                    ></textarea>
-                    <Button variant="primary" className="w-full py-4 text-lg shadow-2xl">
-                      Submit Consultation Request
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+              <ContactForm />
             </motion.div>
           </div>
         </div>
@@ -1331,11 +1309,11 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white font-bold text-xl">SE</span>
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mr-4 shadow-lg p-1">
+                  <img src="/selogo.svg" alt="SE Aircon Logo" className="h-full w-full" />
                 </div>
                 <div>
-                                   <span className="text-2xl font-bold">SE Aircon Pvt Ltd</span>
+                  <span className="text-2xl font-bold">SE Aircon Pvt Ltd</span>
                   <p className="text-cyan-200 text-sm font-medium">Bringing Comfort to Life</p>
                 </div>
               </div>
