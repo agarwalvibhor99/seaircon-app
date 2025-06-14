@@ -53,11 +53,11 @@ export default function DashboardStats() {
           supabase
             .from('consultation_requests')
             .select('*', { count: 'exact', head: true })
-            .not('status', 'in', '(converted,completed,cancelled)'), // Active leads
+            .in('status', ['new', 'contacted', 'qualified', 'proposal_sent']), // Active leads
           supabase
             .from('consultation_requests')
             .select('*', { count: 'exact', head: true })
-            .eq('status', 'converted'), // Converted leads
+            .eq('status', 'won'), // Won/Converted leads
           supabase
             .from('projects')
             .select('*', { count: 'exact', head: true })

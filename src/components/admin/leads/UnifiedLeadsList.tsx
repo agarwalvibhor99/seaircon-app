@@ -21,12 +21,16 @@ import {
   Trash2,
   X,
   ArrowUpCircle,
-  Building
+  Building,
+  Clock
 } from 'lucide-react'
 import { DynamicForm, useFormModal } from '@/components/ui/dynamic-form'
 import { getLeadFormConfig, getProjectFormConfig } from '@/components/ui/form-config'
 import { FloatingActionButton } from '@/components/ui/floating-action-button'
 import { useLeadFormManager } from '@/components/ui/unified-form-manager'
+import QuickStatusUpdate from '@/components/admin/leads/QuickStatusUpdate'
+import StatusHistoryModal from '@/components/admin/leads/StatusHistoryModal'
+import { AutoStatusProgressionService } from '@/lib/auto-status-progression.service'
 import { createBrowserClient } from '@supabase/ssr'
 import { useDashboard } from '@/contexts/DashboardContext'
 import { notify } from '@/lib/toast'
@@ -57,14 +61,37 @@ interface UnifiedLeadsListProps {
   leads: Lead[]
 }
 
+interface LeadAnalytics {
+  totalLeads: number
+  activeLeads: number
+  convertedLeads: number
+  lostLeads: number
+  qualifiedLeads: number
+  completedLeads: number
+  conversionRate: number
+  qualificationRate: number
+}
+
 export default function UnifiedLeadsList({ leads }: UnifiedLeadsListProps) {
   const { refreshDashboard } = useDashboard()
   const [filteredLeads, setFilteredLeads] = useState(Array.isArray(leads) ? leads : [])
   const [currentLeads, setCurrentLeads] = useState(Array.isArray(leads) ? leads : []) // Track current leads state
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('active') // Default to active leads
+  const [statusFilter, setStatusFilter] = useState('all') // Changed default to show all leads
   const [urgencyFilter, setUrgencyFilter] = useState('all')
   const [serviceFilter, setServiceFilter] = useState('all')
+  
+  // Lead Analytics State
+  const [analytics, setAnalytics] = useState<LeadAnalytics>({
+    totalLeads: 0,
+    activeLeads: 0,
+    convertedLeads: 0,
+    lostLeads: 0,
+    qualifiedLeads: 0,
+    completedLeads: 0,
+    conversionRate: 0,
+    qualificationRate: 0
+  })
 
   // Modal states
   const [showViewDialog, setShowViewDialog] = useState(false)
@@ -347,23 +374,17 @@ CONVERTED FROM LEAD:
       console.log('✅ Project created successfully:', result.data)
       const projectNumber = result.data?.project_number || 'Unknown'
 
-      // Step 2: Remove lead from local state immediately (optimistic update)
-      console.log('🔄 Optimistically removing lead from UI...')
-      const leadIdToRemove = convertingLead.id
-      setCurrentLeads(prev => prev.filter(lead => lead.id !== leadIdToRemove))
-      setFilteredLeads(prev => prev.filter(lead => lead.id !== leadIdToRemove))
-
-      // Step 3: Mark lead as converted (instead of deleting)
-      console.log('� Marking lead as converted in database:', leadIdToRemove)
+      // Step 2: Mark lead as converted (keep in database for analytics)
+      console.log('🔄 Marking lead as won/converted in database:', convertingLead.id)
       
       try {
-        const updateResponse = await fetch(`/api/consultation-requests?id=${leadIdToRemove}`, {
+        const updateResponse = await fetch(`/api/consultation-requests?id=${convertingLead.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            status: 'converted',
+            status: 'won',
             converted_to_project_id: result.data?.id,
             converted_at: new Date().toISOString()
           })
@@ -394,12 +415,25 @@ CONVERTED FROM LEAD:
           throw new Error(`Failed to mark lead as converted: ${updateResult.error}`)
           
         } else {
-          console.log('✅ Lead successfully marked as converted')
+          console.log('✅ Lead successfully marked as won/converted')
+          
+          // Trigger automatic status progression for analytics
+          try {
+            await AutoStatusProgressionService.onProjectCreated(
+              convertingLead.id, 
+              convertingLead.status, 
+              result.data?.id
+            )
+            console.log('✅ Automatic status progression completed')
+          } catch (progressionError) {
+            console.warn('⚠️ Status progression failed (non-critical):', progressionError)
+          }
+          
           console.log('🎯 About to show success toast...')
           
           try {
             notify.success(`🎉 Lead successfully converted to project ${projectNumber}!`, 
-              `The lead has been converted and a new project has been created. You can view it in the projects section.`)
+              `The lead is now marked as won and linked to the project. View the project in the projects section.`)
             console.log('✅ Success toast called successfully')
           } catch (toastError) {
             console.error('❌ Error showing success toast:', toastError)
@@ -549,15 +583,17 @@ CONVERTED FROM LEAD:
       )
     }
 
-    // Enhanced status filtering
+    // Enhanced status filtering with all lead categories
     if (statusFilter === 'active') {
-      filtered = filtered.filter(lead => ['new', 'contacted', 'in_progress'].includes(lead.status))
+      filtered = filtered.filter(lead => ['new', 'contacted', 'qualified', 'proposal_sent'].includes(lead.status))
     } else if (statusFilter === 'converted') {
-      filtered = filtered.filter(lead => lead.status === 'converted')
+      filtered = filtered.filter(lead => lead.status === 'won')
+    } else if (statusFilter === 'qualified') {
+      filtered = filtered.filter(lead => ['qualified', 'proposal_sent'].includes(lead.status))
+    } else if (statusFilter === 'lost') {
+      filtered = filtered.filter(lead => ['lost', 'cancelled'].includes(lead.status))
     } else if (statusFilter === 'completed') {
-      filtered = filtered.filter(lead => lead.status === 'completed')
-    } else if (statusFilter === 'cancelled') {
-      filtered = filtered.filter(lead => lead.status === 'cancelled')
+      filtered = filtered.filter(lead => ['won', 'lost', 'cancelled'].includes(lead.status))
     } else if (statusFilter !== 'all') {
       filtered = filtered.filter(lead => lead.status === statusFilter)
     }
@@ -591,14 +627,15 @@ CONVERTED FROM LEAD:
       console.log('🔍 Leads by status:', {
         new: leadsData?.filter((lead: any) => lead.status === 'new').length || 0,
         contacted: leadsData?.filter((lead: any) => lead.status === 'contacted').length || 0,
-        in_progress: leadsData?.filter((lead: any) => lead.status === 'in_progress').length || 0,
-        converted: leadsData?.filter((lead: any) => lead.status === 'converted').length || 0,
-        completed: leadsData?.filter((lead: any) => lead.status === 'completed').length || 0,
+        qualified: leadsData?.filter((lead: any) => lead.status === 'qualified').length || 0,
+        proposal_sent: leadsData?.filter((lead: any) => lead.status === 'proposal_sent').length || 0,
+        won: leadsData?.filter((lead: any) => lead.status === 'won').length || 0,
+        lost: leadsData?.filter((lead: any) => lead.status === 'lost').length || 0,
         cancelled: leadsData?.filter((lead: any) => lead.status === 'cancelled').length || 0,
       })
       
       setCurrentLeads(leadsData || [])
-      setFilteredLeads(leadsData || []) // This will be filtered by the useEffect
+      // Don't set filteredLeads directly - let the useEffect handle filtering
     } catch (error) {
       console.error('❌ Error refreshing leads:', error)
       notify.error('Failed to refresh leads')
@@ -618,7 +655,8 @@ CONVERTED FROM LEAD:
       qualified: { label: 'Qualified', color: 'bg-green-100 text-green-800' },
       proposal_sent: { label: 'Proposal Sent', color: 'bg-purple-100 text-purple-800' },
       won: { label: 'Won', color: 'bg-green-100 text-green-800' },
-      lost: { label: 'Lost', color: 'bg-red-100 text-red-800' }
+      lost: { label: 'Lost', color: 'bg-red-100 text-red-800' },
+      cancelled: { label: 'Cancelled', color: 'bg-gray-100 text-gray-800' }
     }
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.new
   }
@@ -653,6 +691,36 @@ CONVERTED FROM LEAD:
     }).format(amount)
   }
 
+  // Calculate lead analytics
+  const calculateAnalytics = (leads: Lead[]): LeadAnalytics => {
+    const totalLeads = leads.length
+    const activeLeads = leads.filter(lead => ['new', 'contacted', 'qualified', 'proposal_sent'].includes(lead.status)).length
+    const convertedLeads = leads.filter(lead => lead.status === 'won').length
+    const lostLeads = leads.filter(lead => ['lost', 'cancelled'].includes(lead.status)).length
+    const qualifiedLeads = leads.filter(lead => ['qualified', 'proposal_sent', 'won'].includes(lead.status)).length
+    const completedLeads = leads.filter(lead => ['won', 'lost', 'cancelled'].includes(lead.status)).length
+    
+    const conversionRate = totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100 * 100) / 100 : 0
+    const qualificationRate = totalLeads > 0 ? Math.round((qualifiedLeads / totalLeads) * 100 * 100) / 100 : 0
+
+    return {
+      totalLeads,
+      activeLeads,
+      convertedLeads,
+      lostLeads,
+      qualifiedLeads,
+      completedLeads,
+      conversionRate,
+      qualificationRate
+    }
+  }
+
+  // Update analytics whenever leads change
+  useEffect(() => {
+    const newAnalytics = calculateAnalytics(currentLeads)
+    setAnalytics(newAnalytics)
+  }, [currentLeads])
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -668,6 +736,79 @@ CONVERTED FROM LEAD:
           </Button>
         </div>
       </div>
+
+      {/* Analytics Dashboard */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-cyan-50 to-blue-50 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <Building className="h-5 w-5 text-cyan-600" />
+            Lead Analytics Dashboard
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Primary Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+              <p className="text-sm font-medium text-gray-600">Total Leads</p>
+              <p className="text-2xl font-bold text-slate-700">{analytics.totalLeads}</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+              <p className="text-sm font-medium text-gray-600">Active</p>
+              <p className="text-2xl font-bold text-blue-600">{analytics.activeLeads}</p>
+              <p className="text-xs text-gray-500">In progress</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+              <p className="text-sm font-medium text-gray-600">Qualified</p>
+              <p className="text-2xl font-bold text-green-600">{analytics.qualifiedLeads}</p>
+              <p className="text-xs text-gray-500">Ready to convert</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+              <p className="text-sm font-medium text-gray-600">Converted</p>
+              <p className="text-2xl font-bold text-purple-600">{analytics.convertedLeads}</p>
+              <p className="text-xs text-gray-500">Won deals</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+              <p className="text-sm font-medium text-gray-600">Lost</p>
+              <p className="text-2xl font-bold text-red-600">{analytics.lostLeads}</p>
+              <p className="text-xs text-gray-500">Lost deals</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+              <p className="text-sm font-medium text-gray-600">Completed</p>
+              <p className="text-2xl font-bold text-gray-600">{analytics.completedLeads}</p>
+              <p className="text-xs text-gray-500">Closed deals</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-white/30">
+              <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
+              <p className="text-2xl font-bold text-cyan-600">{analytics.conversionRate.toFixed(1)}%</p>
+              <p className="text-xs text-gray-500">Success rate</p>
+            </div>
+          </div>
+
+          {/* Secondary Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/30">
+            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+              <p className="text-sm font-medium text-gray-600">Qualification Rate</p>
+              <p className="text-xl font-bold text-emerald-600">{analytics.qualificationRate.toFixed(1)}%</p>
+            </div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+              <p className="text-sm font-medium text-gray-600">Active Pipeline</p>
+              <p className="text-xl font-bold text-blue-600">{analytics.activeLeads}/{analytics.totalLeads}</p>
+            </div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+              <p className="text-sm font-medium text-gray-600">Closure Rate</p>
+              <p className="text-xl font-bold text-purple-600">
+                {analytics.totalLeads > 0 ? ((analytics.completedLeads / analytics.totalLeads) * 100).toFixed(1) : 0}%
+              </p>
+            </div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+              <p className="text-sm font-medium text-gray-600">Win/Loss Ratio</p>
+              <p className="text-xl font-bold text-indigo-600">
+                {analytics.lostLeads > 0 ? (analytics.convertedLeads / analytics.lostLeads).toFixed(1) : analytics.convertedLeads > 0 ? '∞' : '0'}:1
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Filters */}
       <Card className="backdrop-blur-sm bg-white/70 border-white/20 shadow-lg">
@@ -690,15 +831,15 @@ CONVERTED FROM LEAD:
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="all">All Leads</SelectItem>
+                  <SelectItem value="active">Active ({analytics.activeLeads})</SelectItem>
+                  <SelectItem value="qualified">Qualified ({analytics.qualifiedLeads})</SelectItem>
+                  <SelectItem value="converted">Converted ({analytics.convertedLeads})</SelectItem>
+                  <SelectItem value="lost">Lost ({analytics.lostLeads})</SelectItem>
+                  <SelectItem value="completed">Completed ({analytics.completedLeads})</SelectItem>
                   <SelectItem value="new">New</SelectItem>
                   <SelectItem value="contacted">Contacted</SelectItem>
-                  <SelectItem value="qualified">Qualified</SelectItem>
                   <SelectItem value="proposal_sent">Proposal Sent</SelectItem>
-                  <SelectItem value="converted">Converted</SelectItem>
-                  <SelectItem value="won">Won</SelectItem>
-                  <SelectItem value="lost">Lost</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={urgencyFilter} onValueChange={setUrgencyFilter}>
@@ -774,7 +915,15 @@ CONVERTED FROM LEAD:
                     <div className="flex-1">
                       <div className="flex items-center gap-4 mb-3">
                         <h3 className="text-lg font-semibold text-gray-900">{lead.name}</h3>
-                        <Badge className={statusBadge.color}>{statusBadge.label}</Badge>
+                        <QuickStatusUpdate 
+                          lead={lead} 
+                          onStatusUpdate={() => {
+                            fetchLeads()
+                            refreshDashboard()
+                          }} 
+                          onConvertToProject={handleConvertLead}
+                          compact={true} 
+                        />
                         <Badge className={urgencyBadge.color}>{urgencyBadge.label}</Badge>
                         <Badge className={serviceBadge.color}>{serviceBadge.label}</Badge>
                       </div>
@@ -818,6 +967,15 @@ CONVERTED FROM LEAD:
                     </div>
                     
                     <div className="flex items-center gap-2 ml-4">
+                      <StatusHistoryModal 
+                        leadId={lead.id} 
+                        leadName={lead.name}
+                        trigger={
+                          <Button variant="outline" size="sm" title="View Status History">
+                            <Clock className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
                       <Button 
                         variant="outline" 
                         size="sm" 

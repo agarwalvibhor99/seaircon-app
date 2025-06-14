@@ -7,10 +7,12 @@ import { useDashboard } from '@/contexts/DashboardContext'
 
 export default function LeadsStats() {
   const [stats, setStats] = useState({
-    newLeads: 0,
-    contacted: 0,
+    totalLeads: 0,
+    activeLeads: 0,
     qualified: 0,
     converted: 0,
+    lost: 0,
+    completed: 0,
     conversionRate: 0
   })
   const [loading, setLoading] = useState(true)
@@ -33,26 +35,31 @@ export default function LeadsStats() {
           .select('status')
 
         if (leads) {
-          const newLeads = leads.filter(l => l.status === 'new').length
-          const contacted = leads.filter(l => l.status === 'contacted').length
-          const qualified = leads.filter(l => l.status === 'qualified').length
-          const converted = leads.filter(l => l.status === 'converted').length
-          const conversionRate = leads.length > 0 ? (converted / leads.length) * 100 : 0
+          const totalLeads = leads.length
+          const activeLeads = leads.filter(l => ['new', 'contacted', 'qualified', 'proposal_sent'].includes(l.status)).length
+          const qualified = leads.filter(l => ['qualified', 'proposal_sent', 'won'].includes(l.status)).length
+          const converted = leads.filter(l => l.status === 'won').length
+          const lost = leads.filter(l => ['lost', 'cancelled'].includes(l.status)).length
+          const completed = leads.filter(l => ['won', 'lost', 'cancelled'].includes(l.status)).length
+          const conversionRate = totalLeads > 0 ? (converted / totalLeads) * 100 : 0
 
           setStats({
-            newLeads,
-            contacted,
+            totalLeads,
+            activeLeads,
             qualified,
             converted,
+            lost,
+            completed,
             conversionRate
           })
           
           console.log('📊 Lead statistics updated:', {
-            total: leads.length,
-            newLeads,
-            contacted,
+            totalLeads,
+            activeLeads,
             qualified,
             converted,
+            lost,
+            completed,
             conversionRate: conversionRate.toFixed(1) + '%'
           })
         }
@@ -67,17 +74,19 @@ export default function LeadsStats() {
   }, [supabase, refreshKey])
 
   const statCards = [
-    { title: 'New Leads', value: stats.newLeads, color: 'text-blue-600' },
-    { title: 'Contacted', value: stats.contacted, color: 'text-yellow-600' },
+    { title: 'Total Leads', value: stats.totalLeads, color: 'text-slate-600' },
+    { title: 'Active', value: stats.activeLeads, color: 'text-blue-600' },
     { title: 'Qualified', value: stats.qualified, color: 'text-green-600' },
     { title: 'Converted', value: stats.converted, color: 'text-purple-600' },
+    { title: 'Lost', value: stats.lost, color: 'text-red-600' },
+    { title: 'Completed', value: stats.completed, color: 'text-gray-600' },
     { title: 'Conversion Rate', value: `${stats.conversionRate.toFixed(1)}%`, color: 'text-cyan-600' }
   ]
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {[1, 2, 3, 4, 5].map((i) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+        {[1, 2, 3, 4, 5, 6, 7].map((i) => (
           <Card key={i} className="animate-pulse">
             <CardContent className="p-4">
               <div className="h-12 bg-gray-200 rounded" />
@@ -89,7 +98,7 @@ export default function LeadsStats() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
       {statCards.map((card) => (
         <Card key={card.title}>
           <CardContent className="p-4 text-center">

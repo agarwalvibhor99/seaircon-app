@@ -39,7 +39,7 @@ export default async function LeadsPage() {
         <AdminHeader employee={employee} />
         
         <main className="p-6">
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Lead Management</h1>
@@ -48,9 +48,9 @@ export default async function LeadsPage() {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <LeadsStats />
+          {/* <LeadsStats /> */}
           
           <div className="mt-8">
             <UnifiedLeadsList leads={leads || []} />
