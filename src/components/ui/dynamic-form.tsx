@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Save, X } from 'lucide-react'
 import { FormConfig, FormFieldConfig, FormSectionConfig, validateFormData, getDefaultFormData } from './form-config'
 import { FormModal, FormActions, FormSection, FormGrid } from './form-modal'
 import { FormInput, FormTextarea, FormSelect, FormDisplay, FormCurrencyInput } from './form-inputs'
+import { LineItemsField, QuotationItem } from './line-items-field'
 import { 
   LeadsFormModal, 
   ProjectsFormModal, 
@@ -62,13 +63,61 @@ export function DynamicForm({
   }, [initialData])
 
   const handleFieldChange = (fieldName: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [fieldName]: value }))
+    setFormData((prev: any) => {
+      const newData = { ...prev, [fieldName]: value }
+      
+      // Special handling for quotation forms
+      if (config.module === 'quotations') {
+        // Auto-fill customer data when consultation request is selected
+        if (fieldName === 'consultation_request_id' && value) {
+          const consultationRequests = config.sections[0]?.fields.find(f => f.name === 'consultation_request_id')?.options || []
+          const consultation = consultationRequests.find((cr: any) => cr.value === value)
+          if (consultation) {
+            // Parse consultation data from label if available
+            const [name, serviceType] = consultation.label.split(' - ')
+            newData.customer_name = name
+            newData.quote_title = `${serviceType} Quotation for ${name}`
+          }
+        }
+        
+        // Clear customer fields when customer type changes
+        if (fieldName === 'customer_type') {
+          if (value === 'existing') {
+            // Clear new customer fields
+            newData.customer_name = ''
+            newData.customer_email = ''
+            newData.customer_phone = ''
+            newData.customer_address = ''
+            newData.consultation_request_id = ''
+          } else if (value === 'new') {
+            // Clear existing customer selection
+            newData.customer_id = ''
+            newData.consultation_request_id = ''
+          } else if (value === 'consultation') {
+            // Clear existing customer selection
+            newData.customer_id = ''
+          }
+        }
+      }
+      
+      return newData
+    })
     
     // Clear error for this field when user starts typing
     if (errors[fieldName]) {
       setErrors(prev => ({ ...prev, [fieldName]: '' }))
     }
   }
+
+  const handleTotalsChange = useCallback((totals: any) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      subtotal: totals.subtotal,
+      tax_amount: totals.taxAmount,
+      discount_amount: totals.discountAmount,
+      total_amount: totals.totalAmount
+    }))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -141,11 +190,23 @@ export function DynamicForm({
           />
         )
       
+      case 'line-items':
+        return (
+          <LineItemsField
+            {...commonProps}
+            value={formData[field.name] || []}
+            onChange={(items: QuotationItem[]) => handleFieldChange(field.name, items)}
+            taxRate={formData.tax_rate || 18}
+            discountPercentage={formData.discount_percentage || 0}
+            onTotalsChange={handleTotalsChange}
+          />
+        )
+      
       default:
         return (
           <FormInput
             {...commonProps}
-            type={field.type}
+            type={field.type as any}
             min={field.min}
             max={field.max}
             step={field.step}

@@ -7,7 +7,7 @@ import { User, Mail, Phone, Building, MapPin, AlertCircle, Calendar, DollarSign,
 export interface FormFieldConfig {
   name: string
   label: string
-  type: 'text' | 'email' | 'tel' | 'number' | 'password' | 'date' | 'datetime-local' | 'time' | 'textarea' | 'select' | 'currency' | 'display'
+  type: 'text' | 'email' | 'tel' | 'number' | 'password' | 'date' | 'datetime-local' | 'time' | 'textarea' | 'select' | 'currency' | 'display' | 'line-items'
   required?: boolean
   placeholder?: string
   hint?: string
@@ -846,7 +846,7 @@ export const getAMCFormConfig = (customers: any[] = [], employees: any[] = []): 
 
 export const getInvoiceFormConfig = (projects: any[] = [], customers: any[] = []): FormConfig => ({
   title: 'Create Invoice',
-  subtitle: 'Generate customer invoice',
+  subtitle: 'Generate customer invoice with detailed billing',
   module: 'invoices',
   maxWidth: '5xl',
   submitLabel: 'Create Invoice',
@@ -855,9 +855,16 @@ export const getInvoiceFormConfig = (projects: any[] = [], customers: any[] = []
       title: 'Invoice Details',
       fields: [
         {
+          name: 'invoice_number',
+          label: 'Invoice Number',
+          type: 'text',
+          placeholder: 'Auto-generated if left blank'
+        },
+        {
           name: 'project_id',
           label: 'Project',
           type: 'select',
+          required: true,
           options: projects.map(p => ({ value: p.id, label: `${p.project_name} - ${p.project_number}` }))
         },
         {
@@ -866,6 +873,18 @@ export const getInvoiceFormConfig = (projects: any[] = [], customers: any[] = []
           type: 'select',
           required: true,
           options: customers.map(c => ({ value: c.id, label: c.name }))
+        },
+        {
+          name: 'invoice_type',
+          label: 'Invoice Type',
+          type: 'select',
+          required: true,
+          options: [
+            { value: 'advance', label: 'Advance Payment' },
+            { value: 'progress', label: 'Progress Payment' },
+            { value: 'final', label: 'Final Payment' },
+            { value: 'amc', label: 'AMC Invoice' }
+          ]
         },
         {
           name: 'invoice_date',
@@ -878,26 +897,57 @@ export const getInvoiceFormConfig = (projects: any[] = [], customers: any[] = []
           label: 'Due Date',
           type: 'date',
           required: true
+        },
+        {
+          name: 'payment_terms',
+          label: 'Payment Terms',
+          type: 'select',
+          required: true,
+          options: [
+            { value: 'Net 15 days', label: 'Net 15 days' },
+            { value: 'Net 30 days', label: 'Net 30 days' },
+            { value: 'Net 60 days', label: 'Net 60 days' },
+            { value: 'Due on Receipt', label: 'Due on Receipt' },
+            { value: 'Custom', label: 'Custom Terms' }
+          ]
+        },
+        {
+          name: 'status',
+          label: 'Status',
+          type: 'select',
+          required: true,
+          options: STATUS_OPTIONS.invoices
         }
       ],
       columns: 2
     },
     {
-      title: 'Amount Details',
+      title: 'Items & Services',
+      fields: [
+        {
+          name: 'items',
+          label: 'Invoice Items',
+          type: 'line-items',
+          required: true
+        }
+      ],
+      columns: 1
+    },
+    {
+      title: 'Calculated Totals',
       fields: [
         {
           name: 'subtotal',
-          label: 'Subtotal',
+          label: 'Subtotal Amount',
           type: 'currency',
-          currency: 'INR',
-          required: true
+          currency: 'INR'
         },
         {
-          name: 'tax_amount',
-          label: 'Tax Amount',
-          type: 'currency',
-          currency: 'INR',
-          required: true
+          name: 'discount_percentage',
+          label: 'Discount (%)',
+          type: 'number',
+          min: 0,
+          max: 100
         },
         {
           name: 'discount_amount',
@@ -906,11 +956,24 @@ export const getInvoiceFormConfig = (projects: any[] = [], customers: any[] = []
           currency: 'INR'
         },
         {
+          name: 'tax_rate',
+          label: 'Tax Rate (%)',
+          type: 'number',
+          min: 0,
+          max: 100,
+          required: true
+        },
+        {
+          name: 'tax_amount',
+          label: 'Tax Amount',
+          type: 'currency',
+          currency: 'INR'
+        },
+        {
           name: 'total_amount',
           label: 'Total Amount',
           type: 'currency',
-          currency: 'INR',
-          required: true
+          currency: 'INR'
         }
       ],
       columns: 2
@@ -922,14 +985,14 @@ export const getInvoiceFormConfig = (projects: any[] = [], customers: any[] = []
           name: 'description',
           label: 'Invoice Description',
           type: 'textarea',
-          placeholder: 'Describe the services or products',
+          placeholder: 'Describe the services or products being invoiced',
           rows: 3
         },
         {
           name: 'notes',
-          label: 'Notes',
+          label: 'Notes & Payment Instructions',
           type: 'textarea',
-          placeholder: 'Additional notes or payment instructions',
+          placeholder: 'Additional notes, payment instructions, or terms',
           rows: 2
         }
       ],
@@ -1017,111 +1080,219 @@ export const getPaymentFormConfig = (invoices: any[] = []): FormConfig => ({
 
 export const getQuotationFormConfig = (customers: any[] = [], projects: any[] = [], consultationRequests: any[] = []): FormConfig => ({
   title: 'Create Quotation',
-  subtitle: 'Generate detailed customer quotation',
+  subtitle: 'Generate comprehensive customer quotation linked to a project',
   module: 'quotations',
   maxWidth: '5xl',
   submitLabel: 'Create Quotation',
   sections: [
     {
-      title: 'Quotation Details',
+      title: 'Customer Information',
       fields: [
         {
-          name: 'consultation_request_id',
-          label: 'Lead/Consultation Request',
+          name: 'customer_type',
+          label: 'Customer Type',
           type: 'select',
-          options: consultationRequests.map(cr => ({ value: cr.id, label: `${cr.name} - ${cr.service_type}` }))
+          required: true,
+          options: [
+            { value: 'consultation', label: 'From Consultation Request' },
+            { value: 'existing', label: 'Existing Customer' },
+            { value: 'new', label: 'New Customer' }
+          ]
+        },
+        {
+          name: 'consultation_request_id',
+          label: 'Consultation Request',
+          type: 'select',
+          options: consultationRequests.map(cr => ({ value: cr.id, label: `${cr.name} - ${cr.service_type}` })),
+          placeholder: 'Select consultation request',
+          showWhen: (formData: any) => formData.customer_type === 'consultation'
         },
         {
           name: 'customer_id',
           label: 'Customer',
           type: 'select',
-          options: customers.map(c => ({ value: c.id, label: c.name }))
+          required: true,
+          options: customers.map(c => ({ value: c.id, label: `${c.name} - ${c.phone}` })),
+          placeholder: 'Select customer',
+          showWhen: (formData: any) => formData.customer_type === 'existing'
         },
         {
           name: 'project_id',
-          label: 'Project',
+          label: 'Project (Required)',
           type: 'select',
-          options: projects.map(p => ({ value: p.id, label: `${p.project_name} - ${p.project_number}` }))
+          required: true,
+          options: projects.map(p => ({ value: p.id, label: `${p.project_number} - ${p.project_name}` })),
+          placeholder: 'Select project for this quotation'
+        }
+      ],
+      columns: 1
+    },
+    {
+      title: 'New Customer Details',
+      fields: [
+        {
+          name: 'customer_name',
+          label: 'Customer Name',
+          type: 'text',
+          required: true,
+          showWhen: (formData: any) => formData.customer_type === 'new' || formData.customer_type === 'consultation'
+        },
+        {
+          name: 'customer_phone',
+          label: 'Phone',
+          type: 'tel',
+          required: true,
+          showWhen: (formData: any) => formData.customer_type === 'new' || formData.customer_type === 'consultation'
+        },
+        {
+          name: 'customer_email',
+          label: 'Email',
+          type: 'email',
+          required: true,
+          showWhen: (formData: any) => formData.customer_type === 'new' || formData.customer_type === 'consultation'
+        },
+        {
+          name: 'customer_address',
+          label: 'Address',
+          type: 'text',
+          required: true,
+          showWhen: (formData: any) => formData.customer_type === 'new' || formData.customer_type === 'consultation'
+        }
+      ],
+      columns: 2,
+      showWhen: (formData: any) => formData.customer_type === 'new' || formData.customer_type === 'consultation'
+    },
+    {
+      title: 'Quotation Details',
+      fields: [
+        {
+          name: 'quote_number',
+          label: 'Quotation Number',
+          type: 'text',
+          required: true,
+          placeholder: 'Auto-generated if empty'
         },
         {
           name: 'valid_until',
           label: 'Valid Until',
           type: 'date',
-          required: true
+          required: true,
+          placeholder: 'Quotation expiry date'
+        },
+        {
+          name: 'quote_title',
+          label: 'Title',
+          type: 'text',
+          required: true,
+          placeholder: 'e.g., AC Installation and Maintenance Quote'
+        },
+        {
+          name: 'description',
+          label: 'Description',
+          type: 'textarea',
+          placeholder: 'Brief description of the work to be done',
+          rows: 3
         }
       ],
       columns: 2
     },
     {
-      title: 'Pricing',
+      title: 'Tax & Discount Settings',
       fields: [
         {
-          name: 'labor_cost',
-          label: 'Labor Cost',
-          type: 'currency',
-          currency: 'INR',
-          required: true
+          name: 'tax_rate',
+          label: 'Tax/GST Rate (%)',
+          type: 'number',
+          required: true,
+          step: 0.01,
+          min: 0,
+          max: 100,
+          placeholder: '18.00'
         },
         {
-          name: 'material_cost',
-          label: 'Material Cost',
+          name: 'discount_percentage',
+          label: 'Discount (%)',
+          type: 'number',
+          step: 0.01,
+          min: 0,
+          max: 100,
+          placeholder: '0'
+        }
+      ],
+      columns: 2
+    },
+    {
+      title: 'Items & Services',
+      fields: [
+        {
+          name: 'items',
+          label: 'Quotation Items',
+          type: 'line-items',
+          required: true
+        }
+      ],
+      columns: 1
+    },
+    {
+      title: 'Calculated Totals',
+      fields: [
+        {
+          name: 'subtotal',
+          label: 'Subtotal Amount',
           type: 'currency',
           currency: 'INR',
-          required: true
-        },
-        {
-          name: 'additional_costs',
-          label: 'Additional Costs',
-          type: 'currency',
-          currency: 'INR'
+          disabled: true,
+          placeholder: 'Auto-calculated from items'
         },
         {
           name: 'discount_amount',
           label: 'Discount Amount',
           type: 'currency',
-          currency: 'INR'
+          currency: 'INR',
+          disabled: true,
+          placeholder: 'Auto-calculated discount amount'
         },
         {
           name: 'tax_amount',
           label: 'Tax Amount',
           type: 'currency',
           currency: 'INR',
-          required: true
+          disabled: true,
+          placeholder: 'Auto-calculated tax amount'
         },
         {
           name: 'total_amount',
           label: 'Total Amount',
           type: 'currency',
           currency: 'INR',
-          required: true
+          disabled: true,
+          placeholder: 'Final total amount'
         }
       ],
-      columns: 3
+      columns: 2
     },
     {
-      title: 'Terms & Details',
+      title: 'Terms & Additional Information',
       fields: [
         {
-          name: 'scope_of_work',
-          label: 'Scope of Work',
-          type: 'textarea',
-          required: true,
-          placeholder: 'Detailed description of work to be performed',
-          rows: 4
-        },
-        {
-          name: 'terms_conditions',
+          name: 'terms_and_conditions',
           label: 'Terms & Conditions',
           type: 'textarea',
-          placeholder: 'Payment terms, warranties, and conditions',
-          rows: 3
+          required: true,
+          placeholder: `1. All prices are in Indian Rupees (INR)
+2. Installation will be completed within 7-10 working days from confirmation
+3. 1 year comprehensive warranty on all equipment
+4. Payment terms: 50% advance, 50% on completion
+5. GST will be added as applicable
+6. This quotation is valid for 30 days from the date of issue`,
+          rows: 6
         },
         {
           name: 'notes',
           label: 'Additional Notes',
           type: 'textarea',
-          placeholder: 'Any additional notes or clarifications',
-          rows: 2
+          placeholder: 'Any additional notes, clarifications, or special instructions',
+          rows: 3
         }
       ],
       columns: 1
@@ -1158,6 +1329,51 @@ export const validateFormData = (formData: any, config: FormConfig): Record<stri
     })
   })
 
+  // Special validation for quotations
+  if (config.module === 'quotations') {
+    // Ensure project is always selected
+    if (!formData.project_id) {
+      errors.project_id = 'Project is required for all quotations'
+    }
+    
+    // Validate customer information based on customer type
+    if (formData.customer_type === 'existing' && !formData.customer_id) {
+      errors.customer_id = 'Customer selection is required'
+    }
+    
+    if (formData.customer_type === 'consultation' && !formData.consultation_request_id) {
+      errors.consultation_request_id = 'Consultation request selection is required'
+    }
+    
+    if ((formData.customer_type === 'new' || formData.customer_type === 'consultation')) {
+      if (!formData.customer_name?.trim()) {
+        errors.customer_name = 'Customer name is required'
+      }
+      if (!formData.customer_email?.trim()) {
+        errors.customer_email = 'Customer email is required'
+      }
+      if (!formData.customer_phone?.trim()) {
+        errors.customer_phone = 'Customer phone is required'
+      }
+      if (!formData.customer_address?.trim()) {
+        errors.customer_address = 'Customer address is required'
+      }
+    }
+    
+    // Validate line items
+    if (!formData.items || !Array.isArray(formData.items) || formData.items.length === 0) {
+      errors.items = 'At least one item is required'
+    } else {
+      // Validate each item has required fields
+      const hasInvalidItems = formData.items.some((item: any) => 
+        !item.description?.trim() || item.quantity <= 0 || item.unit_price <= 0
+      )
+      if (hasInvalidItems) {
+        errors.items = 'All items must have description, quantity > 0, and unit price > 0'
+      }
+    }
+  }
+
   return errors
 }
 
@@ -1169,17 +1385,50 @@ export const getDefaultFormData = (config: FormConfig): any => {
     section.fields.forEach(field => {
       switch (field.type) {
         case 'select':
-          defaultData[field.name] = field.options?.[0]?.value || ''
+          // Special handling for customer_type field
+          if (field.name === 'customer_type') {
+            defaultData[field.name] = 'consultation'
+          } else {
+            defaultData[field.name] = field.options?.[0]?.value || ''
+          }
           break
         case 'number':
         case 'currency':
-          defaultData[field.name] = field.min || 0
+          // Set default values for specific fields
+          if (field.name === 'tax_rate') {
+            defaultData[field.name] = 18
+          } else if (field.name === 'discount_percentage') {
+            defaultData[field.name] = 0
+          } else {
+            defaultData[field.name] = field.min || 0
+          }
+          break
+        case 'text':
+          // Set default quote number and invoice number
+          if (field.name === 'quote_number') {
+            defaultData[field.name] = `QUO-${Date.now()}`
+          } else if (field.name === 'invoice_number') {
+            defaultData[field.name] = `INV-${Date.now()}`
+          } else {
+            defaultData[field.name] = ''
+          }
           break
         case 'date':
           defaultData[field.name] = new Date().toISOString().split('T')[0]
           break
         case 'time':
           defaultData[field.name] = '09:00'
+          break
+        case 'line-items':
+          defaultData[field.name] = [
+            {
+              id: '1',
+              description: '',
+              quantity: 1,
+              unit_price: 0,
+              total: 0
+            }
+          ]
           break
         default:
           defaultData[field.name] = ''

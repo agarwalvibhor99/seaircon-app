@@ -28,7 +28,7 @@ export default function QuickActions() {
     {
       title: 'New Invoice',
       description: 'Create invoice for payment',
-      href: '/admin/invoicing/create',
+      href: '/admin/invoicing',
       icon: '💰',
       color: 'bg-purple-50 hover:bg-purple-100 border-purple-200'
     }
