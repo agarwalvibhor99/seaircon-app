@@ -189,8 +189,8 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
       case 'emergency': return 'bg-red-100 text-red-800 border-red-200'
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      case 'high': return 'bg-gray-400 text-gray-900 border-gray-500'
+      case 'medium': return 'bg-gray-200 text-gray-700 border-gray-300'
       case 'low': return 'bg-green-100 text-green-800 border-green-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
@@ -198,9 +198,9 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
 
   return (
     <Card className={`w-full max-w-4xl mx-auto shadow-2xl border-0 bg-white/95 backdrop-blur-sm ${className}`}>
-      <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+      <CardHeader className="bg-gray-900 text-white rounded-t-lg">
         <CardTitle className="text-3xl font-bold text-center">Request a Consultation</CardTitle>
-        <CardDescription className="text-center text-cyan-50 text-lg">
+        <CardDescription className="text-center text-gray-50 text-lg">
           Get expert HVAC advice tailored to your needs. We&apos;ll respond within 24 hours.
         </CardDescription>
       </CardHeader>
@@ -208,9 +208,9 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
         <form onSubmit={onSubmit} className="space-y-8">
           {/* Contact Information */}
           <div className="space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b-2 border-cyan-100">
-              <div className="p-2 bg-cyan-100 rounded-lg">
-                <Phone className="h-5 w-5 text-cyan-600" />
+            <div className="flex items-center gap-3 pb-4 border-b-2 border-gray-100">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Phone className="h-5 w-5 text-gray-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
             </div>
@@ -223,7 +223,7 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
                   value={formData.full_name}
                   onChange={(e) => handleInputChange('full_name', e.target.value)}
                   placeholder="Enter your full name"
-                  className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.full_name ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                  className={`transition-all duration-200 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.full_name ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                 />
                 {errors.full_name && (
                   <p className="text-red-600 text-sm flex items-center gap-1">
@@ -241,7 +241,7 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="your.email@example.com"
-                  className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                  className={`transition-all duration-200 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                 />
                 {errors.email && (
                   <p className="text-red-600 text-sm flex items-center gap-1">
@@ -258,7 +258,7 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="+1 (555) 123-4567"
-                  className={`transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
+                  className={`transition-all duration-200 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}
                 />
                 {errors.phone && (
                   <p className="text-red-600 text-sm flex items-center gap-1">
@@ -283,8 +283,8 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
 
           {/* Service Details */}
           <div className="space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b-2 border-blue-100">
-              <div className="p-2 bg-blue-100 rounded-lg">
+            <div className="flex items-center gap-3 pb-4 border-b-2 border-gray-100">
+              <div className="p-2 bg-gray-100 rounded-lg">
                 <CheckCircle className="h-5 w-5 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800">Service Details</h3>
@@ -488,7 +488,7 @@ export default function ContactForm({ onSuccess, className = '' }: ContactFormPr
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full text-lg py-6 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+              className="w-full text-lg py-6 bg-gray-900 hover:bg-gray-800 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
             >
               {isSubmitting ? (
                 <>

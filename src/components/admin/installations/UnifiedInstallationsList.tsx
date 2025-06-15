@@ -10,6 +10,9 @@ import { Wrench, Eye, Edit, Calendar, Clock, User, MapPin, CheckCircle, AlertTri
 import { Employee, Project } from '@/lib/enhanced-types'
 import { FloatingActionButton } from '@/components/ui/floating-action-button'
 import { useInstallationFormManager } from '@/components/ui/unified-form-manager'
+import { SectionHeader, SearchFilterBar } from '@/components/ui/section-header'
+import { StatusBadge, ActionButtons, DataCell, ContactInfo, formatCurrency, formatDate } from '@/components/ui/data-table-components'
+import { statusConfigs, priorityConfigs } from '@/lib/design-system'
 import { createBrowserClient } from '@supabase/ssr'
 import { notify } from "@/lib/toast"
 
@@ -39,21 +42,6 @@ interface UnifiedInstallationsListProps {
   employee: Employee
   projects: Project[]
   employees: Employee[]
-}
-
-const statusConfig = {
-  scheduled: { color: 'bg-blue-100 text-blue-800', label: 'Scheduled', icon: Calendar },
-  in_progress: { color: 'bg-yellow-100 text-yellow-800', label: 'In Progress', icon: Clock },
-  completed: { color: 'bg-green-100 text-green-800', label: 'Completed', icon: CheckCircle },
-  cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled', icon: X },
-  on_hold: { color: 'bg-orange-100 text-orange-800', label: 'On Hold', icon: AlertTriangle }
-}
-
-const priorityConfig = {
-  low: { color: 'bg-gray-100 text-gray-800', label: 'Low' },
-  medium: { color: 'bg-yellow-100 text-yellow-800', label: 'Medium' },
-  high: { color: 'bg-orange-100 text-orange-800', label: 'High' },
-  urgent: { color: 'bg-red-100 text-red-800', label: 'Urgent' }
 }
 
 export default function UnifiedInstallationsList({ installations, employee, projects, employees }: UnifiedInstallationsListProps) {
@@ -308,7 +296,6 @@ export default function UnifiedInstallationsList({ installations, employee, proj
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {sortedInstallations.map((installation) => {
-            const StatusIcon = statusConfig[installation.status]?.icon || Wrench
             const isUpcoming = installation.status === 'scheduled' && new Date(installation.installation_date) <= new Date(Date.now() + 24 * 60 * 60 * 1000)
             const isHighPriority = installation.priority === 'urgent' || installation.priority === 'high'
             
@@ -334,13 +321,16 @@ export default function UnifiedInstallationsList({ installations, employee, proj
                       )}
                     </div>
                     <div className="flex flex-col gap-1">
-                      <Badge className={`${statusConfig[installation.status]?.color} flex items-center gap-1 text-xs`}>
-                        <StatusIcon className="h-3 w-3" />
-                        {statusConfig[installation.status]?.label}
-                      </Badge>
-                      <Badge className={`${priorityConfig[installation.priority]?.color} text-xs`}>
-                        {priorityConfig[installation.priority]?.label}
-                      </Badge>
+                      <StatusBadge 
+                        status={installation.status} 
+                        statusConfig={statusConfigs.installations}
+                        className="text-xs"
+                      />
+                      <StatusBadge 
+                        status={installation.priority} 
+                        statusConfig={priorityConfigs}
+                        className="text-xs"
+                      />
                     </div>
                   </div>
                 </CardHeader>
@@ -435,8 +425,7 @@ export default function UnifiedInstallationsList({ installations, employee, proj
         onClick={createFormModal.openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Schedule New Installation"
-        gradientFrom="from-orange-500"
-        gradientTo="to-red-500"
+        variant="monochrome"
       />
 
       {/* Form Modal */}

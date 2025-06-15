@@ -350,8 +350,7 @@ export default function UnifiedInvoicesList({ invoices, employee, customers, pro
         onClick={createFormModal.openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Create New Invoice"
-        gradientFrom="from-purple-500"
-        gradientTo="to-pink-500"
+        variant="monochrome"
       />
 
       {/* Form Modal */}

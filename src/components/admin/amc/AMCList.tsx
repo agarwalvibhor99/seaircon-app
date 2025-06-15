@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ClipboardList, Eye, Edit, RefreshCw, AlertTriangle, CheckCircle, Clock, Calendar, Plus } from 'lucide-react'
-import CreateAMCFormDialog from './CreateAMCFormDialog'
+import { useAMCFormManager } from '@/components/ui/unified-form-manager'
+import { FloatingActionButton } from '@/components/ui/floating-action-button'
+import { SectionHeader, SearchFilterBar } from '@/components/ui/section-header'
 
 interface AMCContract {
   id: string
@@ -29,6 +31,8 @@ interface AMCContract {
 
 interface AMCListProps {
   contracts: AMCContract[]
+  customers?: any[]
+  employees?: any[]
   onRefresh?: () => void
 }
 
@@ -39,11 +43,18 @@ const statusConfig = {
   cancelled: { color: 'bg-gray-100 text-gray-800', label: 'Cancelled', icon: Clock }
 }
 
-export default function AMCList({ contracts, onRefresh }: AMCListProps) {
+export default function AMCList({ contracts, customers = [], employees = [], onRefresh }: AMCListProps) {
   const [filteredContracts, setFilteredContracts] = useState(contracts)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
+
+  // Unified form manager for AMC contracts
+  const {
+    openCreateModal,
+    FormModal: CreateAMCModal
+  } = useAMCFormManager(customers, employees, () => {
+    onRefresh?.()
+  })
 
   // Filter contracts based on search and filters
   const handleFilter = () => {
@@ -270,27 +281,14 @@ export default function AMCList({ contracts, onRefresh }: AMCListProps) {
         )}
       </div>
 
-      {/* Create AMC Contract Button */}
-      <div className="fixed bottom-4 right-4">
-        <Button 
-          onClick={() => setShowCreateDialog(true)} 
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Create AMC Contract
-        </Button>
-      </div>
+      {/* Unified AMC Form */}
+      <CreateAMCModal />
 
-      {/* Create AMC Contract Dialog */}
-      {showCreateDialog && (
-        <CreateAMCFormDialog 
-          onSuccess={() => {
-            setShowCreateDialog(false)
-            onRefresh?.()
-          }}
-          onCancel={() => setShowCreateDialog(false)}
-        />
-      )}
+      {/* Floating Action Button */}
+      <FloatingActionButton
+        onClick={openCreateModal}
+        variant="monochrome"
+      />
     </div>
   )
 }

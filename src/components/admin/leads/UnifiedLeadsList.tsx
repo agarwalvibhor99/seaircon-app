@@ -650,11 +650,11 @@ CONVERTED FROM LEAD:
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      new: { label: 'New', color: 'bg-blue-100 text-blue-800' },
-      contacted: { label: 'Contacted', color: 'bg-yellow-100 text-yellow-800' },
-      qualified: { label: 'Qualified', color: 'bg-green-100 text-green-800' },
-      proposal_sent: { label: 'Proposal Sent', color: 'bg-purple-100 text-purple-800' },
-      won: { label: 'Won', color: 'bg-green-100 text-green-800' },
+      new: { label: 'New', color: 'bg-gray-100 text-gray-800' },
+      contacted: { label: 'Contacted', color: 'bg-gray-200 text-gray-700' },
+      qualified: { label: 'Qualified', color: 'bg-gray-300 text-gray-800' },
+      proposal_sent: { label: 'Proposal Sent', color: 'bg-gray-200 text-gray-700' },
+      won: { label: 'Won', color: 'bg-gray-400 text-gray-900' },
       lost: { label: 'Lost', color: 'bg-red-100 text-red-800' },
       cancelled: { label: 'Cancelled', color: 'bg-gray-100 text-gray-800' }
     }
@@ -664,20 +664,20 @@ CONVERTED FROM LEAD:
   const getUrgencyBadge = (urgency: string) => {
     const urgencyConfig = {
       low: { label: 'Low', color: 'bg-gray-100 text-gray-800' },
-      medium: { label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
-      high: { label: 'High', color: 'bg-orange-100 text-orange-800' },
-      emergency: { label: 'Emergency', color: 'bg-red-100 text-red-800' }
+      medium: { label: 'Medium', color: 'bg-gray-200 text-gray-700' },
+      high: { label: 'High', color: 'bg-gray-400 text-gray-900' },
+      emergency: { label: 'Emergency', color: 'bg-gray-600 text-white' }
     }
     return urgencyConfig[urgency as keyof typeof urgencyConfig] || urgencyConfig.medium
   }
 
   const getServiceTypeBadge = (serviceType: string) => {
     const serviceConfig = {
-      installation: { label: 'Installation', color: 'bg-blue-100 text-blue-800' },
-      maintenance: { label: 'Maintenance', color: 'bg-green-100 text-green-800' },
-      repair: { label: 'Repair', color: 'bg-red-100 text-red-800' },
-      consultation: { label: 'Consultation', color: 'bg-purple-100 text-purple-800' },
-      amc: { label: 'AMC', color: 'bg-orange-100 text-orange-800' }
+      installation: { label: 'Installation', color: 'bg-gray-200 text-gray-700' },
+      maintenance: { label: 'Maintenance', color: 'bg-gray-300 text-gray-800' },
+      repair: { label: 'Repair', color: 'bg-gray-400 text-gray-900' },
+      consultation: { label: 'Consultation', color: 'bg-gray-200 text-gray-700' },
+      amc: { label: 'AMC', color: 'bg-gray-300 text-gray-800' }
     }
     return serviceConfig[serviceType as keyof typeof serviceConfig] || serviceConfig.consultation
   }

@@ -145,11 +145,11 @@ export default function ReportsOverview({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Users className="h-8 w-8 text-blue-600" />
+              <Users className="h-8 w-8 text-gray-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Leads</p>
                 <p className="text-2xl font-bold text-gray-900">{leadStats.total}</p>
-                <p className="text-xs text-green-600">{leadStats.conversionRate}% conversion</p>
+                <p className="text-xs text-gray-600">{leadStats.conversionRate}% conversion</p>
               </div>
             </div>
           </CardContent>
@@ -158,7 +158,7 @@ export default function ReportsOverview({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <ClipboardList className="h-8 w-8 text-purple-600" />
+              <ClipboardList className="h-8 w-8 text-gray-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Active Projects</p>
                 <p className="text-2xl font-bold text-gray-900">{performanceStats.activeProjects}</p>
@@ -171,11 +171,11 @@ export default function ReportsOverview({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <DollarSign className="h-8 w-8 text-green-600" />
+              <DollarSign className="h-8 w-8 text-gray-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Revenue Collected</p>
                 <p className="text-xl font-bold text-gray-900">{formatCurrency(revenueStats.paidAmount)}</p>
-                <p className="text-xs text-orange-600">{formatCurrency(revenueStats.outstandingAmount)} pending</p>
+                <p className="text-xs text-gray-600">{formatCurrency(revenueStats.outstandingAmount)} pending</p>
               </div>
             </div>
           </CardContent>
@@ -184,11 +184,11 @@ export default function ReportsOverview({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Wrench className="h-8 w-8 text-cyan-600" />
+              <Wrench className="h-8 w-8 text-gray-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Installations</p>
                 <p className="text-2xl font-bold text-gray-900">{performanceStats.activeInstallations}</p>
-                <p className="text-xs text-cyan-600">{performanceStats.averageInstallationProgress}% avg progress</p>
+                <p className="text-xs text-gray-600">{performanceStats.averageInstallationProgress}% avg progress</p>
               </div>
             </div>
           </CardContent>
@@ -216,7 +216,7 @@ export default function ReportsOverview({
                     <span>New Leads</span>
                     <div className="flex items-center gap-2">
                       <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: '100%' }}></div>
+                        <div className="bg-gray-600 h-2 rounded-full" style={{ width: '100%' }}></div>
                       </div>
                       <span className="text-sm font-medium">{leadStats.new}</span>
                     </div>
@@ -225,7 +225,7 @@ export default function ReportsOverview({
                     <span>Contacted</span>
                     <div className="flex items-center gap-2">
                       <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${(leadStats.contacted / leadStats.total) * 100}%` }}></div>
+                        <div className="bg-gray-500 h-2 rounded-full" style={{ width: `${(leadStats.contacted / leadStats.total) * 100}%` }}></div>
                       </div>
                       <span className="text-sm font-medium">{leadStats.contacted}</span>
                     </div>
@@ -234,7 +234,7 @@ export default function ReportsOverview({
                     <span>Qualified</span>
                     <div className="flex items-center gap-2">
                       <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${(leadStats.qualified / leadStats.total) * 100}%` }}></div>
+                        <div className="bg-gray-400 h-2 rounded-full" style={{ width: `${(leadStats.qualified / leadStats.total) * 100}%` }}></div>
                       </div>
                       <span className="text-sm font-medium">{leadStats.qualified}</span>
                     </div>
@@ -243,7 +243,7 @@ export default function ReportsOverview({
                     <span>Quote Sent</span>
                     <div className="flex items-center gap-2">
                       <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-orange-600 h-2 rounded-full" style={{ width: `${(leadStats.quoteSent / leadStats.total) * 100}%` }}></div>
+                        <div className="bg-gray-300 h-2 rounded-full" style={{ width: `${(leadStats.quoteSent / leadStats.total) * 100}%` }}></div>
                       </div>
                       <span className="text-sm font-medium">{leadStats.quoteSent}</span>
                     </div>
@@ -252,7 +252,7 @@ export default function ReportsOverview({
                     <span>Won</span>
                     <div className="flex items-center gap-2">
                       <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-600 h-2 rounded-full" style={{ width: `${(leadStats.won / leadStats.total) * 100}%` }}></div>
+                        <div className="bg-gray-600 h-2 rounded-full" style={{ width: `${(leadStats.won / leadStats.total) * 100}%` }}></div>
                       </div>
                       <span className="text-sm font-medium">{leadStats.won}</span>
                     </div>
@@ -273,7 +273,7 @@ export default function ReportsOverview({
                       <div className="flex items-center gap-2">
                         <div className="w-24 bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-cyan-600 h-2 rounded-full" 
+                            className="bg-gray-600 h-2 rounded-full" 
                             style={{ width: `${(count / leadStats.total) * 100}%` }}
                           ></div>
                         </div>
@@ -302,11 +302,11 @@ export default function ReportsOverview({
                   <span>Invoiced</span>
                   <span className="font-bold">{formatCurrency(revenueStats.invoicedAmount)}</span>
                 </div>
-                <div className="flex justify-between text-green-600">
+                <div className="flex justify-between text-gray-600">
                   <span>Collected</span>
                   <span className="font-bold">{formatCurrency(revenueStats.paidAmount)}</span>
                 </div>
-                <div className="flex justify-between text-orange-600">
+                <div className="flex justify-between text-gray-600">
                   <span>Outstanding</span>
                   <span className="font-bold">{formatCurrency(revenueStats.outstandingAmount)}</span>
                 </div>
@@ -327,7 +327,7 @@ export default function ReportsOverview({
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-blue-600 h-2 rounded-full" 
+                            className="bg-gray-600 h-2 rounded-full" 
                             style={{ width: `${percentage}%` }}
                           ></div>
                         </div>
@@ -353,7 +353,7 @@ export default function ReportsOverview({
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-green-600 h-2 rounded-full" 
+                            className="bg-gray-600 h-2 rounded-full" 
                             style={{ width: `${percentage}%` }}
                           ></div>
                         </div>
@@ -383,7 +383,7 @@ export default function ReportsOverview({
                       <div className="flex items-center gap-2">
                         <div className="w-24 bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-purple-600 h-2 rounded-full" 
+                            className="bg-gray-600 h-2 rounded-full" 
                             style={{ width: `${percentage}%` }}
                           ></div>
                         </div>
@@ -409,7 +409,7 @@ export default function ReportsOverview({
                       <div className="flex items-center gap-2">
                         <div className="w-24 bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-cyan-600 h-2 rounded-full" 
+                            className="bg-gray-600 h-2 rounded-full" 
                             style={{ width: `${percentage}%` }}
                           ></div>
                         </div>
@@ -430,19 +430,19 @@ export default function ReportsOverview({
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <TrendingUp className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-blue-600">{leadStats.conversionRate}%</p>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <TrendingUp className="h-8 w-8 text-gray-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-gray-600">{leadStats.conversionRate}%</p>
                   <p className="text-sm text-gray-600">Lead Conversion Rate</p>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <BarChart3 className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-green-600">{performanceStats.averageInstallationProgress}%</p>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <BarChart3 className="h-8 w-8 text-gray-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-gray-600">{performanceStats.averageInstallationProgress}%</p>
                   <p className="text-sm text-gray-600">Avg Installation Progress</p>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <Calendar className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-purple-600">{performanceStats.completedProjects}</p>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <Calendar className="h-8 w-8 text-gray-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-gray-600">{performanceStats.completedProjects}</p>
                   <p className="text-sm text-gray-600">Projects Completed</p>
                 </div>
               </div>

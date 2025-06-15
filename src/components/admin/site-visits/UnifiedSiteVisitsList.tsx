@@ -411,8 +411,7 @@ export default function UnifiedSiteVisitsList({ visits, employee, leads, employe
         onClick={createFormModal.openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Schedule New Visit"
-        gradientFrom="from-blue-500"
-        gradientTo="to-cyan-500"
+        variant="monochrome"
       />
 
       {/* Form Modal */}

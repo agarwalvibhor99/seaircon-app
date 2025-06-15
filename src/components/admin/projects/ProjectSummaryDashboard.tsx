@@ -37,27 +37,27 @@ interface ProjectSummary extends Project {
 
 const statusColors: { [key: string]: string } = {
   draft: 'bg-gray-100 text-gray-800',
-  planning: 'bg-blue-100 text-blue-800',
-  approved: 'bg-green-100 text-green-800',
-  in_progress: 'bg-yellow-100 text-yellow-800',
-  on_hold: 'bg-orange-100 text-orange-800',
-  completed: 'bg-emerald-100 text-emerald-800',
-  cancelled: 'bg-red-100 text-red-800',
-  sent: 'bg-purple-100 text-purple-800',
-  viewed: 'bg-indigo-100 text-indigo-800',
-  rejected: 'bg-red-100 text-red-800',
+  planning: 'bg-gray-200 text-gray-800',
+  approved: 'bg-gray-300 text-gray-800',
+  in_progress: 'bg-gray-400 text-gray-800',
+  on_hold: 'bg-gray-500 text-white',
+  completed: 'bg-gray-600 text-white',
+  cancelled: 'bg-gray-700 text-white',
+  sent: 'bg-gray-300 text-gray-800',
+  viewed: 'bg-gray-400 text-gray-800',
+  rejected: 'bg-gray-500 text-white',
   expired: 'bg-gray-100 text-gray-800',
-  superseded: 'bg-orange-100 text-orange-800',
-  paid: 'bg-green-100 text-green-800',
-  overdue: 'bg-red-100 text-red-800',
-  partial: 'bg-yellow-100 text-yellow-800'
+  superseded: 'bg-gray-600 text-white',
+  paid: 'bg-gray-700 text-white',
+  overdue: 'bg-gray-800 text-white',
+  partial: 'bg-gray-200 text-gray-800'
 }
 
 const priorityColors = {
-  low: 'bg-green-100 text-green-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-orange-100 text-orange-800',
-  urgent: 'bg-red-100 text-red-800'
+  low: 'bg-gray-100 text-gray-800',
+  medium: 'bg-gray-200 text-gray-800',
+  high: 'bg-gray-300 text-gray-800',
+  urgent: 'bg-gray-400 text-gray-800'
 }
 
 export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDashboardProps) {
@@ -105,7 +105,7 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
       </div>
     )
   }
@@ -140,7 +140,7 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
   return (
     <div className="space-y-8">
       {/* Project Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg p-6">
+      <div className="bg-gray-900 text-white rounded-lg p-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -152,7 +152,7 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
                 {project.priority.toUpperCase()} Priority
               </Badge>
             </div>
-            <p className="text-blue-100 mb-4">{project.project_number}</p>
+            <p className="text-gray-200 mb-4">{project.project_number}</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="flex items-center gap-2">
@@ -194,8 +194,8 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <TrendingUp className="h-6 w-6 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Project Value</p>
@@ -208,12 +208,12 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <DollarSign className="h-6 w-6 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Paid</p>
-                <p className="text-2xl font-bold text-green-600">₹{totalPaidAmount.toLocaleString('en-IN')}</p>
+                <p className="text-2xl font-bold text-gray-600">₹{totalPaidAmount.toLocaleString('en-IN')}</p>
               </div>
             </div>
           </CardContent>
@@ -222,12 +222,12 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <Clock className="h-6 w-6 text-orange-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <Clock className="h-6 w-6 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Outstanding</p>
-                <p className="text-2xl font-bold text-orange-600">₹{totalOutstanding.toLocaleString('en-IN')}</p>
+                <p className="text-2xl font-bold text-gray-600">₹{totalOutstanding.toLocaleString('en-IN')}</p>
               </div>
             </div>
           </CardContent>
@@ -236,8 +236,8 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <FileText className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <FileText className="h-6 w-6 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Progress</p>
@@ -258,7 +258,7 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div 
-                className="bg-blue-600 h-3 rounded-full transition-all duration-300" 
+                className="bg-gray-600 h-3 rounded-full transition-all duration-300" 
                 style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
@@ -290,7 +290,7 @@ export default function ProjectSummaryDashboard({ projectId }: ProjectSummaryDas
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-600">Approved</p>
-                  <p className="text-lg font-semibold text-green-600">{approvedQuotes}</p>
+                  <p className="text-lg font-semibold text-gray-600">{approvedQuotes}</p>
                 </div>
                 <div>
                   <p className="text-gray-600">Sent</p>

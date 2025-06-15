@@ -9,28 +9,28 @@ export default function QuickActions() {
       description: 'Create a new consultation request',
       href: '/admin/leads/new',
       icon: '👤',
-      color: 'bg-blue-50 hover:bg-blue-100 border-blue-200'
+      color: 'bg-gray-50 hover:bg-gray-100 border-gray-200'
     },
     {
       title: 'Schedule Site Visit',
       description: 'Book a site assessment',
       href: '/admin/site-visits/schedule',
       icon: '📅',
-      color: 'bg-green-50 hover:bg-green-100 border-green-200'
+      color: 'bg-gray-50 hover:bg-gray-100 border-gray-200'
     },
     {
       title: 'Create Quotation',
       description: 'Generate new quotation',
       href: '/admin/quotations',
       icon: '📄',
-      color: 'bg-yellow-50 hover:bg-yellow-100 border-yellow-200'
+      color: 'bg-gray-50 hover:bg-gray-100 border-gray-200'
     },
     {
       title: 'New Invoice',
       description: 'Create invoice for payment',
       href: '/admin/invoicing',
       icon: '💰',
-      color: 'bg-purple-50 hover:bg-purple-100 border-purple-200'
+      color: 'bg-gray-50 hover:bg-gray-100 border-gray-200'
     }
   ]
 

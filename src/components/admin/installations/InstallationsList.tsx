@@ -7,7 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Wrench, Eye, Edit, Play, Pause, CheckCircle, Calendar, User, Clock, BarChart3, Plus } from 'lucide-react'
-import CreateInstallationFormDialog from './CreateInstallationFormDialog'
+import { useInstallationFormManager } from '@/components/ui/unified-form-manager'
+import { FloatingActionButton } from '@/components/ui/floating-action-button'
+import { SectionHeader, SearchFilterBar } from '@/components/ui/section-header'
+import { getStatusConfig } from '@/lib/design-system'
 
 interface Installation {
   id: string
@@ -25,6 +28,8 @@ interface Installation {
 
 interface InstallationsListProps {
   installations: Installation[]
+  projects?: any[]
+  employees?: any[]
   onRefresh?: () => void
 }
 
@@ -36,11 +41,18 @@ const statusConfig = {
   cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled', icon: Pause }
 }
 
-export default function InstallationsList({ installations, onRefresh }: InstallationsListProps) {
+export default function InstallationsList({ installations, projects = [], employees = [], onRefresh }: InstallationsListProps) {
   const [filteredInstallations, setFilteredInstallations] = useState(installations)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
+
+  // Unified form manager for installations
+  const {
+    openCreateModal,
+    FormModal: CreateInstallationModal
+  } = useInstallationFormManager(projects, employees, () => {
+    onRefresh?.()
+  })
 
   // Filter installations based on search and filters
   const handleFilter = () => {
@@ -283,28 +295,14 @@ export default function InstallationsList({ installations, onRefresh }: Installa
         )}
       </div>
 
-      {/* Create Installation Button */}
-      <div className="fixed bottom-4 right-4">
-        <Button 
-          onClick={() => setShowCreateDialog(true)} 
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-          size="sm"
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          New Installation
-        </Button>
-      </div>
+      {/* Unified Installation Form */}
+      <CreateInstallationModal />
 
-      {/* Create Installation Dialog */}
-      {showCreateDialog && (
-        <CreateInstallationFormDialog 
-          onSuccess={() => {
-            setShowCreateDialog(false)
-            onRefresh?.()
-          }}
-          onCancel={() => setShowCreateDialog(false)}
-        />
-      )}
+      {/* Floating Action Button */}
+      <FloatingActionButton
+        onClick={openCreateModal}
+        variant="monochrome"
+      />
     </div>
   )
 }

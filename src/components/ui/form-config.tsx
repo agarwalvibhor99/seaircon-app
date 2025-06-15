@@ -46,133 +46,133 @@ export interface FormConfig {
 // Common field options
 export const PRIORITY_OPTIONS = [
   { value: 'low', label: 'Low', color: 'bg-gray-100 text-gray-800' },
-  { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-800' },
-  { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-800' }
+  { value: 'medium', label: 'Medium', color: 'bg-gray-200 text-gray-800' },
+  { value: 'high', label: 'High', color: 'bg-gray-400 text-gray-800' },
+  { value: 'urgent', label: 'Urgent', color: 'bg-gray-600 text-white' }
 ]
 
 export const STATUS_OPTIONS = {
   leads: [
-    { value: 'new', label: 'New', color: 'bg-blue-100 text-blue-800' },
-    { value: 'contacted', label: 'Contacted', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'qualified', label: 'Qualified', color: 'bg-green-100 text-green-800' },
-    { value: 'proposal_sent', label: 'Proposal Sent', color: 'bg-purple-100 text-purple-800' },
-    { value: 'negotiation', label: 'Negotiation', color: 'bg-orange-100 text-orange-800' },
-    { value: 'won', label: 'Won', color: 'bg-green-100 text-green-800' },
-    { value: 'lost', label: 'Lost', color: 'bg-red-100 text-red-800' }
+    { value: 'new', label: 'New', color: 'bg-gray-100 text-gray-800' },
+    { value: 'contacted', label: 'Contacted', color: 'bg-gray-200 text-gray-700' },
+    { value: 'qualified', label: 'Qualified', color: 'bg-gray-300 text-gray-800' },
+    { value: 'proposal_sent', label: 'Proposal Sent', color: 'bg-gray-200 text-gray-800' },
+    { value: 'negotiation', label: 'Negotiation', color: 'bg-gray-300 text-gray-800' },
+    { value: 'won', label: 'Won', color: 'bg-gray-300 text-gray-800' },
+    { value: 'lost', label: 'Lost', color: 'bg-gray-400 text-gray-900' }
   ],
   projects: [
     { value: 'draft', label: 'Draft', color: 'bg-gray-100 text-gray-800' },
-    { value: 'planning', label: 'Planning', color: 'bg-blue-100 text-blue-800' },
-    { value: 'approved', label: 'Approved', color: 'bg-cyan-100 text-cyan-800' },
-    { value: 'in_progress', label: 'In Progress', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'on_hold', label: 'On Hold', color: 'bg-orange-100 text-orange-800' },
-    { value: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800' },
-    { value: 'cancelled', label: 'Cancelled', color: 'bg-red-100 text-red-800' }
+    { value: 'planning', label: 'Planning', color: 'bg-gray-200 text-gray-800' },
+    { value: 'approved', label: 'Approved', color: 'bg-gray-300 text-gray-800' },
+    { value: 'in_progress', label: 'In Progress', color: 'bg-gray-200 text-gray-700' },
+    { value: 'on_hold', label: 'On Hold', color: 'bg-gray-300 text-gray-800' },
+    { value: 'completed', label: 'Completed', color: 'bg-gray-400 text-gray-900' },
+    { value: 'cancelled', label: 'Cancelled', color: 'bg-gray-500 text-white' }
   ],
   quotations: [
     { value: 'draft', label: 'Draft', color: 'bg-gray-100 text-gray-800' },
-    { value: 'sent', label: 'Sent', color: 'bg-blue-100 text-blue-800' },
-    { value: 'approved', label: 'Approved', color: 'bg-green-100 text-green-800' },
-    { value: 'rejected', label: 'Rejected', color: 'bg-red-100 text-red-800' },
-    { value: 'expired', label: 'Expired', color: 'bg-orange-100 text-orange-800' }
+    { value: 'sent', label: 'Sent', color: 'bg-gray-200 text-gray-800' },
+    { value: 'approved', label: 'Approved', color: 'bg-gray-300 text-gray-800' },
+    { value: 'rejected', label: 'Rejected', color: 'bg-gray-400 text-gray-900' },
+    { value: 'expired', label: 'Expired', color: 'bg-gray-400 text-gray-800' }
   ],
   invoices: [
     { value: 'draft', label: 'Draft', color: 'bg-gray-100 text-gray-800' },
-    { value: 'sent', label: 'Sent', color: 'bg-blue-100 text-blue-800' },
-    { value: 'paid', label: 'Paid', color: 'bg-green-100 text-green-800' },
-    { value: 'overdue', label: 'Overdue', color: 'bg-red-100 text-red-800' },
+    { value: 'sent', label: 'Sent', color: 'bg-gray-200 text-gray-700' },
+    { value: 'paid', label: 'Paid', color: 'bg-gray-300 text-gray-800' },
+    { value: 'overdue', label: 'Overdue', color: 'bg-gray-400 text-gray-900' },
     { value: 'cancelled', label: 'Cancelled', color: 'bg-gray-100 text-gray-800' }
   ],
   payments: [
-    { value: 'pending', label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800' },
-    { value: 'failed', label: 'Failed', color: 'bg-red-100 text-red-800' },
-    { value: 'refunded', label: 'Refunded', color: 'bg-orange-100 text-orange-800' }
+    { value: 'pending', label: 'Pending', color: 'bg-gray-200 text-gray-700' },
+    { value: 'completed', label: 'Completed', color: 'bg-gray-300 text-gray-800' },
+    { value: 'failed', label: 'Failed', color: 'bg-gray-400 text-gray-900' },
+    { value: 'refunded', label: 'Refunded', color: 'bg-gray-300 text-gray-800' }
   ],
   sitevisits: [
-    { value: 'scheduled', label: 'Scheduled', color: 'bg-blue-100 text-blue-800' },
-    { value: 'in_progress', label: 'In Progress', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800' },
-    { value: 'cancelled', label: 'Cancelled', color: 'bg-red-100 text-red-800' }
+    { value: 'scheduled', label: 'Scheduled', color: 'bg-gray-200 text-gray-700' },
+    { value: 'in_progress', label: 'In Progress', color: 'bg-gray-300 text-gray-800' },
+    { value: 'completed', label: 'Completed', color: 'bg-gray-400 text-gray-900' },
+    { value: 'cancelled', label: 'Cancelled', color: 'bg-gray-500 text-white' }
   ],
   installations: [
-    { value: 'scheduled', label: 'Scheduled', color: 'bg-blue-100 text-blue-800' },
-    { value: 'in_progress', label: 'In Progress', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800' },
-    { value: 'on_hold', label: 'On Hold', color: 'bg-orange-100 text-orange-800' }
+    { value: 'scheduled', label: 'Scheduled', color: 'bg-gray-200 text-gray-700' },
+    { value: 'in_progress', label: 'In Progress', color: 'bg-gray-300 text-gray-800' },
+    { value: 'completed', label: 'Completed', color: 'bg-gray-400 text-gray-900' },
+    { value: 'on_hold', label: 'On Hold', color: 'bg-gray-300 text-gray-800' }
   ],
   amc: [
-    { value: 'active', label: 'Active', color: 'bg-green-100 text-green-800' },
-    { value: 'expired', label: 'Expired', color: 'bg-red-100 text-red-800' },
-    { value: 'suspended', label: 'Suspended', color: 'bg-orange-100 text-orange-800' }
+    { value: 'active', label: 'Active', color: 'bg-gray-200 text-gray-700' },
+    { value: 'expired', label: 'Expired', color: 'bg-gray-400 text-gray-900' },
+    { value: 'suspended', label: 'Suspended', color: 'bg-gray-300 text-gray-800' }
   ],
   employees: [
-    { value: 'active', label: 'Active', color: 'bg-green-100 text-green-800' },
+    { value: 'active', label: 'Active', color: 'bg-gray-200 text-gray-700' },
     { value: 'inactive', label: 'Inactive', color: 'bg-gray-100 text-gray-800' },
-    { value: 'on_leave', label: 'On Leave', color: 'bg-orange-100 text-orange-800' }
+    { value: 'on_leave', label: 'On Leave', color: 'bg-gray-300 text-gray-800' }
   ]
 }
 
 export const SERVICE_TYPE_OPTIONS = [
-  { value: 'installation', label: 'Installation', color: 'bg-blue-100 text-blue-800' },
-  { value: 'maintenance', label: 'Maintenance', color: 'bg-green-100 text-green-800' },
-  { value: 'repair', label: 'Repair', color: 'bg-red-100 text-red-800' },
-  { value: 'consultation', label: 'Consultation', color: 'bg-purple-100 text-purple-800' },
-  { value: 'amc', label: 'AMC', color: 'bg-orange-100 text-orange-800' }
+  { value: 'installation', label: 'Installation', color: 'bg-gray-200 text-gray-800' },
+  { value: 'maintenance', label: 'Maintenance', color: 'bg-gray-300 text-gray-800' },
+  { value: 'repair', label: 'Repair', color: 'bg-gray-400 text-gray-900' },
+  { value: 'consultation', label: 'Consultation', color: 'bg-gray-300 text-gray-800' },
+  { value: 'amc', label: 'AMC', color: 'bg-gray-400 text-gray-800' }
 ]
 
 export const PROPERTY_TYPE_OPTIONS = [
-  { value: 'residential', label: 'Residential', color: 'bg-blue-100 text-blue-800' },
-  { value: 'commercial', label: 'Commercial', color: 'bg-green-100 text-green-800' },
-  { value: 'industrial', label: 'Industrial', color: 'bg-orange-100 text-orange-800' }
+  { value: 'residential', label: 'Residential', color: 'bg-gray-200 text-gray-800' },
+  { value: 'commercial', label: 'Commercial', color: 'bg-gray-300 text-gray-800' },
+  { value: 'industrial', label: 'Industrial', color: 'bg-gray-300 text-gray-800' }
 ]
 
 export const CONTACT_METHOD_OPTIONS = [
-  { value: 'phone', label: 'Phone', color: 'bg-blue-100 text-blue-800' },
-  { value: 'email', label: 'Email', color: 'bg-green-100 text-green-800' },
-  { value: 'whatsapp', label: 'WhatsApp', color: 'bg-emerald-100 text-emerald-800' }
+  { value: 'phone', label: 'Phone', color: 'bg-gray-200 text-gray-700' },
+  { value: 'email', label: 'Email', color: 'bg-gray-300 text-gray-800' },
+  { value: 'whatsapp', label: 'WhatsApp', color: 'bg-gray-200 text-gray-700' }
 ]
 
 export const LEAD_SOURCE_OPTIONS = [
-  { value: 'website', label: 'Website', color: 'bg-blue-100 text-blue-800' },
-  { value: 'referral', label: 'Referral', color: 'bg-green-100 text-green-800' },
-  { value: 'advertisement', label: 'Advertisement', color: 'bg-purple-100 text-purple-800' },
-  { value: 'cold_call', label: 'Cold Call', color: 'bg-orange-100 text-orange-800' },
-  { value: 'walk_in', label: 'Walk-in', color: 'bg-cyan-100 text-cyan-800' },
+  { value: 'website', label: 'Website', color: 'bg-gray-200 text-gray-800' },
+  { value: 'referral', label: 'Referral', color: 'bg-gray-300 text-gray-800' },
+  { value: 'advertisement', label: 'Advertisement', color: 'bg-gray-300 text-gray-800' },
+  { value: 'cold_call', label: 'Cold Call', color: 'bg-gray-400 text-gray-800' },
+  { value: 'walk_in', label: 'Walk-in', color: 'bg-gray-300 text-gray-800' },
   { value: 'other', label: 'Other', color: 'bg-gray-100 text-gray-800' }
 ]
 
 export const DEPARTMENT_OPTIONS = [
-  { value: 'management', label: 'Management', color: 'bg-indigo-100 text-indigo-800' },
-  { value: 'sales', label: 'Sales', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'technical', label: 'Technical', color: 'bg-green-100 text-green-800' },
-  { value: 'operations', label: 'Operations', color: 'bg-blue-100 text-blue-800' },
-  { value: 'accounts', label: 'Accounts', color: 'bg-purple-100 text-purple-800' }
+  { value: 'management', label: 'Management', color: 'bg-gray-400 text-gray-800' },
+  { value: 'sales', label: 'Sales', color: 'bg-gray-200 text-gray-800' },
+  { value: 'technical', label: 'Technical', color: 'bg-gray-300 text-gray-800' },
+  { value: 'operations', label: 'Operations', color: 'bg-gray-200 text-gray-800' },
+  { value: 'accounts', label: 'Accounts', color: 'bg-gray-300 text-gray-800' }
 ]
 
 export const ROLE_OPTIONS = [
-  { value: 'admin', label: 'Admin', color: 'bg-red-100 text-red-800' },
-  { value: 'manager', label: 'Manager', color: 'bg-blue-100 text-blue-800' },
-  { value: 'employee', label: 'Employee', color: 'bg-green-100 text-green-800' },
-  { value: 'technician', label: 'Technician', color: 'bg-orange-100 text-orange-800' }
+  { value: 'admin', label: 'Admin', color: 'bg-gray-400 text-gray-900' },
+  { value: 'manager', label: 'Manager', color: 'bg-gray-300 text-gray-800' },
+  { value: 'employee', label: 'Employee', color: 'bg-gray-200 text-gray-700' },
+  { value: 'technician', label: 'Technician', color: 'bg-gray-200 text-gray-800' }
 ]
 
 export const PAYMENT_METHOD_OPTIONS = [
-  { value: 'cash', label: 'Cash', color: 'bg-green-100 text-green-800' },
-  { value: 'bank_transfer', label: 'Bank Transfer', color: 'bg-blue-100 text-blue-800' },
-  { value: 'upi', label: 'UPI', color: 'bg-purple-100 text-purple-800' },
-  { value: 'credit_card', label: 'Credit Card', color: 'bg-orange-100 text-orange-800' },
-  { value: 'debit_card', label: 'Debit Card', color: 'bg-cyan-100 text-cyan-800' },
-  { value: 'cheque', label: 'Cheque', color: 'bg-yellow-100 text-yellow-800' }
+  { value: 'cash', label: 'Cash', color: 'bg-gray-200 text-gray-700' },
+  { value: 'bank_transfer', label: 'Bank Transfer', color: 'bg-gray-200 text-gray-800' },
+  { value: 'upi', label: 'UPI', color: 'bg-gray-300 text-gray-800' },
+  { value: 'credit_card', label: 'Credit Card', color: 'bg-gray-400 text-gray-800' },
+  { value: 'debit_card', label: 'Debit Card', color: 'bg-gray-300 text-gray-800' },
+  { value: 'cheque', label: 'Cheque', color: 'bg-gray-200 text-gray-700' }
 ]
 
 export const VISIT_TYPE_OPTIONS = [
-  { value: 'consultation', label: 'Consultation', color: 'bg-purple-100 text-purple-800' },
-  { value: 'installation', label: 'Installation', color: 'bg-blue-100 text-blue-800' },
-  { value: 'maintenance', label: 'Maintenance', color: 'bg-green-100 text-green-800' },
-  { value: 'repair', label: 'Repair', color: 'bg-red-100 text-red-800' },
-  { value: 'inspection', label: 'Inspection', color: 'bg-orange-100 text-orange-800' }
+  { value: 'consultation', label: 'Consultation', color: 'bg-gray-300 text-gray-800' },
+  { value: 'installation', label: 'Installation', color: 'bg-gray-200 text-gray-800' },
+  { value: 'maintenance', label: 'Maintenance', color: 'bg-gray-300 text-gray-800' },
+  { value: 'repair', label: 'Repair', color: 'bg-gray-400 text-gray-900' },
+  { value: 'inspection', label: 'Inspection', color: 'bg-gray-400 text-gray-800' }
 ]
 
 // Form configuration generators
@@ -239,9 +239,9 @@ export const getLeadFormConfig = (): FormConfig => ({
           required: true,
           options: [
             { value: 'low', label: 'Low', color: 'bg-gray-100 text-gray-800' },
-            { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
-            { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-800' },
-            { value: 'emergency', label: 'Emergency', color: 'bg-red-100 text-red-800' }
+            { value: 'medium', label: 'Medium', color: 'bg-gray-200 text-gray-700' },
+            { value: 'high', label: 'High', color: 'bg-gray-400 text-gray-900' },
+            { value: 'emergency', label: 'Emergency', color: 'bg-gray-600 text-white' }
           ],
           showBadges: true,
           icon: <AlertCircle className="h-4 w-4" />
@@ -759,9 +759,9 @@ export const getAMCFormConfig = (customers: any[] = [], employees: any[] = []): 
           type: 'select',
           required: true,
           options: [
-            { value: 'comprehensive', label: 'Comprehensive', color: 'bg-green-100 text-green-800' },
-            { value: 'preventive', label: 'Preventive', color: 'bg-blue-100 text-blue-800' },
-            { value: 'breakdown', label: 'Breakdown', color: 'bg-orange-100 text-orange-800' }
+            { value: 'comprehensive', label: 'Comprehensive', color: 'bg-gray-300 text-gray-800' },
+            { value: 'preventive', label: 'Preventive', color: 'bg-gray-200 text-gray-700' },
+            { value: 'breakdown', label: 'Breakdown', color: 'bg-gray-400 text-gray-900' }
           ],
           showBadges: true
         },

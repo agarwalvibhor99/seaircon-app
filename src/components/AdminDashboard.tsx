@@ -125,13 +125,13 @@ export default function AdminDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'new': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'contacted': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'qualified': return 'bg-purple-100 text-purple-800 border-purple-200'
-      case 'quote_sent': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'follow_up': return 'bg-cyan-100 text-cyan-800 border-cyan-200'
-      case 'won': return 'bg-green-100 text-green-800 border-green-200'
-      case 'lost': return 'bg-red-100 text-red-800 border-red-200'
+      case 'new': return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'contacted': return 'bg-gray-200 text-gray-700 border-gray-300'
+      case 'qualified': return 'bg-gray-300 text-gray-800 border-gray-400'
+      case 'quote_sent': return 'bg-gray-400 text-gray-900 border-gray-500'
+      case 'follow_up': return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'won': return 'bg-gray-200 text-gray-800 border-gray-300'
+      case 'lost': return 'bg-gray-300 text-gray-800 border-gray-400'
       case 'cancelled': return 'bg-gray-100 text-gray-800 border-gray-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
@@ -139,20 +139,20 @@ export default function AdminDashboard() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800 border-red-200'
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'low': return 'bg-green-100 text-green-800 border-green-200'
+      case 'urgent': return 'bg-gray-600 text-white border-gray-700'
+      case 'high': return 'bg-gray-400 text-gray-900 border-gray-500'
+      case 'medium': return 'bg-gray-200 text-gray-700 border-gray-300'
+      case 'low': return 'bg-gray-100 text-gray-600 border-gray-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }
 
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
-      case 'emergency': return 'bg-red-100 text-red-800 border-red-200'
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'low': return 'bg-green-100 text-green-800 border-green-200'
+      case 'emergency': return 'bg-gray-600 text-white border-gray-700'
+      case 'high': return 'bg-gray-400 text-gray-900 border-gray-500'
+      case 'medium': return 'bg-gray-200 text-gray-700 border-gray-300'
+      case 'low': return 'bg-gray-100 text-gray-600 border-gray-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }
@@ -178,7 +178,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex items-center space-x-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
           <span className="text-gray-600">Verifying authentication...</span>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function AdminDashboard() {
             <div className="text-right">
               <p className="text-sm font-medium text-gray-900">{user.name}</p>
               <p className="text-xs text-gray-500">{user.email}</p>
-              <p className="text-xs text-blue-600 capitalize">{user.role}</p>
+              <p className="text-xs text-gray-600 capitalize">{user.role}</p>
             </div>
           )}
           <Button 
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
                     <p className="text-sm font-medium text-gray-900">{user.name}</p>
                     <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
-                  <div className="w-9 h-9 bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center shadow-lg">
                     <span className="text-sm font-semibold text-white">
                       {user.name.charAt(0).toUpperCase()}
                     </span>
@@ -308,14 +308,14 @@ export default function AdminDashboard() {
                   <h2 className="text-3xl font-bold mb-2 leading-tight">
                     Welcome back, {user?.name}! 👋
                   </h2>
-                  <p className="text-blue-100 text-base mb-4 opacity-90">
+                  <p className="text-gray-100 text-base mb-4 opacity-90">
                     Here's what's happening with your CRM today
                   </p>
                   
                   <div className="flex flex-wrap gap-3">
                     <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
                       <div className="flex items-center space-x-2">
-                        <Calendar className="h-4 w-4 text-blue-100" />
+                        <Calendar className="h-4 w-4 text-gray-100" />
                         <span className="text-xs font-medium">
                           {new Date().toLocaleDateString('en-US', { 
                             weekday: 'short', 
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
                       <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-orange-200" />
+                        <Clock className="h-4 w-4 text-gray-200" />
                         <span className="text-xs font-medium">
                           {followUps.length} follow-ups
                         </span>
@@ -336,7 +336,7 @@ export default function AdminDashboard() {
                     {stats && (
                       <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
                         <div className="flex items-center space-x-2">
-                          <TrendingUp className="h-4 w-4 text-green-200" />
+                          <TrendingUp className="h-4 w-4 text-gray-400" />
                           <span className="text-xs font-medium">
                             {stats.totalRequests} requests
                           </span>
@@ -357,7 +357,7 @@ export default function AdminDashboard() {
                     Reports
                   </Button>
                   <Button 
-                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-white text-gray-600 hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all duration-200"
                     size="sm"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
                   {stats.totalRequests}
                 </div>
                 <p className="text-xs text-gray-500 flex items-center">
-                  <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
+                  <TrendingUp className="h-3 w-3 mr-1 text-gray-500" />
                   All consultation requests
                 </p>
               </CardContent>
@@ -401,11 +401,11 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-2xl font-bold text-cyan-600 mb-1">
+                <div className="text-2xl font-bold text-gray-900 mb-1">
                   {stats.statusStats.new || 0}
                 </div>
                 <p className="text-xs text-gray-500 flex items-center">
-                  <Activity className="h-3 w-3 mr-1 text-cyan-500" />
+                  <Activity className="h-3 w-3 mr-1 text-gray-500" />
                   Awaiting first contact
                 </p>
               </CardContent>
@@ -416,16 +416,16 @@ export default function AdminDashboard() {
                 <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
                   Emergency
                 </CardTitle>
-                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                <div className="w-8 h-8 bg-gray-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <AlertCircle className="h-4 w-4 text-white" />
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-2xl font-bold text-red-600 mb-1">
+                <div className="text-2xl font-bold text-gray-800 mb-1">
                   {stats.urgencyStats.emergency || 0}
                 </div>
                 <p className="text-xs text-gray-500 flex items-center">
-                  <Clock className="h-3 w-3 mr-1 text-red-500" />
+                  <Clock className="h-3 w-3 mr-1 text-gray-500" />
                   Urgent attention required
                 </p>
               </CardContent>
@@ -441,11 +441,11 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-2xl font-bold text-orange-600 mb-1">
+                <div className="text-2xl font-bold text-gray-600 mb-1">
                   {followUps.length}
                 </div>
                 <p className="text-xs text-gray-500 flex items-center">
-                  <Calendar className="h-3 w-3 mr-1 text-orange-500" />
+                  <Calendar className="h-3 w-3 mr-1 text-gray-500" />
                   Due this week
                 </p>
               </CardContent>
@@ -480,7 +480,7 @@ export default function AdminDashboard() {
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base font-semibold text-gray-900 flex items-center">
-                  <Search className="h-4 w-4 mr-2 text-blue-600" />
+                  <Search className="h-4 w-4 mr-2 text-gray-600" />
                   Filters & Search
                 </CardTitle>
                 <CardDescription className="text-gray-600 text-sm">
@@ -496,13 +496,13 @@ export default function AdminDashboard() {
                         placeholder="Search by name, email, company, or phone..."
                         value={searchTerm}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                        className="pl-10 bg-white/80 border-gray-200/60 focus:border-blue-500/60 focus:ring-blue-500/20 transition-all duration-200"
+                        className="pl-10 bg-white/80 border-gray-200/60 focus:border-gray-500/60 focus:ring-gray-500/20 transition-all duration-200"
                       />
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-full sm:w-[180px] bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200">
+                      <SelectTrigger className="w-full sm:w-[180px] bg-white border-gray-200 focus:border-gray-500 focus:ring-gray-200">
                         <SelectValue placeholder="Filter by status" />
                       </SelectTrigger>
                       <SelectContent className="bg-white border-gray-200">
@@ -518,7 +518,7 @@ export default function AdminDashboard() {
                       </SelectContent>
                     </Select>
                     <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                      <SelectTrigger className="w-full sm:w-[180px] bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200">
+                      <SelectTrigger className="w-full sm:w-[180px] bg-white border-gray-200 focus:border-gray-500 focus:ring-gray-200">
                         <SelectValue placeholder="Filter by priority" />
                       </SelectTrigger>
                       <SelectContent className="bg-white border-gray-200">
@@ -541,7 +541,7 @@ export default function AdminDashboard() {
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
-                        <CardTitle className="text-lg text-gray-900 group-hover:text-blue-600 transition-colors">
+                        <CardTitle className="text-lg text-gray-900 group-hover:text-gray-600 transition-colors">
                           {request.full_name}
                         </CardTitle>
                         <CardDescription className="text-gray-600 text-sm">
@@ -574,18 +574,18 @@ export default function AdminDashboard() {
                       <div className="space-y-2">
                         <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Contact</h4>
                         <div className="flex items-center gap-2 text-sm">
-                          <div className="w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
-                            <Mail className="w-3 h-3 text-blue-600" />
+                          <div className="w-6 h-6 bg-gray-100 rounded-md flex items-center justify-center">
+                            <Mail className="w-3 h-3 text-gray-600" />
                           </div>
-                          <a href={`mailto:${request.email}`} className="text-blue-600 hover:text-blue-700 hover:underline font-medium transition-colors truncate">
+                          <a href={`mailto:${request.email}`} className="text-gray-600 hover:text-gray-700 hover:underline font-medium transition-colors truncate">
                             {request.email}
                           </a>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <div className="w-6 h-6 bg-green-100 rounded-md flex items-center justify-center">
-                            <Phone className="w-3 h-3 text-green-600" />
+                          <div className="w-6 h-6 bg-gray-100 rounded-md flex items-center justify-center">
+                            <Phone className="w-3 h-3 text-gray-600" />
                           </div>
-                          <a href={`tel:${request.phone}`} className="text-green-600 hover:text-green-700 hover:underline font-medium transition-colors">
+                          <a href={`tel:${request.phone}`} className="text-gray-600 hover:text-gray-700 hover:underline font-medium transition-colors">
                             {request.phone}
                           </a>
                         </div>
@@ -602,7 +602,7 @@ export default function AdminDashboard() {
                         {request.property_type && (
                           <div className="flex items-center gap-2 text-sm">
                             <span className="font-medium text-gray-700">Property:</span> 
-                            <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-md text-xs font-medium">
+                            <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded-md text-xs font-medium">
                               {request.property_type}
                             </span>
                           </div>
@@ -610,7 +610,7 @@ export default function AdminDashboard() {
                         {request.project_size && (
                           <div className="flex items-center gap-2 text-sm">
                             <span className="font-medium text-gray-700">Size:</span> 
-                            <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-md text-xs font-medium">
+                            <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded-md text-xs font-medium">
                               {request.project_size}
                             </span>
                           </div>
@@ -618,7 +618,7 @@ export default function AdminDashboard() {
                         {request.budget_range && (
                           <div className="flex items-center gap-2 text-sm">
                             <span className="font-medium text-gray-700">Budget:</span> 
-                            <span className="bg-green-50 text-green-700 px-2 py-1 rounded-md text-xs font-medium">
+                            <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded-md text-xs font-medium">
                               {request.budget_range}
                             </span>
                           </div>
@@ -639,8 +639,8 @@ export default function AdminDashboard() {
                           <div className="text-sm">
                             <span className="font-medium text-gray-700">Next Follow-up:</span>
                             <div className="mt-1 flex items-center gap-2">
-                              <Clock className="h-4 w-4 text-orange-500" />
-                              <span className="text-orange-600 font-medium">
+                              <Clock className="h-4 w-4 text-gray-500" />
+                              <span className="text-gray-600 font-medium">
                                 {formatDate(request.next_follow_up)}
                               </span>
                             </div>
@@ -655,21 +655,21 @@ export default function AdminDashboard() {
                           Source: {request.source}
                         </Badge>
                         {request.assigned_to && (
-                          <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700">
+                          <Badge variant="outline" className="text-xs bg-gray-50 border-gray-200 text-gray-700">
                             Assigned: {request.assigned_to}
                           </Badge>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200">
+                        <Button variant="outline" size="sm" className="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 transition-all duration-200">
                           <Eye className="w-4 h-4 mr-1" />
                           View
                         </Button>
-                        <Button variant="outline" size="sm" className="hover:bg-green-50 hover:border-green-300 hover:text-green-700 transition-all duration-200">
+                        <Button variant="outline" size="sm" className="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 transition-all duration-200">
                           <MessageSquare className="w-4 h-4 mr-1" />
                           Contact
                         </Button>
-                        <Button variant="outline" size="sm" className="hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700 transition-all duration-200">
+                        <Button variant="outline" size="sm" className="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 transition-all duration-200">
                           <Edit className="w-4 h-4 mr-1" />
                           Edit
                         </Button>
@@ -720,7 +720,7 @@ export default function AdminDashboard() {
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-                  <Clock className="h-5 w-5 mr-2 text-orange-600" />
+                  <Clock className="h-5 w-5 mr-2 text-gray-600" />
                   Upcoming Follow-ups
                 </CardTitle>
                 <CardDescription className="text-gray-600">
@@ -730,8 +730,8 @@ export default function AdminDashboard() {
               <CardContent>
                 {followUps.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-gradient-to-r from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <CheckCircle className="w-10 h-10 text-green-500" />
+                    <div className="w-20 h-20 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <CheckCircle className="w-10 h-10 text-gray-500" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-3">All caught up! 🎉</h3>
                     <p className="text-gray-600 max-w-md mx-auto">
@@ -741,20 +741,20 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="space-y-4">
                     {followUps.map((request) => (
-                      <div key={request.id} className="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200/60 rounded-xl p-6 hover:shadow-lg transition-all duration-300">
+                      <div key={request.id} className="bg-gray-50 border border-gray-200/60 rounded-xl p-6 hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <h4 className="text-lg font-semibold text-gray-900 mb-2">{request.full_name}</h4>
                             <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                               <div className="flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-blue-500" />
-                                <a href={`mailto:${request.email}`} className="text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                                <Mail className="w-4 h-4 text-gray-500" />
+                                <a href={`mailto:${request.email}`} className="text-gray-600 hover:text-gray-700 hover:underline font-medium">
                                   {request.email}
                                 </a>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-green-500" />
-                                <a href={`tel:${request.phone}`} className="text-green-600 hover:text-green-700 hover:underline font-medium">
+                                <Phone className="w-4 h-4 text-gray-500" />
+                                <a href={`tel:${request.phone}`} className="text-gray-600 hover:text-gray-700 hover:underline font-medium">
                                   {request.phone}
                                 </a>
                               </div>
@@ -772,7 +772,7 @@ export default function AdminDashboard() {
                             </Badge>
                             <Button 
                               size="sm" 
-                              className="bg-gradient-to-r from-orange-500 to-yellow-600 hover:from-orange-600 hover:to-yellow-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                              className="bg-gray-800 hover:bg-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                             >
                               <MessageSquare className="w-4 h-4 mr-2" />
                               Follow Up

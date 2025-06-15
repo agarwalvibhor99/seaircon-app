@@ -446,8 +446,7 @@ export default function UnifiedPaymentsList({ payments, employee, invoices }: Un
         onClick={createFormModal.openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Record New Payment"
-        gradientFrom="from-green-500"
-        gradientTo="to-emerald-500"
+        variant="monochrome"
       />
 
       {/* Form Modal */}

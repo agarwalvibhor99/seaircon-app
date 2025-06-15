@@ -90,11 +90,11 @@ export default function CustomerJourney({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="h-5 w-5 text-green-600" />
+        return <CheckCircle className="h-5 w-5 text-gray-600" />
       case 'current':
-        return <Clock className="h-5 w-5 text-blue-600" />
+        return <Clock className="h-5 w-5 text-gray-600" />
       case 'blocked':
-        return <AlertCircle className="h-5 w-5 text-red-600" />
+        return <AlertCircle className="h-5 w-5 text-gray-600" />
       default:
         return <Clock className="h-5 w-5 text-gray-400" />
     }
@@ -103,11 +103,11 @@ export default function CustomerJourney({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 border-green-300'
+        return 'bg-gray-200 border-gray-300'
       case 'current':
-        return 'bg-blue-100 border-blue-300'
+        return 'bg-gray-300 border-gray-400'
       case 'blocked':
-        return 'bg-red-100 border-red-300'
+        return 'bg-gray-400 border-gray-500'
       default:
         return 'bg-gray-100 border-gray-300'
     }

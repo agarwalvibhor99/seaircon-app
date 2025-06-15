@@ -118,7 +118,7 @@ export function FormActions({
         type={onSubmit ? 'button' : 'submit'}
         onClick={onSubmit}
         disabled={isSubmitting || disabled}
-        className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg order-1 sm:order-2"
+        className="flex-1 bg-gray-900 hover:bg-gray-800 text-white shadow-lg order-1 sm:order-2"
       >
         {isSubmitting ? (
           <div className="flex items-center gap-2">

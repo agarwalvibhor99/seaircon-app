@@ -423,8 +423,7 @@ export default function UnifiedAMCList({ contracts, employee, customers, employe
         onClick={createFormModal.openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Create New Contract"
-        gradientFrom="from-emerald-500"
-        gradientTo="to-teal-500"
+        variant="monochrome"
       />
 
       {/* Form Modal */}

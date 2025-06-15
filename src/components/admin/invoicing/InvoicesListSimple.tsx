@@ -10,7 +10,9 @@ import { FileText, Eye, Edit, Download, Send, CheckCircle, Clock, AlertTriangle,
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { notify } from "@/lib/toast"
-import CreateInvoiceFormDialog from './CreateInvoiceFormDialog'
+import { useInvoiceFormManager } from '@/components/ui/unified-form-manager'
+import { FloatingActionButton } from '@/components/ui/floating-action-button'
+import { SectionHeader, SearchFilterBar } from '@/components/ui/section-header'
 
 interface Invoice {
   id: string
@@ -29,6 +31,8 @@ interface Invoice {
 
 interface InvoicesListSimpleProps {
   invoices: Invoice[]
+  projects?: any[]
+  customers?: any[]
 }
 
 const statusConfig = {
@@ -39,14 +43,21 @@ const statusConfig = {
   cancelled: { color: 'bg-gray-100 text-gray-800', label: 'Cancelled', icon: Clock }
 }
 
-export default function InvoicesListSimple({ invoices: initialInvoices }: InvoicesListSimpleProps) {
+export default function InvoicesListSimple({ invoices: initialInvoices, projects = [], customers = [] }: InvoicesListSimpleProps) {
   const [invoices, setInvoices] = useState(initialInvoices)
   const [filteredInvoices, setFilteredInvoices] = useState(initialInvoices)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
   const router = useRouter()
+
+  // Unified form manager for invoices
+  const {
+    openCreateModal,
+    FormModal: CreateInvoiceModal
+  } = useInvoiceFormManager(projects, customers, () => {
+    window.location.reload()
+  })
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -285,32 +296,14 @@ export default function InvoicesListSimple({ invoices: initialInvoices }: Invoic
         )}
       </div>
 
-      {/* Create Invoice Dialog */}
-      {showCreateDialog && (
-        <CreateInvoiceFormDialog
-          employee={{} as any} // Will need proper employee data
-          projects={[]}
-          customers={[]}
-          quotations={[]}
-          onSuccess={() => {
-            setShowCreateDialog(false)
-            // Refresh invoices
-            router.refresh()
-          }}
-          onCancel={() => setShowCreateDialog(false)}
-        />
-      )}
+      {/* Unified Invoice Form */}
+      <CreateInvoiceModal />
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <button
-          onClick={() => setShowCreateDialog(true)}
-          className="flex items-center justify-center w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-          title="Create New Invoice"
-        >
-          <Plus className="h-6 w-6" />
-        </button>
-      </div>
+      <FloatingActionButton
+        onClick={openCreateModal}
+        variant="monochrome"
+      />
     </div>
   )
 }

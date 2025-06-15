@@ -21,8 +21,8 @@ export function LeadsFormModal(props: ModuleFormModalProps) {
     <FormModal
       {...props}
       icon={<User className="h-6 w-6" />}
-      gradientFrom="from-cyan-500"
-      gradientTo="to-blue-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
     />
   )
 }
@@ -57,8 +57,8 @@ export function InvoicesFormModal(props: ModuleFormModalProps) {
     <FormModal
       {...props}
       icon={<Receipt className="h-6 w-6" />}
-      gradientFrom="from-blue-500"
-      gradientTo="to-cyan-500"
+      gradientFrom="from-gray-800"
+      gradientTo="to-gray-600"
     />
   )
 }

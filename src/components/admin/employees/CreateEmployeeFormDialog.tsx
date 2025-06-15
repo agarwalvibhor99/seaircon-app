@@ -200,34 +200,34 @@ export default function CreateEmployeeFormDialog({
   }
 
   const ROLES = [
-    { value: 'admin', label: 'Administrator', color: 'bg-red-100 text-red-800' },
-    { value: 'manager', label: 'Manager', color: 'bg-purple-100 text-purple-800' },
-    { value: 'team_lead', label: 'Team Lead', color: 'bg-indigo-100 text-indigo-800' },
-    { value: 'employee', label: 'Employee', color: 'bg-blue-100 text-blue-800' },
-    { value: 'technician', label: 'Technician', color: 'bg-green-100 text-green-800' },
-    { value: 'engineer', label: 'Engineer', color: 'bg-teal-100 text-teal-800' }
+    { value: 'admin', label: 'Administrator', color: 'bg-gray-100 text-gray-800' },
+    { value: 'manager', label: 'Manager', color: 'bg-gray-200 text-gray-800' },
+    { value: 'team_lead', label: 'Team Lead', color: 'bg-gray-300 text-gray-800' },
+    { value: 'employee', label: 'Employee', color: 'bg-gray-400 text-gray-800' },
+    { value: 'technician', label: 'Technician', color: 'bg-gray-500 text-white' },
+    { value: 'engineer', label: 'Engineer', color: 'bg-gray-600 text-white' }
   ]
 
   const DEPARTMENTS = [
-    { value: 'management', label: 'Management', color: 'bg-indigo-100 text-indigo-800' },
-    { value: 'sales', label: 'Sales', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'technical', label: 'Technical', color: 'bg-green-100 text-green-800' },
-    { value: 'operations', label: 'Operations', color: 'bg-blue-100 text-blue-800' },
-    { value: 'accounts', label: 'Accounts', color: 'bg-purple-100 text-purple-800' },
-    { value: 'hr', label: 'Human Resources', color: 'bg-pink-100 text-pink-800' }
+    { value: 'management', label: 'Management', color: 'bg-gray-100 text-gray-800' },
+    { value: 'sales', label: 'Sales', color: 'bg-gray-200 text-gray-800' },
+    { value: 'technical', label: 'Technical', color: 'bg-gray-300 text-gray-800' },
+    { value: 'operations', label: 'Operations', color: 'bg-gray-400 text-gray-800' },
+    { value: 'accounts', label: 'Accounts', color: 'bg-gray-500 text-white' },
+    { value: 'hr', label: 'Human Resources', color: 'bg-gray-600 text-white' }
   ]
 
   const STATUS_OPTIONS = [
-    { value: 'active', label: 'Active', color: 'bg-green-100 text-green-800' },
-    { value: 'inactive', label: 'Inactive', color: 'bg-gray-100 text-gray-800' },
-    { value: 'on_leave', label: 'On Leave', color: 'bg-orange-100 text-orange-800' }
+    { value: 'active', label: 'Active', color: 'bg-gray-100 text-gray-800' },
+    { value: 'inactive', label: 'Inactive', color: 'bg-gray-400 text-gray-800' },
+    { value: 'on_leave', label: 'On Leave', color: 'bg-gray-300 text-gray-800' }
   ]
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-t-lg">
+        <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <User className="h-5 w-5" />
             Basic Information
@@ -500,7 +500,7 @@ export default function CreateEmployeeFormDialog({
         <Button 
           type="submit" 
           disabled={loading}
-          className="bg-cyan-600 hover:bg-cyan-700"
+          className="bg-gray-900 hover:bg-gray-800 text-white"
         >
           {loading ? (
             <>

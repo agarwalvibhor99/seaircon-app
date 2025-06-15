@@ -138,30 +138,30 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
 
   const getDepartmentBadge = (department: string) => {
     const departmentConfig = {
-      management: { label: 'Management', color: 'bg-indigo-100 text-indigo-800' },
-      sales: { label: 'Sales', color: 'bg-yellow-100 text-yellow-800' },
-      technical: { label: 'Technical', color: 'bg-green-100 text-green-800' },
-      operations: { label: 'Operations', color: 'bg-blue-100 text-blue-800' },
-      accounts: { label: 'Accounts', color: 'bg-purple-100 text-purple-800' }
+      management: { label: 'Management', color: 'bg-gray-100 text-gray-800' },
+      sales: { label: 'Sales', color: 'bg-gray-200 text-gray-700' },
+      technical: { label: 'Technical', color: 'bg-gray-300 text-gray-800' },
+      operations: { label: 'Operations', color: 'bg-gray-200 text-gray-700' },
+      accounts: { label: 'Accounts', color: 'bg-gray-300 text-gray-800' }
     }
     return departmentConfig[department as keyof typeof departmentConfig] || { label: department, color: 'bg-gray-100 text-gray-800' }
   }
 
   const getRoleBadge = (role: string) => {
     const roleConfig = {
-      admin: { label: 'Admin', color: 'bg-red-100 text-red-800' },
-      manager: { label: 'Manager', color: 'bg-blue-100 text-blue-800' },
-      employee: { label: 'Employee', color: 'bg-green-100 text-green-800' },
-      technician: { label: 'Technician', color: 'bg-orange-100 text-orange-800' }
+      admin: { label: 'Admin', color: 'bg-gray-400 text-gray-900' },
+      manager: { label: 'Manager', color: 'bg-gray-200 text-gray-700' },
+      employee: { label: 'Employee', color: 'bg-gray-100 text-gray-800' },
+      technician: { label: 'Technician', color: 'bg-gray-300 text-gray-800' }
     }
     return roleConfig[role as keyof typeof roleConfig] || { label: role, color: 'bg-gray-100 text-gray-800' }
   }
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      active: { label: 'Active', color: 'bg-green-100 text-green-800' },
-      inactive: { label: 'Inactive', color: 'bg-gray-100 text-gray-800' },
-      on_leave: { label: 'On Leave', color: 'bg-orange-100 text-orange-800' }
+      active: { label: 'Active', color: 'bg-gray-100 text-gray-800' },
+      inactive: { label: 'Inactive', color: 'bg-gray-400 text-gray-900' },
+      on_leave: { label: 'On Leave', color: 'bg-gray-300 text-gray-800' }
     }
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.active
   }
@@ -191,7 +191,7 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
           <h2 className="text-2xl font-bold text-gray-900">Employee Management</h2>
           <p className="text-gray-600">Manage your team members and their information</p>
         </div>
-        <Button onClick={openCreateModal} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={openCreateModal} className="bg-gray-900 hover:bg-gray-800 text-white">
           <UserPlus className="h-4 w-4 mr-2" />
           Add New Employee
         </Button>
@@ -336,7 +336,7 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
                       {employee.salary && (
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="font-medium">Monthly Salary:</span>
-                          <span className="text-lg font-semibold text-green-600">
+                          <span className="text-lg font-semibold text-gray-600">
                             {formatCurrency(employee.salary)}
                           </span>
                         </div>
@@ -354,7 +354,7 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
                         variant="outline" 
                         size="sm" 
                         onClick={() => handleDelete(employee.id)}
-                        className="text-red-600 hover:bg-red-50"
+                        className="text-gray-600 hover:bg-gray-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -372,8 +372,7 @@ export default function UnifiedEmployeeList({ employees }: UnifiedEmployeeListPr
         onClick={openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Add New Employee"
-        gradientFrom="from-blue-500"
-        gradientTo="to-indigo-500"
+        variant="monochrome"
       />
 
       {/* Create Employee Modal */}

@@ -6,7 +6,11 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FileText, Eye, Edit, Download, Send, CheckCircle, Clock, AlertTriangle } from 'lucide-react'
+import { FileText, Eye, Edit, Download, Send, CheckCircle, Clock, AlertTriangle, Plus } from 'lucide-react'
+import { useInvoiceFormManager } from '@/components/ui/unified-form-manager'
+import { FloatingActionButton } from '@/components/ui/floating-action-button'
+import { SectionHeader, SearchFilterBar } from '@/components/ui/section-header'
+import { getStatusConfig } from '@/lib/design-system'
 
 interface Invoice {
   id: string
@@ -25,6 +29,8 @@ interface Invoice {
 
 interface InvoicesListProps {
   invoices: Invoice[]
+  projects?: any[]
+  customers?: any[]
 }
 
 const statusConfig = {
@@ -35,10 +41,19 @@ const statusConfig = {
   cancelled: { color: 'bg-gray-100 text-gray-800', label: 'Cancelled', icon: Clock }
 }
 
-export default function InvoicesList({ invoices }: InvoicesListProps) {
+export default function InvoicesList({ invoices, projects = [], customers = [] }: InvoicesListProps) {
   const [filteredInvoices, setFilteredInvoices] = useState(invoices)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+
+  // Unified form manager for invoices
+  const {
+    openCreateModal,
+    FormModal: CreateInvoiceModal
+  } = useInvoiceFormManager(projects, customers, () => {
+    // Refresh data after successful creation
+    window.location.reload()
+  })
 
   // Filter invoices based on search and filters
   const handleFilter = () => {
@@ -100,36 +115,36 @@ export default function InvoicesList({ invoices }: InvoicesListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <Input
-                placeholder="Search by invoice number, project, customer..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <div className="flex gap-2">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="sent">Sent</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="overdue">Overdue</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Header */}
+      <SectionHeader
+        title="Invoices Management"
+        description="Create, manage and track customer invoices"
+        primaryAction={{
+          label: "Create Invoice",
+          onClick: openCreateModal
+        }}
+      />
+
+      {/* Search and Filters */}
+      <SearchFilterBar
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        filters={[
+          {
+            label: "Status",
+            value: statusFilter,
+            options: [
+              { value: "all", label: "All Status" },
+              { value: "draft", label: "Draft" },
+              { value: "sent", label: "Sent" },
+              { value: "paid", label: "Paid" },
+              { value: "overdue", label: "Overdue" },
+              { value: "cancelled", label: "Cancelled" }
+            ],
+            onChange: setStatusFilter
+          }
+        ]}
+      />
 
       {/* Invoices List */}
       <div className="grid gap-4">
@@ -262,6 +277,15 @@ export default function InvoicesList({ invoices }: InvoicesListProps) {
           })
         )}
       </div>
+
+      {/* Unified Invoice Form */}
+      <CreateInvoiceModal />
+
+      {/* Floating Action Button */}
+      <FloatingActionButton
+        onClick={openCreateModal}
+        variant="monochrome"
+      />
     </div>
   )
 }

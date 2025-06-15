@@ -38,8 +38,8 @@ export function FloatingActionButton({
   onClick,
   icon,
   label = 'Add New',
-  gradientFrom = 'from-blue-500',
-  gradientTo = 'to-cyan-500',
+  gradientFrom = 'from-gray-700',
+  gradientTo = 'to-gray-900',
   position = 'bottom-right',
   size = 'md',
   variant = 'gradient',
@@ -91,21 +91,21 @@ export function LeadsFAB({ onClick, className, variant = 'monochrome' }: { onCli
       onClick={onClick}
       label="Add New Lead"
       variant={variant}
-      gradientFrom="from-cyan-500"
-      gradientTo="to-blue-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )
 }
 
-export function ProjectsFAB({ onClick, className, variant = 'gradient' }: { onClick: () => void; className?: string; variant?: 'gradient' | 'monochrome' }) {
+export function ProjectsFAB({ onClick, className, variant = 'monochrome' }: { onClick: () => void; className?: string; variant?: 'gradient' | 'monochrome' }) {
   return (
     <FloatingActionButton
       onClick={onClick}
       label="Create Project"
       variant={variant}
-      gradientFrom="from-green-500"
-      gradientTo="to-teal-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )
@@ -116,8 +116,8 @@ export function QuotationsFAB({ onClick, className }: { onClick: () => void; cla
     <FloatingActionButton
       onClick={onClick}
       label="Create Quotation"
-      gradientFrom="from-purple-500"
-      gradientTo="to-indigo-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )
@@ -128,8 +128,8 @@ export function InvoicesFAB({ onClick, className }: { onClick: () => void; class
     <FloatingActionButton
       onClick={onClick}
       label="Create Invoice"
-      gradientFrom="from-blue-500"
-      gradientTo="to-cyan-500"
+      gradientFrom="from-gray-800"
+      gradientTo="to-gray-600"
       className={className}
     />
   )
@@ -140,8 +140,8 @@ export function PaymentsFAB({ onClick, className }: { onClick: () => void; class
     <FloatingActionButton
       onClick={onClick}
       label="Record Payment"
-      gradientFrom="from-green-500"
-      gradientTo="to-emerald-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )
@@ -152,8 +152,8 @@ export function EmployeesFAB({ onClick, className }: { onClick: () => void; clas
     <FloatingActionButton
       onClick={onClick}
       label="Add Employee"
-      gradientFrom="from-indigo-500"
-      gradientTo="to-purple-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )
@@ -164,8 +164,8 @@ export function SiteVisitsFAB({ onClick, className }: { onClick: () => void; cla
     <FloatingActionButton
       onClick={onClick}
       label="Schedule Visit"
-      gradientFrom="from-orange-500"
-      gradientTo="to-red-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )
@@ -176,8 +176,8 @@ export function InstallationsFAB({ onClick, className }: { onClick: () => void; 
     <FloatingActionButton
       onClick={onClick}
       label="Add Installation"
-      gradientFrom="from-emerald-500"
-      gradientTo="to-green-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )
@@ -188,8 +188,8 @@ export function AMCFAB({ onClick, className }: { onClick: () => void; className?
     <FloatingActionButton
       onClick={onClick}
       label="Create AMC"
-      gradientFrom="from-amber-500"
-      gradientTo="to-orange-500"
+      gradientFrom="from-gray-700"
+      gradientTo="to-gray-900"
       className={className}
     />
   )

@@ -251,8 +251,8 @@ select::-webkit-scrollbar-thumb:hover {
 }
 
 [data-radix-select-item][data-state="checked"] {
-  background-color: #eff6ff;
-  color: #1d4ed8;
+  background-color: #f3f4f6;
+  color: #1f2937;
   font-weight: 500;
 }
 

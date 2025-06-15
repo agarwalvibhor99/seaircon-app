@@ -358,8 +358,7 @@ export default function UnifiedProjectsList({ projects, employee, customers, emp
         onClick={createFormModal.openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Create New Project"
-        gradientFrom="from-green-500"
-        gradientTo="to-blue-500"
+        variant="monochrome"
       />
 
       {/* Form Modal */}

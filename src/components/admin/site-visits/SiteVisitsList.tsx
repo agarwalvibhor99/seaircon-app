@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Calendar, Clock, User, MapPin, Eye, Edit, CheckCircle, Plus } from 'lucide-react'
-import ScheduleSiteVisitFormDialog from './ScheduleSiteVisitFormDialog'
+import { useSiteVisitFormManager } from '@/components/ui/unified-form-manager'
+import { FloatingActionButton } from '@/components/ui/floating-action-button'
 
 interface SiteVisit {
   id: string
@@ -24,6 +25,8 @@ interface SiteVisit {
 
 interface SiteVisitsListProps {
   visits: SiteVisit[]
+  leads?: any[]
+  employees?: any[]
 }
 
 const statusConfig = {
@@ -39,12 +42,20 @@ const priorityConfig = {
   high: { color: 'bg-red-100 text-red-800', label: 'High' }
 }
 
-export default function SiteVisitsList({ visits }: SiteVisitsListProps) {
+export default function SiteVisitsList({ visits, leads = [], employees = [] }: SiteVisitsListProps) {
   const [filteredVisits, setFilteredVisits] = useState(visits)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [priorityFilter, setPriorityFilter] = useState('all')
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
+
+  // Unified form manager for site visits
+  const {
+    openCreateModal,
+    FormModal: CreateSiteVisitModal
+  } = useSiteVisitFormManager(leads, employees, () => {
+    // Refresh data after successful creation
+    window.location.reload()
+  })
 
   // Filter visits based on search and filters
   const handleFilter = () => {
@@ -228,30 +239,14 @@ export default function SiteVisitsList({ visits }: SiteVisitsListProps) {
         )}
       </div>
 
-      {/* Schedule Site Visit Dialog */}
-      {showCreateDialog && (
-        <ScheduleSiteVisitFormDialog
-          leads={[]}
-          customers={[]}
-          technicians={[]}
-          onSuccess={() => {
-            setShowCreateDialog(false)
-            // Refresh site visits - would need a proper refresh mechanism
-          }}
-          onCancel={() => setShowCreateDialog(false)}
-        />
-      )}
+      {/* Unified Site Visit Form */}
+      <CreateSiteVisitModal />
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <button
-          onClick={() => setShowCreateDialog(true)}
-          className="flex items-center justify-center w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-          title="Schedule Site Visit"
-        >
-          <Plus className="h-6 w-6" />
-        </button>
-      </div>
+      <FloatingActionButton
+        onClick={openCreateModal}
+        variant="monochrome"
+      />
     </div>
   )
 }

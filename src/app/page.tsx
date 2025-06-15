@@ -16,8 +16,8 @@ interface ButtonProps {
 const Button = ({ children, variant = "primary", className = "", ...props }: ButtonProps) => {
   const baseClasses = "relative overflow-hidden py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl group";
   const variants = {
-    primary: "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg backdrop-blur-sm",
-    secondary: "bg-white/90 backdrop-blur-md text-slate-700 border border-cyan-200 hover:bg-white hover:border-cyan-300 hover:text-cyan-700",
+    primary: "bg-gray-900 hover:bg-gray-800 text-white shadow-lg backdrop-blur-sm",
+    secondary: "bg-white/90 backdrop-blur-md text-slate-700 border border-gray-200 hover:bg-white hover:border-gray-300 hover:text-gray-900",
     outline: "border-2 border-white/90 text-white hover:bg-white/20 backdrop-blur-sm",
     glass: "bg-white/15 backdrop-blur-md border border-white/30 text-white hover:bg-white/25"
   };
@@ -428,12 +428,12 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-100 text-slate-800 relative overflow-hidden">
+    <main className="min-h-screen bg-gray-50 text-slate-800 relative overflow-hidden">
       {/* Background Grid Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(14,165,233,0.12)_1px,transparent_0)] [background-size:24px_24px] pointer-events-none"></div>
       
       {/* Navigation */}
-      <nav className="bg-white/85 backdrop-blur-xl shadow-lg sticky top-0 z-50 border-b border-cyan-100/50">
+      <nav className="bg-white/85 backdrop-blur-xl shadow-lg sticky top-0 z-50 border-b border-gray-100/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
@@ -443,7 +443,7 @@ export default function Home() {
                   <img src="/selogo.svg" alt="SE Aircon Logo" className="w-12 h-12" />
                 </div>
                 <div>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">SE Aircon Pvt Ltd</span>
+                  <span className="text-2xl font-bold text-gray-900">SE Aircon Pvt Ltd</span>
                   <p className="text-sm text-slate-600 font-medium">Bringing Comfort to Life</p>
                 </div>
               </div>
@@ -452,10 +452,10 @@ export default function Home() {
             {/* Desktop Navigation */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-8">
-                <Link href="#home" className="text-slate-700 hover:text-cyan-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-cyan-50">Home</Link>
-                <Link href="#about" className="text-slate-700 hover:text-cyan-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-cyan-50">About</Link>
-                <Link href="#services" className="text-slate-700 hover:text-cyan-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-cyan-50">Services</Link>
-                <Link href="#products" className="text-slate-700 hover:text-cyan-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-cyan-50">Products</Link>
+                <Link href="#home" className="text-slate-700 hover:text-gray-900 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-gray-50">Home</Link>
+                <Link href="#about" className="text-slate-700 hover:text-gray-900 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-gray-50">About</Link>
+                <Link href="#services" className="text-slate-700 hover:text-gray-900 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-gray-50">Services</Link>
+                <Link href="#products" className="text-slate-700 hover:text-gray-900 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-gray-50">Products</Link>
                 <Link href="#testimonials" className="text-slate-700 hover:text-cyan-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-cyan-50">Testimonials</Link>
                 <Link href="#contact" className="text-slate-700 hover:text-cyan-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-cyan-50">Contact</Link>
                 <Button variant="primary" className="ml-4">
@@ -507,7 +507,7 @@ export default function Home() {
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-cyan-400/15 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-400/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-cyan-300/8 to-blue-400/8 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gray-300/8 rounded-full blur-3xl"></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -529,7 +529,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-700 bg-clip-text text-transparent">
+            <span className="text-gray-900">
               Professional HVAC
             </span>
             <br />
@@ -605,7 +605,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+              <span className="text-gray-900">
                 About SE Aircon Pvt Ltd
               </span>
             </motion.h2>
@@ -627,7 +627,7 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <Card variant="gradient" className="h-96">
-                <div className="h-full flex items-center justify-center bg-gradient-to-br from-cyan-500/15 to-blue-600/15 relative">
+                <div className="h-full flex items-center justify-center bg-gray-100/15 relative">
                   <div className="text-center">
                     <div className="w-24 h-24 bg-white/25 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-4">
                       <TechnicalIcon />
@@ -662,7 +662,7 @@ export default function Home() {
                   As a group with a turnover of ₹200 million, we anticipate reaching ₹250 million in fiscal year 2023-24. Our operations are carried out in collaboration with our sister company, Rasair Engineers Pvt Ltd, which manages our exclusive channel partnership for Daikin Air Conditioning Pvt Ltd.
                 </p>
                 <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl p-6 border border-cyan-200">
+                  <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                     <h4 className="font-bold text-slate-800 mb-3 flex items-center">
                       <AwardIcon />
                       <span className="ml-2">Our Mission</span>
@@ -672,7 +672,7 @@ export default function Home() {
                     </p>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+                  <div className="bg-gray-100 rounded-2xl p-6 border border-gray-200">
                     <h4 className="font-bold text-slate-800 mb-3 flex items-center">
                       <VisionIcon />
                       <span className="ml-2">Our Vision</span>
@@ -693,7 +693,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <Card variant="glass" className="p-8 bg-gradient-to-r from-white/95 to-cyan-50/90">
+            <Card variant="glass" className="p-8 bg-gray-50/95">
               <div className="flex flex-col space-y-6">
                 {/* First Row - Primary Partners */}
                 <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
@@ -760,7 +760,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+              <span className="text-gray-900">
                 Comprehensive HVAC Services
               </span>
             </motion.h2>
@@ -819,7 +819,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+              <span className="text-gray-900">
                 Products & Solutions
               </span>
             </motion.h2>
@@ -1234,7 +1234,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+              <span className="text-gray-900">
                 Ready to Experience Comfort?
               </span>
             </motion.h2>

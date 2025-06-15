@@ -8,8 +8,11 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { FileText, Eye, Edit, Download, Send, CheckCircle, XCircle, Clock, Search, Filter, X, Plus } from 'lucide-react'
 import { Employee, Customer, Project } from '@/lib/enhanced-types'
-import { FloatingActionButton } from '@/components/ui/floating-action-button'
 import { useQuotationFormManager } from '@/components/ui/unified-form-manager'
+import { FloatingActionButton } from '@/components/ui/floating-action-button'
+import { SectionHeader, SearchFilterBar } from '@/components/ui/section-header'
+import { StatusBadge, ActionButtons, DataCell, ContactInfo, formatCurrency, formatDate } from '@/components/ui/data-table-components'
+import { statusConfigs } from '@/lib/design-system'
 import { createBrowserClient } from '@supabase/ssr'
 import { notify } from "@/lib/toast"
 
@@ -42,14 +45,6 @@ interface UnifiedQuotationsListProps {
   customers: Customer[]
   projects: Project[]
   consultationRequests: ConsultationRequest[]
-}
-
-const statusConfig = {
-  draft: { color: 'bg-gray-100 text-gray-800', label: 'Draft', icon: FileText },
-  sent: { color: 'bg-blue-100 text-blue-800', label: 'Sent', icon: Send },
-  approved: { color: 'bg-green-100 text-green-800', label: 'Approved', icon: CheckCircle },
-  rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected', icon: XCircle },
-  expired: { color: 'bg-orange-100 text-orange-800', label: 'Expired', icon: Clock }
 }
 
 export default function UnifiedQuotationsList({ quotations, employee, customers, projects, consultationRequests }: UnifiedQuotationsListProps) {
@@ -122,23 +117,6 @@ export default function UnifiedQuotationsList({ quotations, employee, customers,
   useEffect(() => {
     handleFilter()
   }, [searchTerm, statusFilter, currentQuotations])
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
-  }
 
   const clearFilters = () => {
     setSearchTerm('')
@@ -222,7 +200,7 @@ export default function UnifiedQuotationsList({ quotations, employee, customers,
             variant="ghost"
             size="sm"
             onClick={clearFilters}
-            className="h-auto p-1 text-blue-600 hover:text-blue-800"
+            className="h-auto p-1 text-gray-600 hover:text-gray-800"
           >
             Clear filters
           </Button>
@@ -246,7 +224,7 @@ export default function UnifiedQuotationsList({ quotations, employee, customers,
             {(!searchTerm && statusFilter === 'all') && (
               <Button
                 onClick={createFormModal.openCreateModal}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="bg-gray-900 hover:bg-gray-800 text-white"
               >
                 <FileText className="w-4 h-4 mr-2" />
                 Create First Quotation
@@ -257,31 +235,33 @@ export default function UnifiedQuotationsList({ quotations, employee, customers,
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredQuotations.map((quotation) => {
-            const StatusIcon = statusConfig[quotation.status]?.icon || FileText
-            
             return (
               <Card key={quotation.id} className="group hover:shadow-xl transition-all duration-300 backdrop-blur-sm bg-white/70 border-white/20 shadow-lg hover:bg-white/80">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
+                      <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
                         {quotation.quotation_number}
                       </CardTitle>
                       <p className="text-sm text-gray-600">
-                        {quotation.consultation_requests?.name || quotation.customers?.name || 'N/A'}
+                        <ContactInfo 
+                          name={quotation.consultation_requests?.name || quotation.customers?.name || 'N/A'}
+                          phone={quotation.consultation_requests?.phone || quotation.customers?.phone}
+                          showPhone={false}
+                        />
                       </p>
                     </div>
-                    <Badge className={`${statusConfig[quotation.status]?.color} flex items-center gap-1`}>
-                      <StatusIcon className="h-3 w-3" />
-                      {statusConfig[quotation.status]?.label}
-                    </Badge>
+                    <StatusBadge 
+                      status={quotation.status} 
+                      statusConfig={statusConfigs.quotations}
+                    />
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Amount:</span>
-                      <span className="font-semibold text-green-700">{formatCurrency(quotation.total_amount)}</span>
+                      <span className="font-semibold text-gray-700">{formatCurrency(quotation.total_amount)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Valid Until:</span>
@@ -337,8 +317,7 @@ export default function UnifiedQuotationsList({ quotations, employee, customers,
         onClick={createFormModal.openCreateModal}
         icon={<Plus className="h-6 w-6" />}
         label="Create New Quotation"
-        gradientFrom="from-blue-500"
-        gradientTo="to-purple-500"
+        variant="monochrome"
       />
 
       {/* Form Modal */}

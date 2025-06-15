@@ -118,7 +118,7 @@ export default function AdminLogin() {
         <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
           <CardHeader className="bg-gray-900 text-white rounded-t-lg border-b border-gray-200">
             <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
-            <CardDescription className="text-center text-cyan-50">
+            <CardDescription className="text-center text-gray-500">
               Enter your employee credentials to access the dashboard
             </CardDescription>
           </CardHeader>
@@ -144,7 +144,7 @@ export default function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="employee@seaircon.com"
-                  className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 border-gray-300 hover:border-gray-400"
                 />
               </div>
               
@@ -157,7 +157,7 @@ export default function AdminLogin() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="transition-all duration-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 border-gray-300 hover:border-gray-400"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 border-gray-300 hover:border-gray-400"
                 />
               </div>
               

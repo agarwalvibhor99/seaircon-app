@@ -124,9 +124,9 @@ export default async function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            project.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                            project.status === 'planning' ? 'bg-yellow-100 text-yellow-800' :
+                            project.status === 'completed' ? 'bg-gray-200 text-gray-800' :
+                            project.status === 'in_progress' ? 'bg-gray-100 text-gray-800' :
+                            project.status === 'planning' ? 'bg-gray-200 text-gray-700' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {project.status.replace('_', ' ')}
@@ -136,7 +136,7 @@ export default async function AdminDashboard() {
                           {project.employees?.full_name || 'Unassigned'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <a href={`/admin/projects/${project.id}`} className="text-cyan-600 hover:text-cyan-900">
+                          <a href={`/admin/projects/${project.id}`} className="text-gray-900 hover:text-gray-600">
                             View
                           </a>
                         </td>

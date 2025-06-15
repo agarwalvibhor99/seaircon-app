@@ -6,9 +6,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { FileText, Eye, Edit, Download, Send, CheckCircle, XCircle, Clock, Plus, Search, Filter, X } from 'lucide-react'
-import CreateQuotationFormDialog from './CreateQuotationFormDialog'
+import { useQuotationFormManager } from '@/components/ui/unified-form-manager'
+import { FloatingActionButton } from '@/components/ui/floating-action-button'
 import { Employee, Customer, Project } from '@/lib/enhanced-types'
 
 interface ConsultationRequest {
@@ -54,13 +54,15 @@ export default function QuotationsList({ quotations, employee, customers, projec
   const [filteredQuotations, setFilteredQuotations] = useState(quotations)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
-  const handleCreateSuccess = () => {
-    setIsAddDialogOpen(false)
-    // Refresh the page to show updated data
+  // Unified form manager for quotations
+  const {
+    openCreateModal,
+    FormModal: CreateQuotationModal
+  } = useQuotationFormManager(customers, projects, consultationRequests, () => {
+    // Refresh data after successful creation
     window.location.reload()
-  }
+  })
 
   // Filter quotations based on search and filters
   const handleFilter = () => {
@@ -127,7 +129,7 @@ export default function QuotationsList({ quotations, employee, customers, projec
           <h2 className="text-2xl font-bold text-gray-900">Quotations Management</h2>
           <p className="text-gray-600">Create, manage and track customer quotations</p>
         </div>
-        <Button onClick={() => setIsAddDialogOpen(true)} className="bg-cyan-600 hover:bg-cyan-700">
+        <Button onClick={openCreateModal} className="bg-gray-900 hover:bg-gray-800 text-white">
           <Plus className="h-4 w-4 mr-2" />
           Create Quotation
         </Button>
@@ -295,30 +297,14 @@ export default function QuotationsList({ quotations, employee, customers, projec
         )}
       </div>
 
-      {/* Create Quotation Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
-            <DialogTitle className="text-xl font-semibold">Create New Quotation</DialogTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsAddDialogOpen(false)}
-              className="hover:bg-gray-100"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogHeader>
-          <CreateQuotationFormDialog
-            employee={employee}
-            customers={customers}
-            projects={projects}
-            consultationRequests={consultationRequests}
-            onSuccess={handleCreateSuccess}
-            onCancel={() => setIsAddDialogOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+      {/* Unified Quotation Form */}
+      <CreateQuotationModal />
+
+      {/* Floating Action Button */}
+      <FloatingActionButton
+        onClick={openCreateModal}
+        variant="monochrome"
+      />
     </div>
   )
 }

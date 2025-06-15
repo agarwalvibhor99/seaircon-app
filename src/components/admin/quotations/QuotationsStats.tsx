@@ -43,7 +43,7 @@ export default function QuotationsStats({ quotations }: QuotationsStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center">
-            <FileText className="h-8 w-8 text-blue-600" />
+            <FileText className="h-8 w-8 text-gray-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Quotations</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
@@ -55,7 +55,7 @@ export default function QuotationsStats({ quotations }: QuotationsStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center">
-            <Clock className="h-8 w-8 text-yellow-600" />
+            <Clock className="h-8 w-8 text-gray-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Pending</p>
               <p className="text-2xl font-bold text-gray-900">{stats.sent}</p>
@@ -68,11 +68,11 @@ export default function QuotationsStats({ quotations }: QuotationsStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center">
-            <CheckCircle className="h-8 w-8 text-green-600" />
+            <CheckCircle className="h-8 w-8 text-gray-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Approved</p>
               <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
-              <p className="text-xs text-green-600">{stats.conversionRate}% conversion</p>
+              <p className="text-xs text-gray-600">{stats.conversionRate}% conversion</p>
             </div>
           </div>
         </CardContent>
@@ -81,7 +81,7 @@ export default function QuotationsStats({ quotations }: QuotationsStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center">
-            <XCircle className="h-8 w-8 text-red-600" />
+            <XCircle className="h-8 w-8 text-gray-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Rejected</p>
               <p className="text-2xl font-bold text-gray-900">{stats.rejected}</p>
@@ -94,7 +94,7 @@ export default function QuotationsStats({ quotations }: QuotationsStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center">
-            <DollarSign className="h-8 w-8 text-cyan-600" />
+            <DollarSign className="h-8 w-8 text-gray-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Value</p>
               <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.totalValue)}</p>
@@ -107,11 +107,11 @@ export default function QuotationsStats({ quotations }: QuotationsStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center">
-            <TrendingUp className="h-8 w-8 text-green-600" />
+            <TrendingUp className="h-8 w-8 text-gray-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Won Value</p>
               <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.approvedValue)}</p>
-              <p className="text-xs text-green-600">Approved quotes</p>
+              <p className="text-xs text-gray-600">Approved quotes</p>
             </div>
           </div>
         </CardContent>

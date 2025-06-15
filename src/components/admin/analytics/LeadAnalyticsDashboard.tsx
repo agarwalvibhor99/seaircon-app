@@ -81,7 +81,7 @@ export default function LeadAnalyticsDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
       </div>
     )
   }
@@ -136,9 +136,9 @@ export default function LeadAnalyticsDashboard() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
             {getConversionTrend() === 'up' ? (
-              <TrendingUp className="h-4 w-4 text-green-600" />
+              <TrendingUp className="h-4 w-4 text-gray-600" />
             ) : getConversionTrend() === 'down' ? (
-              <TrendingDown className="h-4 w-4 text-red-600" />
+              <TrendingDown className="h-4 w-4 text-gray-600" />
             ) : (
               <Target className="h-4 w-4 text-gray-600" />
             )}
@@ -154,7 +154,7 @@ export default function LeadAnalyticsDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg. Time to Convert</CardTitle>
-            <Clock className="h-4 w-4 text-blue-600" />
+            <Clock className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.averageTimeToConvert}</div>
@@ -167,7 +167,7 @@ export default function LeadAnalyticsDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Project Value</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(metrics.totalProjectValue)}</div>
@@ -180,7 +180,7 @@ export default function LeadAnalyticsDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg. Project Value</CardTitle>
-            <BarChart3 className="h-4 w-4 text-purple-600" />
+            <BarChart3 className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(metrics.averageProjectValue)}</div>
@@ -337,11 +337,11 @@ export default function LeadAnalyticsDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-green-600">✅ Solution 1 Benefits</CardTitle>
+                <CardTitle className="text-gray-600">✅ Solution 1 Benefits</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-gray-600 rounded-full mt-2"></div>
                   <div>
                     <div className="font-medium">Historical Data Preserved</div>
                     <div className="text-sm text-gray-600">
@@ -350,7 +350,7 @@ export default function LeadAnalyticsDashboard() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-gray-600 rounded-full mt-2"></div>
                   <div>
                     <div className="font-medium">Conversion Tracking</div>
                     <div className="text-sm text-gray-600">
@@ -359,7 +359,7 @@ export default function LeadAnalyticsDashboard() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-gray-600 rounded-full mt-2"></div>
                   <div>
                     <div className="font-medium">Performance Insights</div>
                     <div className="text-sm text-gray-600">
@@ -368,7 +368,7 @@ export default function LeadAnalyticsDashboard() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-gray-600 rounded-full mt-2"></div>
                   <div>
                     <div className="font-medium">Revenue Attribution</div>
                     <div className="text-sm text-gray-600">
@@ -381,7 +381,7 @@ export default function LeadAnalyticsDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-blue-600">📊 Key Performance Indicators</CardTitle>
+                <CardTitle className="text-gray-600">📊 Key Performance Indicators</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">

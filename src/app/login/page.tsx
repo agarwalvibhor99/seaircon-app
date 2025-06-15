@@ -12,7 +12,7 @@ export default function LoginPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
         <div className="mx-auto h-16 w-16 mb-6 rounded-2xl overflow-hidden shadow-lg">
           <img 
@@ -21,7 +21,7 @@ export default function LoginPage() {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto"></div>
         <p className="mt-4 text-gray-600">Redirecting to login...</p>
       </div>
     </div>
