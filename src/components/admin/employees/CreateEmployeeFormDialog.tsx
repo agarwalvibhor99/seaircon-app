@@ -227,7 +227,7 @@ export default function CreateEmployeeFormDialog({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
+        <CardHeader className="bg-gray-900 text-white rounded-t-lg">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <User className="h-5 w-5" />
             Basic Information
@@ -299,7 +299,7 @@ export default function CreateEmployeeFormDialog({
 
       {/* Role & Department */}
       <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
+        <CardHeader className="bg-gray-900 text-white rounded-t-lg">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <Shield className="h-5 w-5" />
             Role & Department
@@ -366,7 +366,7 @@ export default function CreateEmployeeFormDialog({
 
       {/* Compensation & Skills */}
       <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-t-lg">
+        <CardHeader className="bg-gray-900 text-white rounded-t-lg">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
             Compensation & Skills
@@ -403,7 +403,7 @@ export default function CreateEmployeeFormDialog({
 
       {/* Emergency Contact */}
       <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-t-lg">
+        <CardHeader className="bg-gray-900 text-white rounded-t-lg">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <Phone className="h-5 w-5" />
             Emergency Contact
@@ -447,7 +447,7 @@ export default function CreateEmployeeFormDialog({
       {/* Security */}
       {(!isEditing || formData.password) && (
         <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
+          <CardHeader className="bg-gray-900 text-white rounded-t-lg">
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <Shield className="h-5 w-5" />
               {isEditing ? 'Change Password' : 'Account Security'}

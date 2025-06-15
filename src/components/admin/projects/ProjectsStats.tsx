@@ -1,7 +1,8 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
-import { ClipboardList, Clock, CheckCircle, AlertTriangle, DollarSign, BarChart3 } from 'lucide-react'
+import StandardizedStats from '@/components/ui/standardized-stats'
+import { ClipboardList, Clock, CheckCircle, AlertTriangle, BarChart3 } from 'lucide-react'
+import { IndianRupee } from '@/components/ui/icons/indian-rupee'
 
 interface Project {
   status: 'planning' | 'in_progress' | 'on_hold' | 'completed' | 'cancelled'
@@ -38,84 +39,49 @@ export default function ProjectsStats({ projects }: ProjectsStatsProps) {
     }).format(amount)
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <ClipboardList className="h-8 w-8 text-blue-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Projects</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  const statCards = [
+    { 
+      title: 'Total Projects', 
+      value: stats.total, 
+      icon: ClipboardList, 
+      color: 'text-blue-600' 
+    },
+    { 
+      title: 'In Progress', 
+      value: stats.inProgress, 
+      subtitle: `${stats.planning} planning`,
+      icon: Clock, 
+      color: 'text-orange-600' 
+    },
+    { 
+      title: 'Completed', 
+      value: stats.completed, 
+      subtitle: `${stats.completionRate}% success rate`,
+      icon: CheckCircle, 
+      color: 'text-green-600' 
+    },
+    { 
+      title: 'Issues', 
+      value: stats.onHold, 
+      subtitle: `${stats.cancelled} cancelled`,
+      icon: AlertTriangle, 
+      color: 'text-yellow-600' 
+    },
+    { 
+      title: 'Total Budget', 
+      value: formatCurrency(stats.totalBudget), 
+      subtitle: 'All projects',
+      icon: IndianRupee, 
+      color: 'text-cyan-600' 
+    },
+    { 
+      title: 'Completed Value', 
+      value: formatCurrency(stats.completedBudget), 
+      subtitle: 'Revenue generated',
+      icon: BarChart3, 
+      color: 'text-green-600' 
+    }
+  ]
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Clock className="h-8 w-8 text-orange-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">In Progress</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.inProgress}</p>
-              <p className="text-xs text-gray-500">{stats.planning} planning</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
-              <p className="text-xs text-green-600">{stats.completionRate}% success rate</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <AlertTriangle className="h-8 w-8 text-yellow-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Issues</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.onHold}</p>
-              <p className="text-xs text-gray-500">{stats.cancelled} cancelled</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <DollarSign className="h-8 w-8 text-cyan-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Budget</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.totalBudget)}</p>
-              <p className="text-xs text-gray-500">All projects</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <BarChart3 className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Completed Value</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.completedBudget)}</p>
-              <p className="text-xs text-green-600">Revenue generated</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  return <StandardizedStats stats={statCards} columns={6} />
 }

@@ -289,7 +289,7 @@ export default function UnifiedSiteVisitsList({ visits, employee, leads, employe
             {(!searchTerm && statusFilter === 'all' && priorityFilter === 'all') && (
               <Button
                 onClick={createFormModal.openCreateModal}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white"
+                className="bg-gray-900 hover:bg-gray-800 text-white"
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 Schedule First Visit

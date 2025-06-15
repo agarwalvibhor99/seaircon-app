@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import StandardizedStats from '@/components/ui/standardized-stats'
 import { 
   Users, 
   ClipboardList,
-  DollarSign,
   BarChart3,
   FileCheck
 } from 'lucide-react'
+import { IndianRupee } from '@/components/ui/icons/indian-rupee'
 import { useDashboard } from '@/contexts/DashboardContext'
 
 interface Stats {
@@ -102,70 +102,33 @@ export default function DashboardStats() {
       title: 'Active Leads',
       value: stats.totalLeads,
       icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100'
+      color: 'text-blue-600'
     },
     {
       title: 'Converted Leads',
       value: stats.convertedLeads,
       icon: Users,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
+      color: 'text-green-600'
     },
     {
       title: 'Active Projects',
       value: stats.activeProjects,
       icon: ClipboardList,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100'
+      color: 'text-orange-600'
     },
     {
       title: 'Pending Invoices',
       value: stats.pendingInvoices,
-      icon: DollarSign,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100'
+      icon: IndianRupee,
+      color: 'text-yellow-600'
     },
     {
       title: 'Monthly Revenue',
       value: `₹${(stats.monthlyRevenue / 100000).toFixed(1)}L`,
       icon: BarChart3,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100'
+      color: 'text-purple-600'
     }
   ]
 
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Card key={i} className="animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-16 bg-gray-200 rounded" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    )
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-      {statCards.map((card) => (
-        <Card key={card.title}>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className={`p-3 rounded-lg ${card.bgColor}`}>
-                <card.icon className={`h-6 w-6 ${card.color}`} />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">{card.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  )
+  return <StandardizedStats stats={statCards} loading={loading} columns={5} />
 }

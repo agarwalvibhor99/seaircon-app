@@ -126,15 +126,6 @@ export default function ProjectsPage() {
                   Plan, assign and track project execution with comprehensive financial oversight
                 </p>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={loadData}
-                  disabled={isLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {isLoading ? 'Loading...' : 'Refresh Data'}
-                </button>
-              </div>
             </div>
           </div>
 

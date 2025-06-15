@@ -1,7 +1,8 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
-import { FileText, Clock, CheckCircle, XCircle, DollarSign, TrendingUp } from 'lucide-react'
+import StandardizedStats from '@/components/ui/standardized-stats'
+import { FileText, Clock, CheckCircle, XCircle, TrendingUp } from 'lucide-react'
+import { IndianRupee } from '@/components/ui/icons/indian-rupee'
 
 interface Quotation {
   status: 'draft' | 'sent' | 'approved' | 'rejected' | 'expired'
@@ -38,84 +39,49 @@ export default function QuotationsStats({ quotations }: QuotationsStatsProps) {
     }).format(amount)
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <FileText className="h-8 w-8 text-gray-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Quotations</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  const statCards = [
+    { 
+      title: 'Total Quotations', 
+      value: stats.total, 
+      icon: FileText, 
+      color: 'text-gray-600' 
+    },
+    { 
+      title: 'Pending', 
+      value: stats.sent, 
+      subtitle: `${stats.draft} drafts`,
+      icon: Clock, 
+      color: 'text-orange-600' 
+    },
+    { 
+      title: 'Approved', 
+      value: stats.approved, 
+      subtitle: `${stats.conversionRate}% conversion`,
+      icon: CheckCircle, 
+      color: 'text-green-600' 
+    },
+    { 
+      title: 'Rejected', 
+      value: stats.rejected, 
+      subtitle: `${stats.expired} expired`,
+      icon: XCircle, 
+      color: 'text-red-600' 
+    },
+    { 
+      title: 'Total Value', 
+      value: formatCurrency(stats.totalValue), 
+      subtitle: 'All quotations',
+      icon: IndianRupee, 
+      color: 'text-blue-600' 
+    },
+    { 
+      title: 'Won Value', 
+      value: formatCurrency(stats.approvedValue), 
+      subtitle: 'Approved quotes',
+      icon: TrendingUp, 
+      color: 'text-green-600' 
+    }
+  ]
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Clock className="h-8 w-8 text-gray-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.sent}</p>
-              <p className="text-xs text-gray-500">{stats.draft} drafts</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <CheckCircle className="h-8 w-8 text-gray-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Approved</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
-              <p className="text-xs text-gray-600">{stats.conversionRate}% conversion</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <XCircle className="h-8 w-8 text-gray-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Rejected</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.rejected}</p>
-              <p className="text-xs text-gray-500">{stats.expired} expired</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <DollarSign className="h-8 w-8 text-gray-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Value</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.totalValue)}</p>
-              <p className="text-xs text-gray-500">All quotations</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <TrendingUp className="h-8 w-8 text-gray-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Won Value</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.approvedValue)}</p>
-              <p className="text-xs text-gray-600">Approved quotes</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  return <StandardizedStats stats={statCards} columns={6} />
 }

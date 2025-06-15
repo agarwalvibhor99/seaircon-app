@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
 import UnifiedSiteVisitsList from '@/components/admin/site-visits/UnifiedSiteVisitsList'
+import SiteVisitsStats from '@/components/admin/site-visits/SiteVisitsStats'
 
 export default async function SiteVisitsPage() {
   const cookieStore = await cookies()
@@ -70,6 +71,11 @@ export default async function SiteVisitsPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="mb-8">
+            <SiteVisitsStats visits={siteVisits || []} />
           </div>
           
           <div className="mt-8">

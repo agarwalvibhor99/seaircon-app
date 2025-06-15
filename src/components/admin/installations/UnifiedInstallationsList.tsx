@@ -285,7 +285,7 @@ export default function UnifiedInstallationsList({ installations, employee, proj
             {(!searchTerm && statusFilter === 'all' && priorityFilter === 'all') && (
               <Button
                 onClick={createFormModal.openCreateModal}
-                className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white"
+                className="bg-gray-900 hover:bg-gray-800 text-white"
               >
                 <Wrench className="w-4 h-4 mr-2" />
                 Schedule First Installation

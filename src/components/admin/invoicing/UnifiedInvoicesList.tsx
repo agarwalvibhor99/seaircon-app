@@ -248,7 +248,7 @@ export default function UnifiedInvoicesList({ invoices, employee, customers, pro
             {(!searchTerm && statusFilter === 'all') && (
               <Button
                 onClick={createFormModal.openCreateModal}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                className="bg-gray-900 hover:bg-gray-800 text-white"
               >
                 <FileText className="w-4 h-4 mr-2" />
                 Create First Invoice

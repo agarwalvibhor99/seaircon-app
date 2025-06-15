@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
+import StandardizedStats from '@/components/ui/standardized-stats'
 import { Wrench, Clock, CheckCircle, AlertTriangle, BarChart3, Calendar } from 'lucide-react'
 
 interface Installation {
@@ -28,84 +28,49 @@ export default function InstallationsStats({ installations }: InstallationsStats
       : '0'
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Wrench className="h-8 w-8 text-blue-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Installations</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  const statCards = [
+    { 
+      title: 'Total Installations', 
+      value: stats.total, 
+      icon: Wrench, 
+      color: 'text-blue-600' 
+    },
+    { 
+      title: 'Scheduled', 
+      value: stats.scheduled, 
+      subtitle: 'Upcoming',
+      icon: Calendar, 
+      color: 'text-purple-600' 
+    },
+    { 
+      title: 'In Progress', 
+      value: stats.inProgress, 
+      subtitle: 'Active work',
+      icon: Clock, 
+      color: 'text-orange-600' 
+    },
+    { 
+      title: 'Completed', 
+      value: stats.completed, 
+      subtitle: `${stats.completionRate}% success`,
+      icon: CheckCircle, 
+      color: 'text-green-600' 
+    },
+    { 
+      title: 'Issues', 
+      value: stats.onHold, 
+      subtitle: `${stats.cancelled} cancelled`,
+      icon: AlertTriangle, 
+      color: 'text-yellow-600' 
+    },
+    { 
+      title: 'Avg. Progress', 
+      value: `${stats.averageProgress}%`, 
+      subtitle: 'Overall completion',
+      icon: BarChart3, 
+      color: 'text-cyan-600' 
+    }
+  ]
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Calendar className="h-8 w-8 text-purple-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Scheduled</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.scheduled}</p>
-              <p className="text-xs text-gray-500">Upcoming</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Clock className="h-8 w-8 text-orange-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">In Progress</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.inProgress}</p>
-              <p className="text-xs text-orange-600">Active work</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
-              <p className="text-xs text-green-600">{stats.completionRate}% success</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <AlertTriangle className="h-8 w-8 text-yellow-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Issues</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.onHold}</p>
-              <p className="text-xs text-gray-500">{stats.cancelled} cancelled</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <BarChart3 className="h-8 w-8 text-cyan-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Avg. Progress</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.averageProgress}%</p>
-              <p className="text-xs text-cyan-600">Overall completion</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  return <StandardizedStats stats={statCards} columns={6} />
 }

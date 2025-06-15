@@ -1,7 +1,8 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
-import { DollarSign, FileText, CheckCircle, Clock, AlertTriangle, TrendingUp } from 'lucide-react'
+import StandardizedStats from '@/components/ui/standardized-stats'
+import { FileText, CheckCircle, Clock, AlertTriangle, TrendingUp } from 'lucide-react'
+import { IndianRupee } from '@/components/ui/icons/indian-rupee'
 
 interface Invoice {
   status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled'
@@ -46,84 +47,49 @@ export default function InvoicingStats({ invoices }: InvoicingStatsProps) {
     }).format(amount)
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <FileText className="h-8 w-8 text-blue-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Invoices</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalInvoices}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  const statCards = [
+    { 
+      title: 'Total Invoices', 
+      value: stats.totalInvoices, 
+      icon: FileText, 
+      color: 'text-blue-600' 
+    },
+    { 
+      title: 'Pending', 
+      value: stats.sentInvoices, 
+      subtitle: `${stats.draftInvoices} drafts`,
+      icon: Clock, 
+      color: 'text-orange-600' 
+    },
+    { 
+      title: 'Paid', 
+      value: stats.paidInvoices, 
+      subtitle: `${stats.paymentRate}% payment rate`,
+      icon: CheckCircle, 
+      color: 'text-green-600' 
+    },
+    { 
+      title: 'Overdue', 
+      value: stats.overdueInvoices, 
+      subtitle: 'Require attention',
+      icon: AlertTriangle, 
+      color: 'text-red-600' 
+    },
+    { 
+      title: 'Total Invoiced', 
+      value: formatCurrency(stats.totalInvoiced), 
+      subtitle: 'All invoices',
+      icon: IndianRupee, 
+      color: 'text-cyan-600' 
+    },
+    { 
+      title: 'Collected', 
+      value: formatCurrency(stats.totalPaid), 
+      subtitle: `${formatCurrency(stats.totalOutstanding)} pending`,
+      icon: TrendingUp, 
+      color: 'text-green-600' 
+    }
+  ]
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Clock className="h-8 w-8 text-orange-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.sentInvoices}</p>
-              <p className="text-xs text-gray-500">{stats.draftInvoices} drafts</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Paid</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.paidInvoices}</p>
-              <p className="text-xs text-green-600">{stats.paymentRate}% payment rate</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <AlertTriangle className="h-8 w-8 text-red-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Overdue</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.overdueInvoices}</p>
-              <p className="text-xs text-red-600">Require attention</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <DollarSign className="h-8 w-8 text-cyan-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Invoiced</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.totalInvoiced)}</p>
-              <p className="text-xs text-gray-500">All invoices</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <TrendingUp className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Collected</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.totalPaid)}</p>
-              <p className="text-xs text-orange-600">{formatCurrency(stats.totalOutstanding)} pending</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  return <StandardizedStats stats={statCards} columns={6} />
 }

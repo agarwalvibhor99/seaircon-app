@@ -1,7 +1,8 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
-import { ClipboardList, CheckCircle, Clock, AlertTriangle, DollarSign, Calendar } from 'lucide-react'
+import StandardizedStats from '@/components/ui/standardized-stats'
+import { ClipboardList, CheckCircle, Clock, AlertTriangle, Calendar } from 'lucide-react'
+import { IndianRupee } from '@/components/ui/icons/indian-rupee'
 
 interface AMCContract {
   status: 'active' | 'expired' | 'pending' | 'cancelled'
@@ -43,84 +44,49 @@ export default function AMCStats({ contracts }: AMCStatsProps) {
     }).format(amount)
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <ClipboardList className="h-8 w-8 text-blue-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Contracts</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalContracts}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  const statCards = [
+    { 
+      title: 'Total Contracts', 
+      value: stats.totalContracts, 
+      icon: ClipboardList, 
+      color: 'text-blue-600' 
+    },
+    { 
+      title: 'Active', 
+      value: stats.activeContracts, 
+      subtitle: `${stats.renewalRate}% active rate`,
+      icon: CheckCircle, 
+      color: 'text-green-600' 
+    },
+    { 
+      title: 'Expiring Soon', 
+      value: stats.expiringContracts, 
+      subtitle: 'Next 30 days',
+      icon: AlertTriangle, 
+      color: 'text-yellow-600' 
+    },
+    { 
+      title: 'Expired', 
+      value: stats.expiredContracts, 
+      subtitle: 'Need renewal',
+      icon: Clock, 
+      color: 'text-red-600' 
+    },
+    { 
+      title: 'Pending', 
+      value: stats.pendingContracts, 
+      subtitle: 'Awaiting approval',
+      icon: Calendar, 
+      color: 'text-purple-600' 
+    },
+    { 
+      title: 'Annual Revenue', 
+      value: formatCurrency(stats.totalRevenue), 
+      subtitle: 'From active contracts',
+      icon: IndianRupee, 
+      color: 'text-cyan-600' 
+    }
+  ]
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.activeContracts}</p>
-              <p className="text-xs text-green-600">{stats.renewalRate}% active rate</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <AlertTriangle className="h-8 w-8 text-yellow-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Expiring Soon</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.expiringContracts}</p>
-              <p className="text-xs text-yellow-600">Next 30 days</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Clock className="h-8 w-8 text-red-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Expired</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.expiredContracts}</p>
-              <p className="text-xs text-red-600">Need renewal</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <Calendar className="h-8 w-8 text-purple-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.pendingContracts}</p>
-              <p className="text-xs text-purple-600">Awaiting approval</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center">
-            <DollarSign className="h-8 w-8 text-cyan-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Annual Revenue</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.totalRevenue)}</p>
-              <p className="text-xs text-gray-500">From active contracts</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  return <StandardizedStats stats={statCards} columns={6} />
 }

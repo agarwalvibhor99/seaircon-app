@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
 import UnifiedEmployeeList from '@/components/admin/employees/UnifiedEmployeeList'
+import EmployeesStats from '@/components/admin/employees/EmployeesStats'
 
 export default async function EmployeesPage() {
   const cookieStore = await cookies()
@@ -61,6 +62,11 @@ export default async function EmployeesPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="mb-8">
+            <EmployeesStats employees={employees || []} />
           </div>
           
           <UnifiedEmployeeList employees={employees || []} />
